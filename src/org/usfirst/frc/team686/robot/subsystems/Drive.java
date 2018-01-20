@@ -40,7 +40,7 @@ public class Drive extends Subsystem
 	// robot powers up
 	private Drive() 
 	{
-		driveCmd = DriveCommand.NEUTRAL();	
+		driveCmd = DriveCommand.COAST();	
 		driveStatus = DriveStatus.getInstance();
 	}
 
@@ -54,7 +54,7 @@ public class Drive extends Subsystem
         @Override
         public void onStart()
         {
-            setOpenLoop(DriveCommand.NEUTRAL());
+            setOpenLoop(DriveCommand.COAST());
         }
 
         @Override
@@ -85,7 +85,7 @@ public class Drive extends Subsystem
         @Override
         public void onStop() 
         {
-            setOpenLoop(DriveCommand.NEUTRAL());
+            setOpenLoop(DriveCommand.COAST());
         }
     };
 
@@ -228,7 +228,7 @@ public class Drive extends Subsystem
 	@Override
 	public void stop()
 	{ 
-		setOpenLoop(DriveCommand.NEUTRAL()); 
+		setOpenLoop(DriveCommand.COAST()); 
 	}
 
 	@Override
@@ -248,7 +248,7 @@ public class Drive extends Subsystem
 				put("Drive/TalonControlModeCmd", driveCmd.getTalonControlMode().toString() );
 				put("Drive/lMotorCmd", driveCmd.getLeftMotor() );
 				put("Drive/rMotorCmd", driveCmd.getRightMotor() );
-				put("Drive/BrakeModeCmd", driveCmd.getBrake() );
+				put("Drive/BrakeModeCmd", driveCmd.getNeutralMode().toString() );
 				put("VelocityHeading/PIDError",  velocityHeadingSetpoint.velocityHeadingPID.getError() );
 				put("VelocityHeading/PIDOutput", velocityHeadingSetpoint.velocityHeadingPID.get() );
 

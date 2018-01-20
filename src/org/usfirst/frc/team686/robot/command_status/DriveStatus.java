@@ -1,9 +1,8 @@
 package org.usfirst.frc.team686.robot.command_status;
 
-
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
 
-import com.ctre.CANTalon.TalonControlMode;
+import com.ctre.phoenix.motorcontrol.*;
 
 /**
  * Drivetrain status structure, filled by DriveLoop.java
@@ -16,8 +15,8 @@ public class DriveStatus
 	// all member variables should be private to force other object to use the set/get access methods
 	// which are synchronized to allow multi-thread synchronization
 
-	private TalonControlMode talonControlMode = TalonControlMode.Disabled;
-	private boolean brakeMode;
+	private ControlMode talonControlMode = ControlMode.Disabled;
+	private NeutralMode neutralMode;
 	
 	private double lDistanceInches, rDistanceInches;
 	private double lSpeedInchesPerSec, rSpeedInchesPerSec;
@@ -25,15 +24,15 @@ public class DriveStatus
 	
 	private double lMotorCurrent, rMotorCurrent;
 	private double lMotorStatus, rMotorStatus;
-	private double lMotorPIDError, rMotorPIDError;
+	private int lMotorPIDError, rMotorPIDError;
 	
 	public DriveStatus() {}
 	
-	public synchronized void setTalonControlMode(TalonControlMode val) { talonControlMode = val; }
-	public synchronized TalonControlMode getTalonControlMode() { return talonControlMode; }
+	public synchronized void setTalonControlMode(ControlMode val) { talonControlMode = val; }
+	public synchronized ControlMode getTalonControlMode() { return talonControlMode; }
 	
-	public synchronized void setBrakeMode(boolean val) { brakeMode = val; }
-	public synchronized boolean getBrakeMode() { return brakeMode; }
+	public synchronized void setNeutralMode(NeutralMode val) { neutralMode = val; }
+	public synchronized NeutralMode getNeutralMode() { return neutralMode; }
 	
 	public synchronized void setLeftDistanceInches(double val)  { lDistanceInches = val; }
 	public synchronized void setRightDistanceInches(double val) { rDistanceInches = val; }
@@ -49,7 +48,7 @@ public class DriveStatus
 
 	public synchronized void setMotorCurrent(double lVal, double rVal) { lMotorCurrent = lVal; rMotorCurrent = rVal; }
 	public synchronized void setMotorStatus(double lVal, double rVal) { lMotorStatus = lVal; rMotorStatus = rVal; }				// current settings, read back from Talon (may be different than commanded values)
-	public synchronized void setMotorPIDError(double lVal, double rVal) { lMotorPIDError = lVal; rMotorPIDError = rVal; }
+	public synchronized void setMotorPIDError(int lVal, int rVal) { lMotorPIDError = lVal; rMotorPIDError = rVal; }
     
 	public synchronized double getLeftMotorCurrent()  { return lMotorCurrent; }
 	public synchronized double getRightMotorCurrent() { return rMotorCurrent; }
@@ -77,7 +76,7 @@ public class DriveStatus
         	synchronized (DriveStatus.this)
         	{
 	    		put("DriveStatus/TalonControlMode", talonControlMode.toString() );
-	    		put("DriveStatus/brakeMode", brakeMode );
+	    		put("DriveStatus/neutralMode", neutralMode.toString() );
 	    		put("DriveStatus/lMotorCurrent", lMotorCurrent );
 	    		put("DriveStatus/rMotorCurrent", rMotorCurrent );
 	    		put("DriveStatus/lMotorStatus", lMotorStatus );

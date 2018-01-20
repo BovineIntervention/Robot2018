@@ -3,6 +3,7 @@ package org.usfirst.frc.team686.robot;
 import org.usfirst.frc.team686.robot.lib.util.ConstantsBase;
 
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.SPI;
 
 /**
  * Attribution: adapted from FRC Team 254
@@ -17,6 +18,8 @@ public class Constants extends ConstantsBase
 {
     public static double kLoopDt = 0.01;
     public static double kDriveWatchdogTimerThreshold = 0.500;    
+    public static int kTalonTimeoutMs = 5;	// ms
+    public static int kTalonPidIdx = 0;		// for non-cascaded PIDs 
     
     // Bumpers
     public static double kCenterToFrontBumper = 19.0;	// position of front bumper with respect to robot center of rotation
@@ -32,12 +35,11 @@ public class Constants extends ConstantsBase
     public static double kTrackScrubFactor = 0.5;
 
     // Wheel Encoder
-    public static double kQuadEncoderGain = ( 30.0 / 54.0 ) * ( 12.0 / 36.0 );	// number of drive shaft rotations per encoder shaft rotation
-																				// 54:30 drive shaft --> 3rd stage, 36:12 3rd stage --> encoder shaft 
-    
-    public static int    kQuadEncoderCodesPerRev = 64;
-    public static int    kQuadEncoderPulsesPerRev = (int)(4*kQuadEncoderCodesPerRev / kQuadEncoderGain);
+    public static int    kQuadEncoderCodesPerRev = 256;
+    public static int    kQuadEncoderPulsesPerRev = 4*kQuadEncoderCodesPerRev;
     public static double kQuadEncoderStatusFramePeriod = 0.100;	// 100ms
+    public static boolean	kLeftMotorInverted = false;
+    public static boolean	kRightMotorInverted = true;
     
     // CONTROL LOOP GAINS
 //  public static double kFullThrottleRPM = 4500 * kQuadEncoderGain;	// high gear: measured max RPM using NI web interface
@@ -133,12 +135,10 @@ public class Constants extends ConstantsBase
     
     // Motor Controllers
     // (Note that if multiple Talons are dedicated to a mechanism, any sensors are attached to the master)
-    public static int kLeftMotorMasterTalonId = 1;
-	public static int kLeftMotorSlave1TalonId = 2;
-	public static int kLeftMotorSlave2TalonId = 3;
-	public static int kRightMotorMasterTalonId = 5;
-	public static int kRightMotorSlave1TalonId = 6;
-	public static int kRightMotorSlave2TalonId = 7;
+    public static final int kLeftMotorMasterTalonId  = 1;
+    public static final int kRightMotorMasterTalonId = 2;
+    public static final int kLeftMotorSlaveTalonId   = 3;
+    public static final int kRightMotorSlaveTalonId  = 4;
 
     // WPILib doesn't handle drive motor reversal correctly, so we'll do it with these flags
 	// +1 if not reversed, -1 if reversed
@@ -173,7 +173,11 @@ public class Constants extends ConstantsBase
     // Relay Ports
     public static int kLedRelayPort = 0;
     
-    // Gyro
+    // GYRO
+    public enum GyroSelectionEnum { BNO055, NAVX; }
+    //public static GyroSelectionEnum GyroSelection = GyroSelectionEnum.BNO055;
+    public static GyroSelectionEnum GyroSelection = GyroSelectionEnum.NAVX;
+
 	// The I2C port the BNO055 is connected to
     public static final I2C.Port BNO055_PORT = I2C.Port.kOnboard;
     
@@ -186,6 +190,12 @@ public class Constants extends ConstantsBase
     public static short kAccelOffsetY = -53;
     public static short kAccelOffsetZ =  25;
     public static short kAccelRadius  = -24;
+    
+    // The SPI port the NavX is connected to
+    // (see https://www.pdocs.kauailabs.com/navx-mxp/guidance/selecting-an-interface/)
+    public static final SPI.Port NAVX_PORT = SPI.Port.kMXP;						// the SPI port has low latency (<0.1 ms)
+    public static byte NAVX_UPDATE_RATE = (byte) (1.0 / Constants.kLoopDt);		// the SPI port supports update rates from 4-200 Hz
+
     
     
 }

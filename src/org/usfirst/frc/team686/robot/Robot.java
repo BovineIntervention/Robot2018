@@ -175,7 +175,7 @@ public class Robot extends IterativeRobot {
 			loopController.start();
 
 			//gearShifter.setLowGear();
-			drive.setOpenLoop(DriveCommand.NEUTRAL());
+			drive.setOpenLoop(DriveCommand.COAST());
 
 		} 
 		catch (Throwable t) 
