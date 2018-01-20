@@ -147,27 +147,6 @@ public class Constants extends ConstantsBase
 	
 	public static final int kTalonCurrentLimit = 25;
 	
-	//ELEVATOR
-	public static double kElevatorDt = 0.010;
-	public static double kElevatorVoltage = 12.0;
-	
-	public static double kElevatorStallTorque = 2.402; //Stall Torque in N*m
-    public static double kElevatorStallCurrent = 126.145; //Stall Current in Amps
-    public static double kElevatorFreeSpeed = 5015.562; //Free Speed in RPM
-    public static double kElevatorFreeCurrent = 1.170; //Free Current in Amps
-    public static double kElevatorMass = 20.0; //Mass of the Elevator
-    
-    public static double kElevatorNumMotors = 2.0; //Number of motors
-    public static double kElevatorResistance = kElevatorVoltage/kElevatorStallCurrent; //Resistance of motor
-    public static double KMotorVelocity = ((kElevatorFreeSpeed / 60) * (2.0 * Math.PI)) / 
-    							(kElevatorVoltage - kElevatorResistance * kElevatorFreeCurrent); //Motor velocity constant (kFreeSpeed converted to rad/s)
-    public static double KElevatorTorque = (kElevatorNumMotors * kElevatorStallTorque) / kElevatorStallCurrent; //Torque constant
-    public static double kElevatorGearRatio = 5; //Gear ratio
-    public static double kElevatorPulleyRadius = 17 * 0.25 * 0.0254 / Math.PI / 2.0; //radius of pulley
-    
-    public static double kElevatorMaxVoltage = 12.0;
-    public static double kElevatorZeroingVelocity = 0.05;
-    
 
     // Joystick Controls
     public static int kXboxButtonA  = 1;
