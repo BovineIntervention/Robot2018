@@ -75,8 +75,8 @@ public class DriveStatus
         {
         	synchronized (DriveStatus.this)
         	{
-	    		put("DriveStatus/TalonControlMode", talonControlMode.toString() );
-	    		put("DriveStatus/neutralMode", neutralMode.toString() );
+	    		put("DriveStatus/TalonControlMode", talonControlMode.value );
+	    		put("DriveStatus/neutralMode", neutralMode.value );
 	    		put("DriveStatus/lMotorCurrent", lMotorCurrent );
 	    		put("DriveStatus/rMotorCurrent", rMotorCurrent );
 	    		put("DriveStatus/lMotorStatus", lMotorStatus );

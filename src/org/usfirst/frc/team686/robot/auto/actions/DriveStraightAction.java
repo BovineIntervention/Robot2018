@@ -75,10 +75,10 @@ public class DriveStraightAction implements Action {
         public void log()
         {
     		put("AutoAction", "DriveStraight" );
-			put("DriveCmd/talonMode", driveStatus.getTalonControlMode().toString() );
+			put("DriveCmd/talonMode", driveStatus.getTalonControlMode().value );
 			put("DriveCmd/left", mDrive.getCommand().getLeftMotor() );
 			put("DriveCmd/right", mDrive.getCommand().getRightMotor() );
-    		put("DriveStatus/TalonControlMode", driveStatus.getTalonControlMode().toString() );
+    		put("DriveStatus/TalonControlMode", driveStatus.getTalonControlMode().value );
 			put("DriveStatus/lSpeed", driveStatus.getLeftSpeedInchesPerSec() );
 			put("DriveStatus/rSpeed", driveStatus.getRightSpeedInchesPerSec() );
     		put("DriveStatus/lDistance", driveStatus.getLeftDistanceInches() );

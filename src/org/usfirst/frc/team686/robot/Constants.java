@@ -38,8 +38,8 @@ public class Constants extends ConstantsBase
     public static int    kQuadEncoderCodesPerRev = 256;
     public static int    kQuadEncoderPulsesPerRev = 4*kQuadEncoderCodesPerRev;
     public static double kQuadEncoderStatusFramePeriod = 0.100;	// 100ms
-    public static boolean	kLeftMotorInverted = false;
-    public static boolean	kRightMotorInverted = true;
+    public static boolean	kLeftMotorInverted = true;
+    public static boolean	kRightMotorInverted = false;
     
     // CONTROL LOOP GAINS
 //  public static double kFullThrottleRPM = 4500 * kQuadEncoderGain;	// high gear: measured max RPM using NI web interface
@@ -136,9 +136,11 @@ public class Constants extends ConstantsBase
     // Motor Controllers
     // (Note that if multiple Talons are dedicated to a mechanism, any sensors are attached to the master)
     public static final int kLeftMotorMasterTalonId  = 1;
-    public static final int kRightMotorMasterTalonId = 2;
-    public static final int kLeftMotorSlaveTalonId   = 3;
-    public static final int kRightMotorSlaveTalonId  = 4;
+    public static final int kLeftMotorSlave1TalonId   = 2;
+    public static final int kLeftMotorSlave2TalonId   = 3;
+    public static final int kRightMotorMasterTalonId = 5;
+    public static final int kRightMotorSlave1TalonId  = 6;
+    public static final int kRightMotorSlave2TalonId  = 7;
 
     // WPILib doesn't handle drive motor reversal correctly, so we'll do it with these flags
 	// +1 if not reversed, -1 if reversed

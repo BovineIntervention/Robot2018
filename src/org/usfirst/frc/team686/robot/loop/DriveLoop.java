@@ -33,8 +33,8 @@ public class DriveLoop implements Loop
 	private static GyroBase gyro;
     private DriveStatus driveStatus;
     
-	public final TalonSRX lMotorMaster, lMotorSlave;
-	public final TalonSRX rMotorMaster, rMotorSlave;
+	public final TalonSRX lMotorMaster, lMotorSlave1, lMotorSlave2; //CHANGE TO FOUR
+	public final TalonSRX rMotorMaster, rMotorSlave1, rMotorSlave2;
 
 	private static final int kVelocityControlSlot = 0;
 	private static final int kBaseLockControlSlot = 1;
@@ -62,13 +62,17 @@ public class DriveLoop implements Loop
 		driveStatus = DriveStatus.getInstance();
 		
 		lMotorMaster = new TalonSRX(Constants.kLeftMotorMasterTalonId);
-        lMotorSlave  = new TalonSRX(Constants.kLeftMotorSlaveTalonId);
+        lMotorSlave1  = new TalonSRX(Constants.kLeftMotorSlave1TalonId);
+        lMotorSlave2  = new TalonSRX(Constants.kLeftMotorSlave2TalonId);
 
 		rMotorMaster = new TalonSRX(Constants.kRightMotorMasterTalonId);
-        rMotorSlave  = new TalonSRX(Constants.kRightMotorSlaveTalonId);
+        rMotorSlave1 = new TalonSRX(Constants.kRightMotorSlave1TalonId);
+        rMotorSlave2 = new TalonSRX(Constants.kRightMotorSlave2TalonId);
 
-		lMotorSlave.set(ControlMode.Follower, Constants.kLeftMotorMasterTalonId);	// give slave the TalonID of it's master
-		rMotorSlave.set(ControlMode.Follower, Constants.kRightMotorMasterTalonId);	// give slave the TalonID of it's master
+		lMotorSlave1.set(ControlMode.Follower, Constants.kLeftMotorMasterTalonId);	// give slave the TalonID of it's master
+		lMotorSlave2.set(ControlMode.Follower, Constants.kLeftMotorMasterTalonId);	// give slave the TalonID of it's master
+		rMotorSlave1.set(ControlMode.Follower, Constants.kRightMotorMasterTalonId);	// give slave the TalonID of it's master
+		rMotorSlave2.set(ControlMode.Follower, Constants.kRightMotorMasterTalonId);	// give slave the TalonID of it's master
         
 		// Get status at 100Hz (faster than default 50 Hz)
 		lMotorMaster.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 10, Constants.kTalonTimeoutMs);
@@ -85,18 +89,22 @@ public class DriveLoop implements Loop
 		rMotorMaster.set(ControlMode.PercentOutput, 0.0);
 		lMotorMaster.setNeutralMode(NeutralMode.Coast);
 		rMotorMaster.setNeutralMode(NeutralMode.Coast);
-		lMotorSlave.setNeutralMode(NeutralMode.Coast);
-		rMotorSlave.setNeutralMode(NeutralMode.Coast);
+		lMotorSlave1.setNeutralMode(NeutralMode.Coast);
+		lMotorSlave2.setNeutralMode(NeutralMode.Coast);
+		rMotorSlave1.setNeutralMode(NeutralMode.Coast);
+		rMotorSlave2.setNeutralMode(NeutralMode.Coast);
 
 		// Set up the encoders
 		lMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, Constants.kTalonPidIdx, Constants.kTalonTimeoutMs);	// configure for closed-loop PID
 		rMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, Constants.kTalonPidIdx, Constants.kTalonTimeoutMs);
-		lMotorMaster.setSensorPhase(false);
-		rMotorMaster.setSensorPhase(false);
+		lMotorMaster.setSensorPhase(true);
+		rMotorMaster.setSensorPhase(true);
 		lMotorMaster.setInverted(Constants.kLeftMotorInverted);
+		lMotorSlave1.setInverted(Constants.kLeftMotorInverted);
+		lMotorSlave2.setInverted(Constants.kLeftMotorInverted);
 		rMotorMaster.setInverted(Constants.kRightMotorInverted);
-		lMotorSlave.setInverted(Constants.kLeftMotorInverted);
-		rMotorSlave.setInverted(Constants.kRightMotorInverted);
+		rMotorSlave1.setInverted(Constants.kRightMotorInverted);
+		rMotorSlave2.setInverted(Constants.kRightMotorInverted);
 
 		// Load velocity control gains
 		lMotorMaster.config_kF(kVelocityControlSlot, Constants.kDriveVelocityKf, Constants.kTalonTimeoutMs);
@@ -275,8 +283,10 @@ public class DriveLoop implements Loop
 		{
 			lMotorMaster.setNeutralMode(newNeutral);
 			rMotorMaster.setNeutralMode(newNeutral);
-			lMotorSlave.setNeutralMode(newNeutral);
-			rMotorSlave.setNeutralMode(newNeutral);
+			lMotorSlave1.setNeutralMode(newNeutral);
+			lMotorSlave2.setNeutralMode(newNeutral);
+			rMotorSlave1.setNeutralMode(newNeutral);
+			rMotorSlave2.setNeutralMode(newNeutral);
 		}
 	}
 	
