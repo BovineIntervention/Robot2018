@@ -10,7 +10,7 @@ import org.usfirst.frc.team686.robot.auto.actions.DriveStraightAction;
 public class DriveStraightMode extends AutoModeBase {
 
     public DriveStraightMode(int lane, boolean shouldDriveBack) 
-    {
+    { 
     }
 
     @Override
