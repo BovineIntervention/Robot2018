@@ -71,14 +71,12 @@ public class SmartDashboardInteractions
     {
     	AutoModeOption selMode = (AutoModeOption)autoModeChooser.getSelected(); 
 
-        DriverStation.Alliance alliance = DriverStation.getInstance().getAlliance();
-        boolean isBlue = (alliance == DriverStation.Alliance.Blue);
+        //DriverStation.Alliance alliance = DriverStation.getInstance().getAlliance();
+        //boolean isBlue = (alliance == DriverStation.Alliance.Blue);
         
         FieldDimensions fieldDimensions = new FieldDimensionsRed();
-        if (isBlue) {
-        	fieldDimensions = new FieldDimensionsBlue();
-        }
 
+        /*
         System.out.print("Alliance detected as: ");
         if (alliance == DriverStation.Alliance.Red) {
             System.out.println("Red");
@@ -87,15 +85,17 @@ public class SmartDashboardInteractions
         } else {
             System.out.println("INVALID");
         }
-        
+        */
         
     	switch (selMode)
     	{
     	
     	case STAND_STILL:
+    		System.out.println("RUNNING: StandStillMode");
 			return new StandStillMode();
 			
     	case DRIVE_STRAIGHT:
+    		System.out.println("RUNNING: DriveStraightMode");
 			return new DriveStraightMode(0, false);
 			
 		default:

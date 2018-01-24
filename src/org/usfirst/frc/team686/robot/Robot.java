@@ -118,21 +118,29 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void autonomousInit() {
-    	operationalMode = OperationalMode.DISABLED;
+		
+		System.out.println("AUTONOMOUS INIT");
+		
+    	operationalMode = OperationalMode.AUTONOMOUS;
     	boolean logToFile = true;
     	boolean logToSmartDashboard = true;
     	robotLogger.setOutputMode(logToFile, logToSmartDashboard);
     	
     	try
     	{
-    		CrashTracker.logDisabledInit();
+    		CrashTracker.logAutoInit();
     		if(autoModeExecuter != null){
     			autoModeExecuter.stop();
     		}
     		autoModeExecuter = null;
     		
-    		stopAll(); //How does stopAll stop all??
-    		loopController.start();
+			autoModeExecuter = new AutoModeExecuter();
+			autoModeExecuter.setAutoMode(smartDashboardInteractions.getAutoModeSelection());
+
+			setInitialPose(autoModeExecuter.getAutoMode().getInitialPose());
+
+			autoModeExecuter.start();
+    	
     	}
     	catch(Throwable t)
     	{
