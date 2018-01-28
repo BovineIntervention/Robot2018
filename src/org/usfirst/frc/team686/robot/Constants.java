@@ -1,8 +1,10 @@
 package org.usfirst.frc.team686.robot;
 
+import org.usfirst.frc.team686.robot.Constants.GyroSelectionEnum;
 import org.usfirst.frc.team686.robot.lib.util.ConstantsBase;
 
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.SPI;
 
 /**
  * Attribution: adapted from FRC Team 254
@@ -15,9 +17,15 @@ import edu.wpi.first.wpilibj.I2C;
  */
 public class Constants extends ConstantsBase
 {
+    public enum RobotSelectionEnum { PRACTICE_BOT, COMPETITION_BOT; }
+    public static RobotSelectionEnum kRobotSelection = RobotSelectionEnum.PRACTICE_BOT;	// select which robot we are building code for (TODO: make this automatic?)
+	
+	
     public static double kLoopDt = 0.01;
     public static double kDriveWatchdogTimerThreshold = 0.500;    
-    
+    public static int kTalonTimeoutMs = 5;	// ms
+    public static int kTalonPidIdx = 0;		// 0 for non-cascaded PIDs, 1 for cascaded PIDs
+
     // Bumpers
     public static double kCenterToFrontBumper = 19.0;	// position of front bumper with respect to robot center of rotation
     public static double kCenterToRearBumper = 19.5;	// position of rear bumper with respect to robot center of rotation
@@ -140,10 +148,9 @@ public class Constants extends ConstantsBase
 	public static int kRightMotorSlave1TalonId = 6;
 	public static int kRightMotorSlave2TalonId = 7;
 
-    // WPILib doesn't handle drive motor reversal correctly, so we'll do it with these flags
-	// +1 if not reversed, -1 if reversed
-	public static final int lMotorPolarity = -1;
-	public static final int rMotorPolarity = 1;
+    // left motors are inverted
+    public static boolean	kLeftMotorInverted  = true;
+    public static boolean	kRightMotorInverted = false;
 	
 	public static final int kTalonCurrentLimit = 25;
 	
@@ -174,6 +181,10 @@ public class Constants extends ConstantsBase
     public static int kLedRelayPort = 0;
     
     // Gyro
+    public enum GyroSelectionEnum { BNO055, NAVX; }
+    
+    public static GyroSelectionEnum GyroSelection = (kRobotSelection == RobotSelectionEnum.COMPETITION_BOT ? GyroSelectionEnum.NAVX : GyroSelectionEnum.BNO055);
+
 	// The I2C port the BNO055 is connected to
     public static final I2C.Port BNO055_PORT = I2C.Port.kOnboard;
     
@@ -187,5 +198,16 @@ public class Constants extends ConstantsBase
     public static short kAccelOffsetZ =  25;
     public static short kAccelRadius  = -24;
     
-    
+    // The SPI port the NavX is connected to
+    // (see https://www.pdocs.kauailabs.com/navx-mxp/guidance/selecting-an-interface/)
+    public static final SPI.Port NAVX_PORT = SPI.Port.kMXP;						// the SPI port has low latency (<0.1 ms)
+    public static byte NAVX_UPDATE_RATE = (byte) (1.0 / Constants.kLoopDt);		// the SPI port supports update rates from 4-200 Hz
+   
+/*
+ *     public void Constants()
+    {
+    	if 
+    }
+    }
+*/
 }

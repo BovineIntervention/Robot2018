@@ -1,16 +1,14 @@
 package org.usfirst.frc.team686.robot.subsystems;
 
+import org.usfirst.frc.team686.robot.lib.util.DataLogger;
+import org.usfirst.frc.team686.robot.lib.util.Kinematics.WheelSpeed;
+import org.usfirst.frc.team686.robot.loops.Loop;
+import org.usfirst.frc.team686.robot.lib.util.PIDController;
+
 import org.usfirst.frc.team686.robot.Constants;
 import org.usfirst.frc.team686.robot.command_status.DriveCommand;
+import org.usfirst.frc.team686.robot.command_status.DriveState;
 import org.usfirst.frc.team686.robot.command_status.DriveCommand.DriveControlMode;
-import org.usfirst.frc.team686.robot.lib.util.DataLogger;
-import org.usfirst.frc.team686.robot.lib.util.PIDController;
-import org.usfirst.frc.team686.robot.lib.util.Kinematics.WheelSpeed;
-import org.usfirst.frc.team686.robot.command_status.DriveStatus;
-import org.usfirst.frc.team686.robot.loop.Loop;
-
-
-
 
 /**
  * The robot's drivetrain, which implements the Superstructure abstract class.
@@ -29,7 +27,7 @@ public class Drive extends Subsystem
 	private DriveCommand driveCmd;
 
 	// drive status
-	public DriveStatus driveStatus;
+	public DriveState DriveState;
 	
 	// velocity heading
 	private VelocityHeadingSetpoint velocityHeadingSetpoint = new VelocityHeadingSetpoint();
@@ -40,10 +38,11 @@ public class Drive extends Subsystem
 	// robot powers up
 	private Drive() 
 	{
-		driveCmd = DriveCommand.NEUTRAL();	
-		driveStatus = DriveStatus.getInstance();
+		driveCmd = DriveCommand.COAST();	
+		DriveState = DriveState.getInstance();
 	}
 
+	
 	
 	/*
 	 * Loop to tend to velocity control loops, where Talon SRXs are monitoring the wheel velocities
@@ -54,7 +53,7 @@ public class Drive extends Subsystem
         @Override
         public void onStart()
         {
-            setOpenLoop(DriveCommand.NEUTRAL());
+            setOpenLoop(DriveCommand.COAST());
         }
 
         @Override
@@ -85,7 +84,7 @@ public class Drive extends Subsystem
         @Override
         public void onStop() 
         {
-            setOpenLoop(DriveCommand.NEUTRAL());
+            setOpenLoop(DriveCommand.COAST());
         }
     };
 
@@ -180,7 +179,7 @@ public class Drive extends Subsystem
 	private void updateVelocityHeading() 
 	{
 		// get change in left/right motor speeds based on error in heading
-		double diffSpeed = velocityHeadingSetpoint.velocityHeadingPID.calculate( driveStatus.getHeadingDeg() );
+		double diffSpeed = velocityHeadingSetpoint.velocityHeadingPID.calculate( DriveState.getHeadingDeg() );
 		
 		// speed up   left side when robot turns left (actual heading > heading setpoint --> diffSpeed < 0) 
 		// slow down right side when robot turns left (actual heading > heading setpoint --> diffSpeed < 0) 
@@ -210,8 +209,8 @@ public class Drive extends Subsystem
 	// test function -- rotates wheels 1 RPM
 	public void testDriveSpeedControl() 
 	{
-		double  left_inches_per_second = 1.0 * Constants.kDriveWheelCircumInches;
-		double right_inches_per_second = 1.0 * Constants.kDriveWheelCircumInches;
+		double  left_inches_per_second = Constants.kDriveWheelCircumInches;
+		double right_inches_per_second = Constants.kDriveWheelCircumInches;
 		setVelocitySetpoint(left_inches_per_second, right_inches_per_second);
 	}
 
@@ -222,13 +221,13 @@ public class Drive extends Subsystem
 	
 	/*
 	 * Subsystem overrides(non-Javadoc)
-	 * @see org.usfirst.frc.team686.robot2017.subsystems.Subsystem#stop()
+	 * @see org.usfirst.frc.team686.robot.subsystems.Subsystem#stop()
 	 */
 	
 	@Override
 	public void stop()
 	{ 
-		setOpenLoop(DriveCommand.NEUTRAL()); 
+		setOpenLoop(DriveCommand.COAST()); 
 	}
 
 	@Override
@@ -248,7 +247,7 @@ public class Drive extends Subsystem
 				put("Drive/TalonControlModeCmd", driveCmd.getTalonControlMode().toString() );
 				put("Drive/lMotorCmd", driveCmd.getLeftMotor() );
 				put("Drive/rMotorCmd", driveCmd.getRightMotor() );
-				put("Drive/BrakeModeCmd", driveCmd.getBrake() );
+				put("Drive/BrakeModeCmd", DriveCommand.getNeutralMode().toString() );
 				put("VelocityHeading/PIDError",  velocityHeadingSetpoint.velocityHeadingPID.getError() );
 				put("VelocityHeading/PIDOutput", velocityHeadingSetpoint.velocityHeadingPID.get() );
 
@@ -260,7 +259,5 @@ public class Drive extends Subsystem
     };
     
     public DataLogger getLogger() { return logger; }
-
-
     
 }

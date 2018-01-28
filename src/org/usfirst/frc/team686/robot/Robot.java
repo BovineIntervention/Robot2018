@@ -1,24 +1,28 @@
 package org.usfirst.frc.team686.robot;
 
+import org.usfirst.frc.team686.robot.auto.AutoModeBase;
 import org.usfirst.frc.team686.robot.auto.AutoModeExecuter;
-import org.usfirst.frc.team686.robot.command_status.DriveStatus;
+import org.usfirst.frc.team686.robot.auto.modes.PointTurnMode;
+import org.usfirst.frc.team686.robot.command_status.DriveState;
 import org.usfirst.frc.team686.robot.command_status.RobotState;
 import org.usfirst.frc.team686.robot.lib.joystick.ArcadeDriveJoystick;
+import org.usfirst.frc.team686.robot.lib.joystick.ButtonBoard;
 import org.usfirst.frc.team686.robot.lib.joystick.JoystickControlsBase;
 import org.usfirst.frc.team686.robot.lib.sensors.SwitchableCameraServer;
-import org.usfirst.frc.team686.robot.loop.DriveLoop;
-import org.usfirst.frc.team686.robot.loop.LoopController;
-import org.usfirst.frc.team686.robot.loop.RobotStateLoop;
 import org.usfirst.frc.team686.robot.subsystems.Drive;
 import org.usfirst.frc.team686.robot.util.DataLogController;
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
 import org.usfirst.frc.team686.robot.command_status.DriveCommand;
 
+import java.util.Optional;
 import java.util.TimeZone;
 
 import org.usfirst.frc.team686.robot.Robot.OperationalMode;
 import org.usfirst.frc.team686.robot.lib.util.CrashTracker;
 import org.usfirst.frc.team686.robot.lib.util.Pose;
+import org.usfirst.frc.team686.robot.loops.DriveLoop;
+import org.usfirst.frc.team686.robot.loops.LoopController;
+import org.usfirst.frc.team686.robot.loops.RobotStateLoop;
 
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -31,6 +35,8 @@ public class Robot extends IterativeRobot {
 	PowerDistributionPanel pdp = new PowerDistributionPanel();
 	
 	JoystickControlsBase controls = ArcadeDriveJoystick.getInstance();
+	ButtonBoard buttonBoard = ButtonBoard.getInstance();
+	
 	RobotState robotState = RobotState.getInstance();
 	Drive drive = Drive.getInstance();
 	
@@ -40,9 +46,6 @@ public class Robot extends IterativeRobot {
 	
 	SmartDashboardInteractions smartDashboardInteractions;
 	DataLogController robotLogger;
-	
-	SwitchableCameraServer switchableCameraServer;
-	boolean cameraSwitchButtonPrev = false;
 	
 	CameraServer cameraServer;
 
@@ -84,12 +87,10 @@ public class Robot extends IterativeRobot {
     		robotLogger = DataLogController.getRobotLogController();
     		robotLogger.register(Drive.getInstance().getLogger());
     		robotLogger.register(drive.getCommand().getLogger());
-    		robotLogger.register(DriveStatus.getInstance().getLogger());
+    		robotLogger.register(DriveState.getInstance().getLogger());
     		robotLogger.register(RobotState.getInstance().getLogger());
     		
     		setInitialPose(new Pose());
-    		
-    		//switchableCameraServer = new SwitchableCameraServer("cam0");
     		
     		//cameraServer.getInstance().startAutomaticCapture();
     	}
@@ -101,38 +102,100 @@ public class Robot extends IterativeRobot {
 	}
 	
 	public void setInitialPose (Pose _initialPose){
-    	robotState.reset(Timer.getFPGATimestamp(), DriveStatus.getInstance().getLeftDistanceInches(), DriveStatus.getInstance().getRightDistanceInches(), _initialPose);
+    	robotState.reset(Timer.getFPGATimestamp(), DriveState.getInstance().getLeftDistanceInches(), DriveState.getInstance().getRightDistanceInches(), _initialPose);
     	System.out.println("InitialPose: " + _initialPose);
     }
     
     public void zeroAllSensors()
     {
     	drive.zeroSensors();
+		// mSuperstructure.zeroSensors();
     }
     
     public void stopAll()
     {
     	drive.stop();
+		// mSuperstructure.stop();
     }
 
+    
+    
+	/****************************************************************
+	 * DISABLED MODE
+	 ****************************************************************/
+
+	@Override
+	public void disabledInit()
+	{
+		operationalMode = OperationalMode.DISABLED;
+		boolean logToFile = true;
+		boolean logToSmartDashboard = true;
+		robotLogger.setOutputMode(logToFile, logToSmartDashboard);
+
+		try
+		{
+			CrashTracker.logDisabledInit();
+			if (autoModeExecuter != null)
+			{
+				autoModeExecuter.stop();
+			}
+			autoModeExecuter = null;
+
+			stopAll(); // stop all actuators
+			loopController.start();
+
+		}
+		catch (Throwable t)
+		{
+			CrashTracker.logThrowableCrash(t);
+			throw t;
+		}
+	}
+
+	@Override
+	public void disabledPeriodic()
+	{
+		try
+		{
+			stopAll(); // stop all actuators
+			
+			System.gc(); // runs garbage collector
+		}
+		catch (Throwable t)
+		{
+			CrashTracker.logThrowableCrash(t);
+			throw t;
+		}
+	}
+
+	
+	
+	/****************************************************************
+	 * AUTONOMOUS MODE
+	 ****************************************************************/
 
 	@Override
 	public void autonomousInit() {
-    	operationalMode = OperationalMode.DISABLED;
+    	operationalMode = OperationalMode.AUTONOMOUS;
     	boolean logToFile = true;
     	boolean logToSmartDashboard = true;
     	robotLogger.setOutputMode(logToFile, logToSmartDashboard);
     	
     	try
     	{
-    		CrashTracker.logDisabledInit();
+    		CrashTracker.logAutoInit();
     		if(autoModeExecuter != null){
     			autoModeExecuter.stop();
     		}
     		autoModeExecuter = null;
     		
-    		stopAll(); //How does stopAll stop all??
-    		loopController.start();
+
+			autoModeExecuter = new AutoModeExecuter();
+			autoModeExecuter.setAutoMode(smartDashboardInteractions.getAutoModeSelection());
+
+			setInitialPose(autoModeExecuter.getAutoMode().getInitialPose());
+
+			autoModeExecuter.start();
     	}
     	catch(Throwable t)
     	{
@@ -156,6 +219,10 @@ public class Robot extends IterativeRobot {
 	}
 	
 	
+	/****************************************************************
+	 * TELEOP MODE
+	 ****************************************************************/
+
 	@Override
 	public void teleopInit(){
 		operationalMode = OperationalMode.TELEOP;
@@ -170,12 +237,11 @@ public class Robot extends IterativeRobot {
 			// Select joystick control method
 			controls = smartDashboardInteractions.getJoystickControlsMode();
 			
-
 			// Configure looper
 			loopController.start();
 
 			//gearShifter.setLowGear();
-			drive.setOpenLoop(DriveCommand.NEUTRAL());
+			drive.setOpenLoop(DriveCommand.COAST());
 
 		} 
 		catch (Throwable t) 
@@ -187,22 +253,32 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		try{
-			drive.setOpenLoop(controls.getDriveCommand());
+			if ((autoModeExecuter == null) || (!autoModeExecuter.getAutoMode().isActive()))
+				drive.setOpenLoop(controls.getDriveCommand());
 			
-			// CAMERA
-			/*
-			if (cameraSwitchButton && !camaraSwitchButtonPrev)
+			// override operator controls if button board direction is set
+			Optional<Double> buttonBoardDirection = buttonBoard.getDirection();
+			if (buttonBoardDirection.isPresent())
 			{
-				switchableCameraServer.changeToNextCamera();
+				if (autoModeExecuter != null)
+					autoModeExecuter.stop();	// kill any old commands
+				autoModeExecuter = new AutoModeExecuter();
+				AutoModeBase autoMode = new PointTurnMode( buttonBoardDirection.get().doubleValue() );
+				autoModeExecuter.setAutoMode( autoMode );
+				autoModeExecuter.start();
 			}
-			camaraSwitchButtonPrev = cameraSwitchButton;
-			*/
 		}
 		catch (Throwable t){
 			CrashTracker.logThrowableCrash(t);
 			throw t;
 		}
 	}
+
+	
+	
+	/****************************************************************
+	 * TEST MODE
+	 ****************************************************************/
 
 	@Override
 	public void testInit() 

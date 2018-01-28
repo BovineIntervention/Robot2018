@@ -42,4 +42,19 @@ public abstract class FieldDimensions
 
 	// Ending point of run to other side of field
 	public abstract Pose getFarSideOfFieldPose();
+
+	// stuff needed to compile without errors.  Susanna to fix
+    public Pose getExchangeStartPose() { return new Pose(); }
+    public Pose getPowerCubeZonePose() { return new Pose(); }
+    public Pose switchStopPosition() { return new Pose(); }
+    public Pose getLeftScalePose() { return new Pose(); }
+    public Pose getRightScalePose() { return new Pose(); }
+    public Pose getLeftSwitchPose() { return new Pose(); }
+    public Pose getRightSwitchPose() { return new Pose(); }
+    public static double kScaleTurnPositionOffsetX = 0;
+    public static double kScaleTurnPositionOffsetY = 0;
+    public static double kSwitchTurnPositionOffsetX = 0;
+    public static double kSwitchTurnPositionOffsetY = 0;
+    public static double kBackupDistY = 0;
+
 }

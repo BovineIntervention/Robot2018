@@ -1,10 +1,10 @@
-package org.team686.lib.util.test;
+package org.usfirst.frc.team686.robot.lib.util.test;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.team686.lib.util.Pose;
-import org.team686.lib.util.Vector2d;
+import org.usfirst.frc.team686.robot.lib.util.Pose;
+import org.usfirst.frc.team686.robot.lib.util.Vector2d;
 
 public class TestRigidTransform2d 
 {

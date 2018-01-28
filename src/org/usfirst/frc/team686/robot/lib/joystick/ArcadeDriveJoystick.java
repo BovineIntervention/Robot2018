@@ -1,8 +1,8 @@
 package org.usfirst.frc.team686.robot.lib.joystick;
 
-import org.usfirst.frc.team686.robot.Constants;
-import org.usfirst.frc.team686.robot.command_status.DriveCommand;
+import org.usfirst.frc.team686.robot.lib.joystick.JoystickControlsBase;
 import org.usfirst.frc.team686.robot.lib.util.Util;
+import org.usfirst.frc.team686.robot.command_status.DriveCommand;
 
 /**
  * Implements a simple arcade drive, where single stick is used for throttle and turn.
@@ -19,13 +19,11 @@ public class ArcadeDriveJoystick extends JoystickControlsBase
     
     public DriveCommand getDriveCommand()
     {
-    	boolean squaredInputs = true;	// set to true to increase fine control while permitting full power
+//	    boolean squaredInputs = true;	// set to true to increase fine control while permitting full power
+	    boolean squaredInputs = false;	// set to true to increase fine control while permitting full power
 	    
-    	double throttle = -mStick.getY();		        
-    	double turn     = -mStick.getX();
-        
-        if(throttle < Constants.kDriveDeadzone && throttle > -Constants.kDriveDeadzone){throttle = 0;}
-        if(turn < Constants.kDriveDeadzone && turn > -Constants.kDriveDeadzone){turn = 0;}
+    	double throttle = -mStick.getY();	// TODO: figure out why Y-axis is negated
+        double turn     = -mStick.getX();	// TODO: figure out why X-axis is negated
      
 	    double moveValue   = Util.limit(throttle, 1.0);
 	    double rotateValue = Util.limit(turn,     1.0);
@@ -68,5 +66,4 @@ public class ArcadeDriveJoystick extends JoystickControlsBase
 	   	    
 	    return signal;        
     }
-    
 }

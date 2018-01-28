@@ -1,4 +1,4 @@
-package org.team686.lib.util.test;
+package org.usfirst.frc.team686.robot.lib.util.test;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

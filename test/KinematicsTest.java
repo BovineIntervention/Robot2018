@@ -1,11 +1,11 @@
-package org.team686.lib.util.test;
+package org.usfirst.frc.team686.robot.lib.util.test;
 
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.team686.lib.util.Kinematics;
-import org.team686.lib.util.Kinematics.*;
+import org.usfirst.frc.team686.robot.lib.util.Kinematics;
+import org.usfirst.frc.team686.robot.lib.util.Kinematics.*;
 
 public class KinematicsTest 
 {

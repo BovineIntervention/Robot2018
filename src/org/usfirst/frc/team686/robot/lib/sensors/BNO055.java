@@ -6,7 +6,6 @@ import org.usfirst.frc.team686.robot.Constants;
 
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -81,7 +80,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  *MIT license, all text above must be included in any redistribution
  *
  */
-public class BNO055 {
+public class BNO055 extends GyroBase {
 	//Tread variables
 	private java.util.Timer executor;
 	private static final long THREAD_PERIOD = 20; //ms - max poll rate on sensor.
@@ -90,7 +89,7 @@ public class BNO055 {
 	public static final byte BNO055_ADDRESS_B = 0x29;
 	public static final int BNO055_ID = 0xA0;
 
-	private static BNO055 instance;
+	private static GyroBase instance;
 	
 	private static I2C imu;
 	private static int _mode;
@@ -368,6 +367,23 @@ public class BNO055 {
 		}
 	};
 	
+	
+	
+	/**
+	 * GyroBase class methods
+	 *
+	 */
+	public static GyroBase getInstance() {
+		return getInstance(Constants.BNO055_PORT);			 
+	}
+	public double getHeadingDeg() {
+		return -getHeading();			// sign correction so that heading increases as robot turns to the left 
+	}
+
+	
+	
+	
+	
 	/**
 	 * Instantiates a new BNO055 class.
 	 *
@@ -380,7 +396,7 @@ public class BNO055 {
 		executor = new java.util.Timer();
 		executor.schedule(new BNO055UpdateTask(this), 0L, THREAD_PERIOD);
 	}
-
+	
 	/**
 	 * Get an instance of the sensor configured for IMU mode and EULER format for the purpose
 	 * of reading gyro angles (assumes sensor has default I2C address).
@@ -388,7 +404,7 @@ public class BNO055 {
 	 * @param port the physical port the sensor is plugged into on the roboRio (I2C.Port.kOnboard or I2C.Port.kMXP).
 	 * @return the instantiated BNO055 object
 	 */
-	public static BNO055 getInstance(I2C.Port port)
+	public static GyroBase getInstance(I2C.Port port)
 	{
 		// OPERATION_MODE_IMU provides fusion of accelerometer and gyro
 		// VECTOR_EULER returns heading, roll, pitch
@@ -403,7 +419,7 @@ public class BNO055 {
 	 * @param address the address the sensor is at (0x28 or 0x29)
 	 * @return the instantiated BNO055 object
 	 */
-	public static BNO055 getInstance(opmode_t mode, vector_type_t vectorType,
+	public static GyroBase getInstance(opmode_t mode, vector_type_t vectorType,
 			I2C.Port port, byte address) {
 		if(instance == null) {
 			instance = new BNO055(port, address);
@@ -422,7 +438,7 @@ public class BNO055 {
 	 *   in (if you don't know use VECTOR_EULER).
 	 * @return the instantiated BNO055 object
 	 */
-	public static BNO055 getInstance(opmode_t mode, vector_type_t vectorType) {
+	public static GyroBase getInstance(opmode_t mode, vector_type_t vectorType) {
 		return getInstance(mode, vectorType, I2C.Port.kOnboard,
 				BNO055_ADDRESS_A);
 	}
@@ -1055,26 +1071,24 @@ public class BNO055 {
 	 * Removes the SmartDashboard diagnostics from the network tables.
 	 */
 	public void clearDashboard() {
-		NetworkTable sd = NetworkTable.getTable("SmartDashboard");
-
-		sd.delete("BNO055 Present");
-		sd.delete("BNO055 Heading");
-		sd.delete("BNO055 Initialized");
-		sd.delete("BNO055 X");
-		sd.delete("BNO055 Y");
-		sd.delete("BNO055 Z");
-		sd.delete("BNO055 Gyro Cal");
-		sd.delete("BNO055 Calibrated");
-		sd.delete("BNO055 Sys Cal");
-		sd.delete("BNO055 Mag Cal");
-		sd.delete("BNO055 Accel Cal");
-		sd.delete("BNO055 Read Dur");
-		sd.delete("BNO055 Read Max");
-		sd.delete("BNO055 Read Over");
-		sd.delete("BNO055 accel_offset_x");
-		sd.delete("BNO055 accel_offset_y");
-		sd.delete("BNO055 accel_offset_z");
-		sd.delete("BNO055 accel_radius");
+		SmartDashboard.delete("BNO055 Present");
+		SmartDashboard.delete("BNO055 Heading");
+		SmartDashboard.delete("BNO055 Initialized");
+		SmartDashboard.delete("BNO055 X");
+		SmartDashboard.delete("BNO055 Y");
+		SmartDashboard.delete("BNO055 Z");
+		SmartDashboard.delete("BNO055 Gyro Cal");
+		SmartDashboard.delete("BNO055 Calibrated");
+		SmartDashboard.delete("BNO055 Sys Cal");
+		SmartDashboard.delete("BNO055 Mag Cal");
+		SmartDashboard.delete("BNO055 Accel Cal");
+		SmartDashboard.delete("BNO055 Read Dur");
+		SmartDashboard.delete("BNO055 Read Max");
+		SmartDashboard.delete("BNO055 Read Over");
+		SmartDashboard.delete("BNO055 accel_offset_x");
+		SmartDashboard.delete("BNO055 accel_offset_y");
+		SmartDashboard.delete("BNO055 accel_offset_z");
+		SmartDashboard.delete("BNO055 accel_radius");
 	}
 
 	/**

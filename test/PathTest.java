@@ -1,11 +1,11 @@
-package org.team686.lib.util.test;
+package org.usfirst.frc.team686.robot.lib.util.test;
 
 import static org.junit.Assert.*;
 
 import java.util.Random;
 
-import org.team686.lib.util.*;
-import org.team686.lib.util.Path.Waypoint;
+import org.usfirst.frc.team686.robot.lib.util.*;
+import org.usfirst.frc.team686.robot.lib.util.Path.Waypoint;
 
 import org.junit.Test;
 
