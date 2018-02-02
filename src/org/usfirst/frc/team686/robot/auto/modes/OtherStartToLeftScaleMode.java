@@ -44,6 +44,17 @@ public class OtherStartToLeftScaleMode extends AutoModeBase {
 		double initialHeading = initialPose.getHeading();
 		   
 		
+		// get transition pose for crossing from left to right side
+		Pose crossPose = new Pose(initialPosition.getX(), initialPose.getY(), Math.toRadians(-55));
+		Pose centerPose = fieldDimensions.getCenterStartPose();
+		
+		Optional<Vector2d> intersection = Util.getLineIntersection(crossPose, centerPose);
+		Vector2d crossPosition;
+		if (intersection.isPresent())
+			crossPosition = intersection.get();
+		else
+			crossPosition = new Vector2d(fieldDimensions.getPowerCubeZoneFromCenterStartDistX() - Constants.kCenterToSideBumper, 0);
+		
 		// get scale position
 		Pose scalePose = fieldDimensions.getLeftScalePose();
 		Vector2d scalePosition = scalePose.getPosition();
@@ -60,7 +71,7 @@ public class OtherStartToLeftScaleMode extends AutoModeBase {
 		double scaleTurnPositionX = fieldDimensions.getScaleTurnPositionX();
 		Pose scaleTurnPoseX = new Pose(scaleTurnPositionX, 0, Math.toRadians(-90));
 		
-		Optional<Vector2d> intersection = Util.getLineIntersection(scaleTurnPoseX, shiftedScalePose);
+		intersection = Util.getLineIntersection(scaleTurnPoseX, shiftedScalePose);
 		Vector2d scaleTurnPosition;
 		if (intersection.isPresent())
 			scaleTurnPosition = intersection.get();

@@ -51,6 +51,8 @@ public class FieldDimensions
 	public static double kPlatFormLeftEndXFromSwitchCenterDistX = (kFieldLengthX/2) - kSwitchCenterFromCenterStartDistX - (kScalePlatformLengthX/2);
 	public static double kScaleFromSwitchOffsetY = (kScaleLengthY/2) - (kSwitchLengthY/2);
 	
+	public static double kPowerCubeZoneFromCenterStartDistX = 98;
+	
 	// get turn angles
 	public static double kTurnPositionOffsetY = 36;
 	
@@ -88,6 +90,7 @@ public class FieldDimensions
 	
 	public double getScaleTurnFromSwitchPositionX() { return ((kPlatFormLeftEndXFromSwitchCenterDistX/2) + Constants.kCenterToSideBumper) + kSwitchCenterFromCenterStartDistX; }
 	
+	public double getPowerCubeZoneFromCenterStartDistX() { return kPowerCubeZoneFromCenterStartDistX; }
 	
 	public Vector2d getBackupPosition() { return new Vector2d(0, kBackupDistY); }
 	

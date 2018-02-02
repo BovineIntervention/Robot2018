@@ -37,6 +37,18 @@ public class OtherStartToLeftSwitchMode extends AutoModeBase {
 		Pose initialPose = fieldDimensions.getOtherStartPose();
 		Vector2d initialPosition = initialPose.getPosition();
 		double initialHeading = initialPose.getHeading();
+		
+		
+		// get transition pose for crossing from left to right side
+		Pose crossPose = new Pose(initialPosition.getX(), initialPose.getY(), Math.toRadians(-55));
+		Pose centerPose = fieldDimensions.getCenterStartPose();
+		
+		Optional<Vector2d> intersection = Util.getLineIntersection(crossPose, centerPose);
+		Vector2d crossPosition;
+		if (intersection.isPresent())
+			crossPosition = intersection.get();
+		else
+			crossPosition = new Vector2d(fieldDimensions.getPowerCubeZoneFromCenterStartDistX() - Constants.kCenterToSideBumper, 0);
 		   
 		
 		// get switch position
@@ -49,7 +61,7 @@ public class OtherStartToLeftSwitchMode extends AutoModeBase {
 		double switchTurnPositionX = fieldDimensions.getSwitchTurnPositionX();
 		Pose switchTurnPoseX = new Pose(switchTurnPositionX, 0, Math.toRadians(-90));
 		
-		Optional<Vector2d> intersection = Util.getLineIntersection(switchTurnPoseX, switchPose);
+		intersection = Util.getLineIntersection(switchTurnPoseX, switchPose);
 		Vector2d switchTurnPosition;
 		if (intersection.isPresent())
 			switchTurnPosition = intersection.get();
