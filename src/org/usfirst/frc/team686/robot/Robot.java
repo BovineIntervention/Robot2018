@@ -1,5 +1,6 @@
 package org.usfirst.frc.team686.robot;
 
+import org.usfirst.frc.team686.robot.auto.AutoModeBase;
 import org.usfirst.frc.team686.robot.auto.AutoModeExecuter;
 import org.usfirst.frc.team686.robot.command_status.DriveStatus;
 import org.usfirst.frc.team686.robot.command_status.RobotState;
@@ -14,6 +15,7 @@ import org.usfirst.frc.team686.robot.util.DataLogController;
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
 import org.usfirst.frc.team686.robot.command_status.DriveCommand;
 
+import java.util.List;
 import java.util.TimeZone;
 
 import org.usfirst.frc.team686.robot.Robot.OperationalMode;
@@ -118,21 +120,29 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void autonomousInit() {
-    	operationalMode = OperationalMode.DISABLED;
+    	operationalMode = OperationalMode.AUTONOMOUS;
     	boolean logToFile = true;
     	boolean logToSmartDashboard = true;
     	robotLogger.setOutputMode(logToFile, logToSmartDashboard);
     	
-    	try
-    	{
-    		CrashTracker.logDisabledInit();
+    	try{
+    		
+    		CrashTracker.logAutoInit();
     		if(autoModeExecuter != null){
     			autoModeExecuter.stop();
     		}
     		autoModeExecuter = null;
     		
-    		stopAll(); //How does stopAll stop all??
-    		loopController.start();
+    		autoModeExecuter = new AutoModeExecuter();
+    		List<AutoModeBase> actions = smartDashboardInteractions.getAutoModeSelection();
+    		
+    		for(int i = 0; i < actions.size(); i++){
+    			autoModeExecuter.setAutoMode(actions.get(i));
+    		}
+    		
+    		setInitialPose(autoModeExecuter.getAutoMode().getInitialPose());
+    		
+    		autoModeExecuter.start();
     	}
     	catch(Throwable t)
     	{
@@ -174,7 +184,6 @@ public class Robot extends IterativeRobot {
 			// Configure looper
 			loopController.start();
 
-			//gearShifter.setLowGear();
 			drive.setOpenLoop(DriveCommand.NEUTRAL());
 
 		} 
