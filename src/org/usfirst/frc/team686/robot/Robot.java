@@ -15,6 +15,7 @@ import org.usfirst.frc.team686.robot.lib.util.DataLogger;
 import org.usfirst.frc.team686.robot.command_status.DriveCommand;
 
 import java.util.Optional;
+import java.util.List;
 import java.util.TimeZone;
 
 import org.usfirst.frc.team686.robot.Robot.OperationalMode;
@@ -36,7 +37,7 @@ public class Robot extends IterativeRobot {
 	
 	JoystickControlsBase controls = ArcadeDriveJoystick.getInstance();
 	ButtonBoard buttonBoard = ButtonBoard.getInstance();
-	
+
 	RobotState robotState = RobotState.getInstance();
 	Drive drive = Drive.getInstance();
 	
@@ -46,7 +47,7 @@ public class Robot extends IterativeRobot {
 	
 	SmartDashboardInteractions smartDashboardInteractions;
 	DataLogController robotLogger;
-	
+
 	CameraServer cameraServer;
 
 	
@@ -91,7 +92,7 @@ public class Robot extends IterativeRobot {
     		robotLogger.register(RobotState.getInstance().getLogger());
     		
     		setInitialPose(new Pose());
-    		
+
     		//cameraServer.getInstance().startAutomaticCapture();
     	}
     	catch(Throwable t)
@@ -118,8 +119,8 @@ public class Robot extends IterativeRobot {
 		// mSuperstructure.stop();
     }
 
-    
-    
+
+
 	/****************************************************************
 	 * DISABLED MODE
 	 ****************************************************************/
@@ -158,7 +159,7 @@ public class Robot extends IterativeRobot {
 		try
 		{
 			stopAll(); // stop all actuators
-			
+
 			System.gc(); // runs garbage collector
 		}
 		catch (Throwable t)
@@ -168,8 +169,8 @@ public class Robot extends IterativeRobot {
 		}
 	}
 
-	
-	
+
+
 	/****************************************************************
 	 * AUTONOMOUS MODE
 	 ****************************************************************/
@@ -180,7 +181,7 @@ public class Robot extends IterativeRobot {
     	boolean logToFile = true;
     	boolean logToSmartDashboard = true;
     	robotLogger.setOutputMode(logToFile, logToSmartDashboard);
-    	
+
     	try
     	{
     		CrashTracker.logAutoInit();
@@ -196,6 +197,16 @@ public class Robot extends IterativeRobot {
 			setInitialPose(autoModeExecuter.getAutoMode().getInitialPose());
 
 			autoModeExecuter.start();
+    		autoModeExecuter = new AutoModeExecuter();
+    		List<AutoModeBase> actions = smartDashboardInteractions.getAutoModeSelection();
+
+    		for(int i = 0; i < actions.size(); i++){
+    			autoModeExecuter.setAutoMode(actions.get(i));
+    		}
+
+    		setInitialPose(autoModeExecuter.getAutoMode().getInitialPose());
+
+    		autoModeExecuter.start();
     	}
     	catch(Throwable t)
     	{
@@ -236,7 +247,7 @@ public class Robot extends IterativeRobot {
 
 			// Select joystick control method
 			controls = smartDashboardInteractions.getJoystickControlsMode();
-			
+
 			// Configure looper
 			loopController.start();
 
@@ -274,8 +285,8 @@ public class Robot extends IterativeRobot {
 		}
 	}
 
-	
-	
+
+
 	/****************************************************************
 	 * TEST MODE
 	 ****************************************************************/

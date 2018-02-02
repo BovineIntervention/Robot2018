@@ -20,13 +20,13 @@ import org.usfirst.frc.team686.robot.lib.util.Vector2d;
 
 import edu.wpi.first.wpilibj.Timer;
 
-public class OtherStartToRightScaleMode extends AutoModeBase {
+public class LeftSwitchToRightScaleMode extends AutoModeBase {
 	FieldDimensions fieldDimensions;
 	Path path;
 	Path pathBackup;
 	
 	
-    public OtherStartToRightScaleMode() 
+    public LeftSwitchToRightScaleMode() 
     {
     	fieldDimensions = new FieldDimensions();
     }
@@ -39,9 +39,25 @@ public class OtherStartToRightScaleMode extends AutoModeBase {
 
     	
 		// get initial position
-		Pose initialPose = FieldDimensions.getOtherStartPose();
-		Vector2d initialPosition = initialPose.getPosition();
-		double initialHeading = initialPose.getHeading();
+		Pose switchPose = FieldDimensions.getLeftSwitchPose();
+		Vector2d switchPosition = initialPose.getPosition();
+		double switchHeading = initialPose.getHeading();
+		
+		// get backup position
+		Vector2d backupPosition = fieldDimensions.getBackupPosition();
+		Vector2d switchBackupPosition = switchPosition.add(backupPosition);
+		Pose switchBackupPose = new Pose(switchBackupPosition, Math.toRadians(-30));
+		
+		// get switch turn position
+		double turnPositionX = fieldDimensions.getScaleTurnFromSwitchPositionX();
+		Pose turnPoseX = new Pose(turnPositionX, 0, Math.toRadians(-90));
+		
+		Optional<Vector2d> intersection = Util.getLineIntersection(turnPoseX, switchBackupPose);
+		Vector2d switchTurnPosition;
+		if (intersection.isPresent())
+			switchTurnPosition = intersection.get();
+		else
+			switchTurnPosition = new Vector2d(turnPositionX, switchPosition.getY() + fieldDimensions.getSwitchTurnOffsetY());
 		   
 		
 		// get scale position
@@ -49,38 +65,32 @@ public class OtherStartToRightScaleMode extends AutoModeBase {
 		Vector2d scalePosition = scalePose.getPosition();
 		double scaleHeading = scalePose.getHeading();
 		
-		// get switch position
-		Pose switchPose = fieldDimensions.getRightSwitchPose();
-		Vector2d switchPosition = switchPose.getPosition();
+		// get scale turn position
+		turnPoseX = new Pose(turnPositionX, 0, Math.toRadians(90));
 		
-		
-		Pose shiftedScalePose = new Pose(switchPosition.getX(), scalePosition.getY(), scaleHeading); // for finding intersection
-		
-		// get turn position
-		double scaleTurnPositionX = fieldDimensions.getScaleTurnPositionX();
-		Pose scaleTurnPoseX = new Pose(scaleTurnPositionX, 0, Math.toRadians(90));
-		
-		Optional<Vector2d> intersection = Util.getLineIntersection(scaleTurnPoseX, shiftedScalePose);
+		intersection = Util.getLineIntersection(turnPoseX, scalePose);
 		Vector2d scaleTurnPosition;
 		if (intersection.isPresent())
 			scaleTurnPosition = intersection.get();
 		else
-			scaleTurnPosition = new Vector2d(scaleTurnPositionX, scalePosition.getY() - fieldDimensions.getScaleTurnOffsetY());
+			scaleTurnPosition = new Vector2d(turnPositionX, switchPosition.getY() - fieldDimensions.getSwitchTurnOffsetY());
+		
+		
 		
 		
 		// get scale stop position
 		Vector2d scaleStopPosition = new Vector2d(scalePosition.getX(), scalePosition.getY() - 1); //avoid collision with fence
 		
 		
-		// get backup position
-		Vector2d backupPosition = fieldDimensions.getBackupPosition();
+		// get scale backup position
 		Vector2d scaleBackupPosition = scalePosition.add(backupPosition);
 		
 		
 		//add positions to paths
 		path = new Path();
-		path.add(new Waypoint(initialPosition, 	pathOptions));
-		path.add(new Waypoint(scaleTurnPosition,     pathOptions));
+		path.add(new Waypoint(switchBackupPosition, 	pathOptions));
+		path.add(new Waypoint(switchTurnPosition,     pathOptions));
+		path.add(new Waypoint(scaleTurnPosition, pathOptions));
 		path.add(new Waypoint(scaleStopPosition, 	pathOptions));
 		
 		pathBackup = new Path();

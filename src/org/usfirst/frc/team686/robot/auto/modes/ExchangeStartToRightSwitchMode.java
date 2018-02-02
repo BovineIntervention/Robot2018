@@ -6,6 +6,7 @@ import org.usfirst.frc.team686.robot.Constants;
 import org.usfirst.frc.team686.robot.auto.AutoModeBase;
 import org.usfirst.frc.team686.robot.auto.AutoModeEndedException;
 import org.usfirst.frc.team686.robot.auto.actions.PathFollowerWithVisionAction;
+import org.usfirst.frc.team686.robot.auto.actions.WaitAction;
 import org.usfirst.frc.team686.robot.lib.util.Path;
 import org.usfirst.frc.team686.robot.lib.util.Path.Waypoint;
 import org.usfirst.frc.team686.robot.lib.util.PathSegment;
@@ -17,8 +18,8 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class ExchangeStartToRightSwitchMode extends AutoModeBase {
 	FieldDimensions fieldDimensions;
-	Path pathToSwitch;
-	Path pathBackupFromSwitch;
+	Path path;
+	Path pathBackup;
 	
 	
     public ExchangeStartToRightSwitchMode() 
@@ -32,50 +33,62 @@ public class ExchangeStartToRightSwitchMode extends AutoModeBase {
     	PathSegment.Options visionOptions = new PathSegment.Options(Constants.kVisionMaxVel,        Constants.kVisionMaxAccel,        Constants.kPathFollowingLookahead, true);
 
 
-		// get positions, based on red/blue alliance
+		// get initial position
 		Pose initialPose = fieldDimensions.getExchangeStartPose();
 		Vector2d initialPosition = initialPose.getPosition();
 		double initialHeading = initialPose.getHeading();
+		
+		
+		// get transition pose for crossing from left to right side
+		Pose crossPose = new Pose(initialPosition.getX(), initialPose.getY(), Math.toRadians(55));
+		Pose centerPose = fieldDimensions.getCenterStartPose();
+		
+		Optional<Vector2d> intersection = Util.getLineIntersection(crossPose, centerPose);
+		Vector2d crossPosition;
+		if (intersection.isPresent())
+			crossPosition = intersection.get();
+		else
+			crossPosition = new Vector2d(fieldDimensions.getPowerCubeZoneFromCenterStartDistX() - Constants.kCenterToSideBumper, 0);
 		   
 		
-		// get position in front of power cube zone
-		Pose powerCubePose = fieldDimensions.getPowerCubeZonePose();
-		Vector2d powerCubePosition = powerCubePose.getPosition();
-		
-		Vector2d powerCubeStopPosition = new Vector2d(powerCubePosition.getX() - fieldDimensions.kBackupDistY, powerCubePosition.getY());
-		
+		// get switch position
 		Pose switchPose = fieldDimensions.getRightSwitchPose();
 		Vector2d switchPosition = switchPose.getPosition();
+		double switchHeading = switchPose.getHeading();
 		
 		
-		// where to stop to place Power Cube
-		Vector2d switchStopPosition = new Vector2d(switchPosition.getX(), switchPosition.getY() + Constants.kCenterToFrontBumper + 2.0);
+		// get turn position
+		double switchTurnPositionX = fieldDimensions.getSwitchTurnPositionX();
+		Pose switchTurnPoseX = new Pose(switchTurnPositionX, 0, Math.toRadians(90));
+		
+		intersection = Util.getLineIntersection(switchTurnPoseX, switchPose);
+		Vector2d switchTurnPosition;
+		if (intersection.isPresent())
+			switchTurnPosition = intersection.get();
+		else
+			switchTurnPosition = new Vector2d(switchTurnPositionX, switchPosition.getY() + fieldDimensions.getSwitchTurnOffsetY());
 		
 		
-		//get where to turn
-		Vector2d switchTurnPosition = new Vector2d(switchStopPosition.getX()-fieldDimensions.kSwitchTurnPositionOffsetX, switchStopPosition.getY());
-
-		
-		//ELEVATOR ACTIONS
+		// get switch stop position
+		Vector2d switchStopPosition = new Vector2d(switchPosition.getX(), switchPosition.getY() - 1); //avoid collision with fence
 		
 		
-		// where to backup to after scoring gear
-		Vector2d backupPosition = new Vector2d(switchStopPosition.getX(), switchStopPosition.getY() + fieldDimensions.kBackupDistY);
+		// get backup position
+		Vector2d backupPosition = fieldDimensions.getBackupPosition();
+		Vector2d switchBackupPosition = switchPosition.add(backupPosition);
 		
 		
-		// define path to peg
-		pathToSwitch = new Path();
-		pathToSwitch.add(new Waypoint(initialPosition, 	pathOptions));
-		pathToSwitch.add(new Waypoint(powerCubeStopPosition, visionOptions));
-		pathToSwitch.add(new Waypoint(switchTurnPosition, visionOptions));
-		pathToSwitch.add(new Waypoint(switchStopPosition, 	visionOptions));
+		//add positions to paths
+		path = new Path();
+		path.add(new Waypoint(initialPosition, 	pathOptions));
+		path.add(new Waypoint(crossPosition, pathOptions));
+		path.add(new Waypoint(switchTurnPosition,     pathOptions));
+		path.add(new Waypoint(switchStopPosition, 	pathOptions));
 		
-		
-		// backup away from peg, turn front towards boiler
-		pathBackupFromSwitch = new Path();
-		pathBackupFromSwitch.add(new Waypoint(switchStopPosition, pathOptions));
-		pathBackupFromSwitch.add(new Waypoint(backupPosition, 		pathOptions));
-		pathBackupFromSwitch.setReverseDirection();	
+		pathBackup = new Path();
+		pathBackup.add(new Waypoint(switchStopPosition, pathOptions));
+		pathBackup.add(new Waypoint(switchBackupPosition, 		pathOptions));
+		pathBackup.setReverseDirection();	
 
 	}
 
@@ -83,15 +96,15 @@ public class ExchangeStartToRightSwitchMode extends AutoModeBase {
     @Override
     protected void routine() throws AutoModeEndedException 
     {
-    	System.out.println("STARTING AUTOMODE: Center Start To Left Switch");
+    	System.out.println("STARTING AUTOMODE: Other Start To Left Switch");
 
-   	 
     	init();																
     	
-   		//runAction( new PathFollowerWithVisionAction( pathToSwitch ) );			// drive to switch   
-    	//runAction( new ScoreCubeAction() );	    							// score cube
+   		runAction( new PathFollowerWithVisionAction( path ) );
+   		runAction( new WaitAction(5) ); 
+   		//runAction( new ScoreCubeAction() );	    							// score cube
     	
-   		//runAction( new PathFollowerWithVisionAction( pathBackupFromSwitch ) );	// backup from switch
+   		runAction( new PathFollowerWithVisionAction( pathBackup ) );
 
     }
 }

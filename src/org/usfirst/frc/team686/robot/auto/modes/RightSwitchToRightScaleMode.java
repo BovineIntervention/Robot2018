@@ -1,7 +1,11 @@
 package org.usfirst.frc.team686.robot.auto.modes;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.List;
 import java.util.Optional;
 
+import org.junit.Test;
 import org.usfirst.frc.team686.robot.Constants;
 import org.usfirst.frc.team686.robot.auto.AutoModeBase;
 import org.usfirst.frc.team686.robot.auto.AutoModeEndedException;
@@ -16,74 +20,84 @@ import org.usfirst.frc.team686.robot.lib.util.Vector2d;
 
 import edu.wpi.first.wpilibj.Timer;
 
-public class ExchangeStartToLeftSwitchMode extends AutoModeBase {
+public class RightSwitchToRightScaleMode extends AutoModeBase {
 	FieldDimensions fieldDimensions;
 	Path path;
 	Path pathBackup;
 	
 	
-    public ExchangeStartToLeftSwitchMode() 
+    public RightSwitchToRightScaleMode() 
     {
-    	
+    	fieldDimensions = new FieldDimensions();
     }
     
     private void init()
     {
+    	
     	PathSegment.Options pathOptions   = new PathSegment.Options(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, Constants.kPathFollowingLookahead, false);
     	PathSegment.Options visionOptions = new PathSegment.Options(Constants.kVisionMaxVel,        Constants.kVisionMaxAccel,        Constants.kPathFollowingLookahead, true);
 
-
+    	
 		// get initial position
-		Pose initialPose = fieldDimensions.getExchangeStartPose();
-		Vector2d initialPosition = initialPose.getPosition();
-		double initialHeading = initialPose.getHeading();
-		   
+		Pose switchPose = FieldDimensions.getRightSwitchPose();
+		Vector2d switchPosition = initialPose.getPosition();
+		double switchHeading = initialPose.getHeading();
 		
-		// get switch position
-		Pose switchPose = fieldDimensions.getLeftSwitchPose();
-		Vector2d switchPosition = switchPose.getPosition();
-		double switchHeading = switchPose.getHeading();
-		
-		
-		// get turn position
-		double switchTurnPositionX = fieldDimensions.getSwitchTurnPositionX();
-		Pose switchTurnPoseX = new Pose(switchTurnPositionX, 0, Math.toRadians(-90));
-		
-		Optional<Vector2d> intersection = Util.getLineIntersection(switchTurnPoseX, switchPose);
-		Vector2d switchTurnPosition;
-		if (intersection.isPresent())
-			switchTurnPosition = intersection.get();
-		else
-			switchTurnPosition = new Vector2d(switchTurnPositionX, switchPosition.getY() + fieldDimensions.getSwitchTurnOffsetY());
-		
-		
-		// get switch stop position
-		Vector2d switchStopPosition = new Vector2d(switchPosition.getX(), switchPosition.getY() + 1); //avoid collision with fence
-		
-		
-		// get backup position
+		// get initial backed up position
 		Vector2d backupPosition = fieldDimensions.getBackupPosition();
-		Vector2d switchBackupPosition = switchPosition.add(backupPosition);
+		Vector2d initialPosition = switchPosition.sub(backupPosition);
+		
+		// get switch backup position
+		Vector2d switchBackupPosition = new Vector2d(initialPosition.getX(), initialPosition.getY() - Constants.kCenterToSideBumper - 36); // backup robot more to prevent collision with switch
+		
+	
+		// get scale position
+		Pose scalePose = fieldDimensions.getRightScalePose();
+		Vector2d scalePosition = scalePose.getPosition();
+		double scaleHeading = scalePose.getHeading();
+		
+	
+		// get scale stop position
+		Vector2d scaleStopPosition = new Vector2d(scalePosition.getX(), scalePosition.getY() - 1); //avoid collision with fence
+		
+		
+		// get scale backup position
+		Vector2d scaleBackupPosition = scalePosition.sub(backupPosition);
 		
 		
 		//add positions to paths
 		path = new Path();
 		path.add(new Waypoint(initialPosition, 	pathOptions));
-		path.add(new Waypoint(switchTurnPosition,     pathOptions));
-		path.add(new Waypoint(switchStopPosition, 	pathOptions));
+		path.add(new Waypoint(switchBackupPosition,     pathOptions));
+		path.add(new Waypoint(scaleStopPosition, 	pathOptions));
 		
 		pathBackup = new Path();
-		pathBackup.add(new Waypoint(switchStopPosition, pathOptions));
-		pathBackup.add(new Waypoint(switchBackupPosition, 		pathOptions));
+		pathBackup.add(new Waypoint(scaleStopPosition, pathOptions));
+		pathBackup.add(new Waypoint(scaleBackupPosition, 		pathOptions));
 		pathBackup.setReverseDirection();	
+		
 
 	}
+    
+    @Test
+    public void test() {
+    	
+    	init();
+    	
+    	List<Waypoint> points = path.getPath();
+    	Waypoint turnPoint = points.get(1);
+    	Vector2d turnPosition = turnPoint.position;
+    	System.out.println(turnPosition.getX());
+    	System.out.println(turnPosition.getY());
+    	
+    	
+    }
 
     // called by AutoModeExecuter.start() --> AutoModeBase.run()
     @Override
     protected void routine() throws AutoModeEndedException 
     {
-    	System.out.println("STARTING AUTOMODE: Exchange Start To Left Switch");
+    	System.out.println("STARTING AUTOMODE: Right Switch To Right Scale");
 
     	init();																
     	

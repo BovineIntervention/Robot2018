@@ -1,7 +1,11 @@
 package org.usfirst.frc.team686.robot.auto.modes;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.List;
 import java.util.Optional;
 
+import org.junit.Test;
 import org.usfirst.frc.team686.robot.Constants;
 import org.usfirst.frc.team686.robot.auto.AutoModeBase;
 import org.usfirst.frc.team686.robot.auto.AutoModeEndedException;
@@ -18,60 +22,81 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class CenterStartToLeftSwitchMode extends AutoModeBase {
 	FieldDimensions fieldDimensions;
-	Path pathToSwitch;
-	Path pathBackupFromSwitch;
+	Path path;
+	Path pathBackup;
 	
 	
     public CenterStartToLeftSwitchMode() 
     {
-    	
+    	fieldDimensions = new FieldDimensions();
     }
     
     private void init()
     {
+    	
     	PathSegment.Options pathOptions   = new PathSegment.Options(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, Constants.kPathFollowingLookahead, false);
     	PathSegment.Options visionOptions = new PathSegment.Options(Constants.kVisionMaxVel,        Constants.kVisionMaxAccel,        Constants.kPathFollowingLookahead, true);
 
-
-		// get positions, based on red/blue alliance
-		Pose initialPose = fieldDimensions.getCenterStartPose();
+    	
+		// get initial position
+		Pose initialPose = FieldDimensions.getCenterStartPose();
 		Vector2d initialPosition = initialPose.getPosition();
 		double initialHeading = initialPose.getHeading();
 		   
 		
+		// get switch position
 		Pose switchPose = fieldDimensions.getLeftSwitchPose();
 		Vector2d switchPosition = switchPose.getPosition();
 		
 		
-		// where to stop to place Power Cube
-		Vector2d switchStopPosition = new Vector2d(switchPosition.getX(), switchPosition.getY() + Constants.kCenterToFrontBumper + 2.0);
+		// get turn position
+		double switchTurnPositionX = fieldDimensions.getSwitchTurnPositionX();
+		Pose switchTurnPoseX = new Pose(switchTurnPositionX, 0, Math.toRadians(-90));
+		
+		Optional<Vector2d> intersection = Util.getLineIntersection(switchTurnPoseX, switchPose);
+		Vector2d switchTurnPosition;
+		if (intersection.isPresent())
+			switchTurnPosition = intersection.get();
+		else
+			switchTurnPosition = new Vector2d(switchTurnPositionX, switchPosition.getY() + fieldDimensions.getSwitchTurnOffsetY());
 		
 		
-		//get where to turn
-		Vector2d switchTurnPosition = new Vector2d(switchStopPosition.getX()-fieldDimensions.kSwitchTurnPositionOffsetX, switchStopPosition.getY() - fieldDimensions.kSwitchTurnPositionOffsetY);
-
-		
-		//ELEVATOR ACTIONS
+		// get switch stop position
+		Vector2d switchStopPosition = new Vector2d(switchPosition.getX(), switchPosition.getY() + 1); //avoid collision with fence
 		
 		
-		// where to backup to after scoring gear
-		Vector2d backupPosition = new Vector2d(switchStopPosition.getX(), switchStopPosition.getY() + fieldDimensions.kBackupDistY);
+		// get backup position
+		Vector2d backupPosition = fieldDimensions.getBackupPosition();
+		Vector2d switchBackupPosition = switchPosition.add(backupPosition);
 		
 		
-		// define path to peg
-		pathToSwitch = new Path();
-		pathToSwitch.add(new Waypoint(initialPosition, 	pathOptions));
-		pathToSwitch.add(new Waypoint(switchTurnPosition,     visionOptions));
-		pathToSwitch.add(new Waypoint(switchStopPosition, 	pathOptions));
+		//add positions to paths
+		path = new Path();
+		path.add(new Waypoint(initialPosition, 	pathOptions));
+		path.add(new Waypoint(switchTurnPosition,     pathOptions));
+		path.add(new Waypoint(switchStopPosition, 	pathOptions));
 		
+		pathBackup = new Path();
+		pathBackup.add(new Waypoint(switchStopPosition, pathOptions));
+		pathBackup.add(new Waypoint(switchBackupPosition, 		pathOptions));
+		pathBackup.setReverseDirection();	
 		
-		// backup away from peg, turn front towards boiler
-		pathBackupFromSwitch = new Path();
-		pathBackupFromSwitch.add(new Waypoint(switchStopPosition, pathOptions));
-		pathBackupFromSwitch.add(new Waypoint(backupPosition, 		pathOptions));
-		pathBackupFromSwitch.setReverseDirection();	
 
 	}
+    
+    @Test
+    public void test() {
+    	
+    	init();
+    	
+    	List<Waypoint> points = path.getPath();
+    	Waypoint turnPoint = points.get(1);
+    	Vector2d turnPosition = turnPoint.position;
+    	System.out.println(turnPosition.getX());
+    	System.out.println(turnPosition.getY());
+   
+    	
+    }
 
     // called by AutoModeExecuter.start() --> AutoModeBase.run()
     @Override
@@ -79,14 +104,13 @@ public class CenterStartToLeftSwitchMode extends AutoModeBase {
     {
     	System.out.println("STARTING AUTOMODE: Center Start To Left Switch");
 
-   	 
     	init();																
     	
-   		runAction( new PathFollowerWithVisionAction( pathToSwitch ) );			// drive to switch   
+   		runAction( new PathFollowerWithVisionAction( path ) );
    		runAction( new WaitAction(5) ); 
    		//runAction( new ScoreCubeAction() );	    							// score cube
     	
-   		runAction( new PathFollowerWithVisionAction( pathBackupFromSwitch ) );	// backup from switch
+   		runAction( new PathFollowerWithVisionAction( pathBackup ) );
 
     }
 }
