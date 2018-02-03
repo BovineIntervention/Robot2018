@@ -49,7 +49,7 @@ public class TestCenterStartToLeftSwitchMode extends AutoModeBase {
 		
 		
 		//get where to turn
-		Vector2d switchTurnPosition = new Vector2d((switchStopPosition.getX()-fieldDimensions.kSwitchTurnPositionOffsetX)/5, (switchStopPosition.getY() - fieldDimensions.kSwitchTurnPositionOffsetY)/5);
+		Vector2d switchTurnPosition = new Vector2d((switchStopPosition.getX()-fieldDimensions.kSwitchTurnPositionOffsetX)/5, (switchStopPosition.getY() - 36)/5);
 
 		
 		//ELEVATOR ACTIONS

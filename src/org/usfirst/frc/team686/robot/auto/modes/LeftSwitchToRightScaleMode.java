@@ -1,11 +1,11 @@
 package org.usfirst.frc.team686.robot.auto.modes;
 
-import static org.junit.Assert.assertEquals;
+
 
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.Test;
+
 import org.usfirst.frc.team686.robot.Constants;
 import org.usfirst.frc.team686.robot.auto.AutoModeBase;
 import org.usfirst.frc.team686.robot.auto.AutoModeEndedException;
@@ -83,7 +83,7 @@ public class LeftSwitchToRightScaleMode extends AutoModeBase {
 		
 		
 		// get scale backup position
-		Vector2d scaleBackupPosition = scalePosition.add(backupPosition);
+		Vector2d scaleBackupPosition = scalePosition.sub(backupPosition);
 		
 		
 		//add positions to paths
@@ -101,19 +101,6 @@ public class LeftSwitchToRightScaleMode extends AutoModeBase {
 
 	}
     
-    @Test
-    public void test() {
-    	
-    	init();
-    	
-    	List<Waypoint> points = path.getPath();
-    	Waypoint turnPoint = points.get(1);
-    	Vector2d turnPosition = turnPoint.position;
-    	System.out.println(turnPosition.getX());
-    	System.out.println(turnPosition.getY());
-   
-    	
-    }
 
     // called by AutoModeExecuter.start() --> AutoModeBase.run()
     @Override

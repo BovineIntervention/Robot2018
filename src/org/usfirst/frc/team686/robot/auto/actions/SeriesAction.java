@@ -14,15 +14,31 @@ public class SeriesAction implements Action
     private Action mCurAction;
     private final ArrayList<Action> mRemainingActions;
 
+    public SeriesAction() 
+    {
+        mRemainingActions = new ArrayList<>();
+        mCurAction = null;
+    }
+
     public SeriesAction(List<Action> actions) 
     {
         mRemainingActions = new ArrayList<>(actions.size());
-        for (Action action : actions) 
-        {
-            mRemainingActions.add(action);
-        }
+        mRemainingActions.addAll(actions);
         mCurAction = null;
     }
+
+	public void add(List<Action> actions)
+	{
+		for (Action action : actions) 
+		{
+			mRemainingActions.add(action);
+		}
+	}
+	
+	public void add(Action action)
+	{
+		mRemainingActions.add(action);
+	}
 
     @Override
     public boolean isFinished() 

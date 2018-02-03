@@ -2,7 +2,9 @@ package org.usfirst.frc.team686.robot;
 
 import org.usfirst.frc.team686.robot.auto.AutoModeBase;
 import org.usfirst.frc.team686.robot.auto.AutoModeExecuter;
+import org.usfirst.frc.team686.robot.auto.actions.SeriesAction;
 import org.usfirst.frc.team686.robot.auto.modes.PointTurnMode;
+import org.usfirst.frc.team686.robot.auto.modes.RunSeriesActionMode;
 import org.usfirst.frc.team686.robot.command_status.DriveState;
 import org.usfirst.frc.team686.robot.command_status.RobotState;
 import org.usfirst.frc.team686.robot.lib.joystick.ArcadeDriveJoystick;
@@ -29,6 +31,7 @@ import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class Robot extends IterativeRobot {
@@ -190,23 +193,15 @@ public class Robot extends IterativeRobot {
     		}
     		autoModeExecuter = null;
     		
-
+			SeriesAction autoSequence;
+			autoSequence = SmartDashboardInteractions.autoSequenceBuilder();
+			
 			autoModeExecuter = new AutoModeExecuter();
-			autoModeExecuter.setAutoMode(smartDashboardInteractions.getAutoModeSelection());
+			autoModeExecuter.setAutoMode( new RunSeriesActionMode( autoSequence ) );
 
-			setInitialPose(autoModeExecuter.getAutoMode().getInitialPose());
+			setInitialPose( autoModeExecuter.getAutoMode().getInitialPose() );
 
 			autoModeExecuter.start();
-    		autoModeExecuter = new AutoModeExecuter();
-    		List<AutoModeBase> actions = smartDashboardInteractions.getAutoModeSelection();
-
-    		for(int i = 0; i < actions.size(); i++){
-    			autoModeExecuter.setAutoMode(actions.get(i));
-    		}
-
-    		setInitialPose(autoModeExecuter.getAutoMode().getInitialPose());
-
-    		autoModeExecuter.start();
     	}
     	catch(Throwable t)
     	{

@@ -1,11 +1,10 @@
 package org.usfirst.frc.team686.robot.auto.modes;
 
-import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.Test;
+
 import org.usfirst.frc.team686.robot.Constants;
 import org.usfirst.frc.team686.robot.auto.AutoModeBase;
 import org.usfirst.frc.team686.robot.auto.AutoModeEndedException;
@@ -83,6 +82,7 @@ public class CenterStartToLeftSwitchMode extends AutoModeBase {
 		
 
 	}
+    /*
     
     @Test
     public void test() {
@@ -97,6 +97,7 @@ public class CenterStartToLeftSwitchMode extends AutoModeBase {
    
     	
     }
+    */
 
     // called by AutoModeExecuter.start() --> AutoModeBase.run()
     @Override
