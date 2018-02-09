@@ -130,13 +130,13 @@ public class DriveLoop implements Loop
 		
         for (BaseMotorController lMotorSlave : lMotorSlaves) 
         {
-    		lMotorSlave.set(ControlMode.Follower, Constants.kLeftMotorMasterTalonId);	// give slave the TalonID of it's master
+    		lMotorSlave.follow(lMotorMaster);	// give slave the TalonID of it's master
     		lMotorSlave.setNeutralMode(NeutralMode.Coast);
     		lMotorSlave.setInverted(Constants.kLeftMotorInverted);
         }
         for (BaseMotorController rMotorSlave : rMotorSlaves) 
         {
-    		rMotorSlave.set(ControlMode.Follower, Constants.kRightMotorMasterTalonId);	// give slave the TalonID of it's master
+    		rMotorSlave.follow(rMotorMaster);	// give slave the TalonID of it's master
     		rMotorSlave.setNeutralMode(NeutralMode.Coast);
     		rMotorSlave.setInverted(Constants.kRightMotorInverted);
         }
