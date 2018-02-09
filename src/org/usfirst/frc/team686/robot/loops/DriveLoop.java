@@ -67,11 +67,11 @@ public class DriveLoop implements Loop
 		// Set up the encoders
 		lMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, Constants.kTalonPidIdx, Constants.kTalonTimeoutMs);	// configure for closed-loop PID
 		rMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, Constants.kTalonPidIdx, Constants.kTalonTimeoutMs);
-		lMotorMaster.setSensorPhase(true);
-		rMotorMaster.setSensorPhase(true);
+		lMotorMaster.setSensorPhase(Constants.kLeftMotorSensorPhase);
+		rMotorMaster.setSensorPhase(Constants.kRightMotorSensorPhase);
 		lMotorMaster.setInverted(Constants.kLeftMotorInverted);
 		rMotorMaster.setInverted(Constants.kRightMotorInverted);
-
+		
 		// Load velocity control gains
 		lMotorMaster.config_kF(kVelocityControlSlot, Constants.kDriveVelocityKf, Constants.kTalonTimeoutMs);
 		lMotorMaster.config_kP(kVelocityControlSlot, Constants.kDriveVelocityKp, Constants.kTalonTimeoutMs);
