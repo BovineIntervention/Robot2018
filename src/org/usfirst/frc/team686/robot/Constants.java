@@ -30,6 +30,7 @@ public class Constants extends ConstantsBase
     public static double kCenterToFrontBumper = 19.0;	// position of front bumper with respect to robot center of rotation
     public static double kCenterToRearBumper = 19.5;	// position of rear bumper with respect to robot center of rotation
     public static double kCenterToSideBumper = 17.5;	// position of side bumper with respect to robot center of rotation
+    public static double kCenterToCornerBumper = Math.sqrt( (kCenterToSideBumper*kCenterToSideBumper) + (kCenterToRearBumper*kCenterToRearBumper));
     
     // Wheels
     public static double kDriveWheelCircumInches = 13.229;//13.250;
@@ -87,8 +88,8 @@ public class Constants extends ConstantsBase
     public static double kPointTurnCompletionTolerance = 1.0 * (Math.PI/180.0); 
     
     // Path following constants
-    public static double kPathFollowingMaxVel    = 80.0; // inches/sec  		
-    public static double kPathFollowingMaxAccel  = 48.0; // inches/sec^2	
+    public static double kPathFollowingMaxVel    = 40.0; // inches/sec  		
+    public static double kPathFollowingMaxAccel  = 24.0; // inches/sec^2	
     public static double kPathFollowingLookahead = 24.0; // inches
     public static double kPathFollowingCompletionTolerance = 1.0; 
     

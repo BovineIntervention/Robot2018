@@ -19,7 +19,7 @@ public class RunSeriesActionMode extends AutoModeBase {
     @Override
     protected void routine() throws AutoModeEndedException {
         
-    	autoActions.update();
+    	runAction( autoActions );
     	
     }
 }

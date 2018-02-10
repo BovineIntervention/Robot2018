@@ -169,6 +169,8 @@ public class SmartDashboardInteractions
     	AutoActions autoActions = new AutoActions();
     	
     	String gameData = DriverStation.getInstance().getGameSpecificMessage();
+System.out.printf("GameData: %s, switchPose = %c, scalePose = %c\n ", gameData, gameData.charAt(0), gameData.charAt(1));    	
+    	
     	char switchPose = gameData.charAt(0);
     	char scalePose = gameData.charAt(1);
     	StartOption startPose = (StartOption)startChooser.getSelected();
