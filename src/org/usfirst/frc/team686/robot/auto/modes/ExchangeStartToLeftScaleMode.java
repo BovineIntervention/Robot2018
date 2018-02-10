@@ -20,14 +20,14 @@ import org.usfirst.frc.team686.robot.lib.util.Vector2d;
 import edu.wpi.first.wpilibj.Timer;
 
 public class ExchangeStartToLeftScaleMode extends AutoModeBase {
-	FieldDimensions fieldDimensions;
+	FieldDimensions FieldDimensions;
 	Path path;
 	Path pathBackup;
 	
 	
     public ExchangeStartToLeftScaleMode() 
     {
-    	fieldDimensions = new FieldDimensions();
+    	FieldDimensions = new FieldDimensions();
     }
     
     private void init()
@@ -44,19 +44,19 @@ public class ExchangeStartToLeftScaleMode extends AutoModeBase {
 		   
 		
 		// get scale position
-		Pose scalePose = fieldDimensions.getLeftScalePose();
+		Pose scalePose = FieldDimensions.getLeftScalePose();
 		Vector2d scalePosition = scalePose.getPosition();
 		double scaleHeading = scalePose.getHeading();
 		
 		// get switch position
-		Pose switchPose = fieldDimensions.getLeftSwitchPose();
+		Pose switchPose = FieldDimensions.getLeftSwitchPose();
 		Vector2d switchPosition = switchPose.getPosition();
 		
 		
 		Pose shiftedScalePose = new Pose(switchPosition.getX(), scalePosition.getY(), scaleHeading); // for finding intersection
 		
 		// get turn position
-		double scaleTurnPositionX = fieldDimensions.getScaleTurnPositionX();
+		double scaleTurnPositionX = FieldDimensions.getScaleTurnPositionX();
 		Pose scaleTurnPoseX = new Pose(scaleTurnPositionX, 0, Math.toRadians(-90));
 		
 		Optional<Vector2d> intersection = Util.getLineIntersection(scaleTurnPoseX, shiftedScalePose);
@@ -64,7 +64,7 @@ public class ExchangeStartToLeftScaleMode extends AutoModeBase {
 		if (intersection.isPresent())
 			scaleTurnPosition = intersection.get();
 		else
-			scaleTurnPosition = new Vector2d(scaleTurnPositionX, scalePosition.getY() + fieldDimensions.getScaleTurnOffsetY());
+			scaleTurnPosition = new Vector2d(scaleTurnPositionX, scalePosition.getY() + FieldDimensions.getScaleTurnOffsetY());
 		
 		
 		// get scale stop position
@@ -72,7 +72,7 @@ public class ExchangeStartToLeftScaleMode extends AutoModeBase {
 		
 		
 		// get backup position
-		Vector2d backupPosition = fieldDimensions.getBackupPosition();
+		Vector2d backupPosition = FieldDimensions.getBackupPosition();
 		Vector2d scaleBackupPosition = scalePosition.add(backupPosition);
 		
 		

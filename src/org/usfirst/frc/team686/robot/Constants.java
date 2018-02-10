@@ -34,7 +34,8 @@ public class Constants extends ConstantsBase
     public static double kCenterToFrontBumper;	// position of front bumper with respect to robot center of rotation
     public static double kCenterToRearBumper;	// position of rear bumper with respect to robot center of rotation
     public static double kCenterToSideBumper;	// position of side bumper with respect to robot center of rotation
-    
+	public static double kCenterToCornerBumper;
+
     // Wheels
     public static double kDriveWheelCircumInches;
     public static double kDriveWheelDiameterInches;
@@ -135,7 +136,7 @@ public class Constants extends ConstantsBase
     public static double kMaxHeight = 0.45;
     public static double kMinHeight = -0.45;
     public static double kElevatorOffset = 0.0; //encoder + offset = absolute position
-    public static double kMaxVoltage = 12.0;
+    public static double kMaxBatteryVoltage = 12.0;
     
     
     // Do not change anything after this line!
@@ -202,6 +203,7 @@ public class Constants extends ConstantsBase
     // The SPI port the NavX is connected to
     // (see https://www.pdocs.kauailabs.com/navx-mxp/guidance/selecting-an-interface/)
     public static final SPI.Port NAVX_PORT = SPI.Port.kMXP;						// the SPI port has low latency (<0.1 ms)
+
     public static byte NAVX_UPDATE_RATE = (byte) (1.0 / Constants.kLoopDt);		// the SPI port supports update rates from 4-200 Hz
    
     
@@ -372,6 +374,8 @@ public class Constants extends ConstantsBase
     	}
 
     	// calculated constants
+    	kCenterToCornerBumper = Math.sqrt(kCenterToRearBumper*kCenterToRearBumper + kCenterToSideBumper*kCenterToSideBumper);
+    	
 	    kDriveWheelDiameterInches = kDriveWheelCircumInches / Math.PI;
 	    kTrackEffectiveDiameter = (kTrackWidthInches * kTrackWidthInches + kTrackLengthInches * kTrackLengthInches) / kTrackWidthInches;
 

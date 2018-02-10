@@ -1,4 +1,4 @@
-package org.usfirst.frc.team686.robot.loop;
+package org.usfirst.frc.team686.robot.loops;
 
 import org.usfirst.frc.team686.robot.Constants;
 

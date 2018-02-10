@@ -17,7 +17,7 @@ import org.usfirst.frc.team686.robot.lib.util.Vector2d;
 import edu.wpi.first.wpilibj.Timer;
 
 public class OtherStartToRightSwitchMode extends AutoModeBase {
-	FieldDimensions fieldDimensions;
+	FieldDimensions FieldDimensions;
 	Path path;
 	Path pathBackup;
 	
@@ -34,19 +34,19 @@ public class OtherStartToRightSwitchMode extends AutoModeBase {
 
 
 		// get initial position
-		Pose initialPose = fieldDimensions.getOtherStartPose();
+		Pose initialPose = FieldDimensions.getOtherStartPose();
 		Vector2d initialPosition = initialPose.getPosition();
 		double initialHeading = initialPose.getHeading();
 		   
 		
 		// get switch position
-		Pose switchPose = fieldDimensions.getRightSwitchPose();
+		Pose switchPose = FieldDimensions.getRightSwitchPose();
 		Vector2d switchPosition = switchPose.getPosition();
 		double switchHeading = switchPose.getHeading();
 		
 		
 		// get turn position
-		double switchTurnPositionX = fieldDimensions.getSwitchTurnPositionX();
+		double switchTurnPositionX = FieldDimensions.getSwitchTurnPositionX();
 		Pose switchTurnPoseX = new Pose(switchTurnPositionX, 0, Math.toRadians(90));
 		
 		Optional<Vector2d> intersection = Util.getLineIntersection(switchTurnPoseX, switchPose);
@@ -54,7 +54,7 @@ public class OtherStartToRightSwitchMode extends AutoModeBase {
 		if (intersection.isPresent())
 			switchTurnPosition = intersection.get();
 		else
-			switchTurnPosition = new Vector2d(switchTurnPositionX, switchPosition.getY() + fieldDimensions.getSwitchTurnOffsetY());
+			switchTurnPosition = new Vector2d(switchTurnPositionX, switchPosition.getY() + FieldDimensions.getSwitchTurnOffsetY());
 		
 		
 		// get switch stop position
@@ -62,7 +62,7 @@ public class OtherStartToRightSwitchMode extends AutoModeBase {
 		
 		
 		// get backup position
-		Vector2d backupPosition = fieldDimensions.getBackupPosition();
+		Vector2d backupPosition = FieldDimensions.getBackupPosition();
 		Vector2d switchBackupPosition = switchPosition.add(backupPosition);
 		
 		
