@@ -46,7 +46,7 @@ public class ElevatorLoop {
 			
 		case ZEROING:
 			// update goal to be slightly lowered, limited in velocity
-			filteredGoal  = filteredGoal - (Constants.kLoopDt * Constants.kElevatorZeroingVelocity);
+			filteredGoal  = filteredGoal - (Constants.kLoopDt * Constants.kZeroingVelocity);
 			
 			if (limitTriggered)
 			{
@@ -80,6 +80,7 @@ public class ElevatorLoop {
 		error_ = error;
 		
 		double voltage = Kp * error + Kv * vel;
+		
 		return Math.min(Constants.kMaxBatteryVoltage, Math.max(-Constants.kMaxBatteryVoltage, voltage));
 	}
 	
