@@ -40,6 +40,7 @@ public abstract class AutoModeBase
 
     public void done() 
     {
+        active = false;
     }
 
     public void stop() 

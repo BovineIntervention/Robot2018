@@ -322,4 +322,6 @@ public class Path
     		return Optional.empty();
     	}
     }
-}
+    
+    public List<Waypoint> getPath() { return waypoints; }
+ }

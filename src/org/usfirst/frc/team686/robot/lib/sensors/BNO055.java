@@ -6,7 +6,6 @@ import org.usfirst.frc.team686.robot.Constants;
 
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -1072,26 +1071,24 @@ public class BNO055 extends GyroBase {
 	 * Removes the SmartDashboard diagnostics from the network tables.
 	 */
 	public void clearDashboard() {
-		NetworkTable sd = NetworkTable.getTable("SmartDashboard");
-
-		sd.delete("BNO055 Present");
-		sd.delete("BNO055 Heading");
-		sd.delete("BNO055 Initialized");
-		sd.delete("BNO055 X");
-		sd.delete("BNO055 Y");
-		sd.delete("BNO055 Z");
-		sd.delete("BNO055 Gyro Cal");
-		sd.delete("BNO055 Calibrated");
-		sd.delete("BNO055 Sys Cal");
-		sd.delete("BNO055 Mag Cal");
-		sd.delete("BNO055 Accel Cal");
-		sd.delete("BNO055 Read Dur");
-		sd.delete("BNO055 Read Max");
-		sd.delete("BNO055 Read Over");
-		sd.delete("BNO055 accel_offset_x");
-		sd.delete("BNO055 accel_offset_y");
-		sd.delete("BNO055 accel_offset_z");
-		sd.delete("BNO055 accel_radius");
+		SmartDashboard.delete("BNO055 Present");
+		SmartDashboard.delete("BNO055 Heading");
+		SmartDashboard.delete("BNO055 Initialized");
+		SmartDashboard.delete("BNO055 X");
+		SmartDashboard.delete("BNO055 Y");
+		SmartDashboard.delete("BNO055 Z");
+		SmartDashboard.delete("BNO055 Gyro Cal");
+		SmartDashboard.delete("BNO055 Calibrated");
+		SmartDashboard.delete("BNO055 Sys Cal");
+		SmartDashboard.delete("BNO055 Mag Cal");
+		SmartDashboard.delete("BNO055 Accel Cal");
+		SmartDashboard.delete("BNO055 Read Dur");
+		SmartDashboard.delete("BNO055 Read Max");
+		SmartDashboard.delete("BNO055 Read Over");
+		SmartDashboard.delete("BNO055 accel_offset_x");
+		SmartDashboard.delete("BNO055 accel_offset_y");
+		SmartDashboard.delete("BNO055 accel_offset_z");
+		SmartDashboard.delete("BNO055 accel_radius");
 	}
 
 	/**

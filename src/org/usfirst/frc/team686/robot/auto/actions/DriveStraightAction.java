@@ -1,7 +1,7 @@
 package org.usfirst.frc.team686.robot.auto.actions;
 
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
-import org.usfirst.frc.team686.robot.command_status.DriveStatus;
+import org.usfirst.frc.team686.robot.command_status.DriveState;
 import org.usfirst.frc.team686.robot.subsystems.*;
 
 /**
@@ -20,7 +20,7 @@ public class DriveStraightAction implements Action {
     private double mVelocity;
     private double mHeadingDeg;
     private Drive mDrive = Drive.getInstance();
-    private DriveStatus driveStatus = DriveStatus.getInstance();
+    private DriveState driveState = DriveState.getInstance();
 
     public DriveStraightAction(double distance, double velocity) {
         this(distance, velocity, 0);
@@ -66,7 +66,7 @@ public class DriveStraightAction implements Action {
 
     private double getCurrentDistance() 
     {
-        return (driveStatus.getLeftDistanceInches() + driveStatus.getRightDistanceInches()) / 2;
+        return (driveState.getLeftDistanceInches() + driveState.getRightDistanceInches()) / 2;
     }
     
 	private final DataLogger logger = new DataLogger()
@@ -75,15 +75,15 @@ public class DriveStraightAction implements Action {
         public void log()
         {
     		put("AutoAction", "DriveStraight" );
-			put("DriveCmd/talonMode", driveStatus.getTalonControlMode().value );
+			put("DriveCmd/talonMode", driveState.getTalonControlMode().toString() );
 			put("DriveCmd/left", mDrive.getCommand().getLeftMotor() );
 			put("DriveCmd/right", mDrive.getCommand().getRightMotor() );
-    		put("DriveStatus/TalonControlMode", driveStatus.getTalonControlMode().value );
-			put("DriveStatus/lSpeed", driveStatus.getLeftSpeedInchesPerSec() );
-			put("DriveStatus/rSpeed", driveStatus.getRightSpeedInchesPerSec() );
-    		put("DriveStatus/lDistance", driveStatus.getLeftDistanceInches() );
-    		put("DriveStatus/rDistance", driveStatus.getRightDistanceInches() );
-    		put("DriveStatus/Heading", driveStatus.getHeadingDeg() );
+    		put("DriveState/TalonControlMode", driveState.getTalonControlMode().toString() );
+			put("DriveState/lSpeed", driveState.getLeftSpeedInchesPerSec() );
+			put("DriveState/rSpeed", driveState.getRightSpeedInchesPerSec() );
+    		put("DriveState/lDistance", driveState.getLeftDistanceInches() );
+    		put("DriveState/rDistance", driveState.getRightDistanceInches() );
+    		put("DriveState/Heading", driveState.getHeadingDeg() );
 	    }
     };
 	

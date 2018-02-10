@@ -73,7 +73,7 @@ public class RobotState
        
         // calculate gyro heading correction for the desired initial pose (as set by autonomous mode)
         double desiredHeading = _initialFieldToRobot.getHeading();  
-        double gyroHeading  = DriveStatus.getInstance().getHeading();
+        double gyroHeading  = DriveState.getInstance().getHeading();
         gyroCorrection = gyroHeading - desiredHeading;		// subtract gyroCorrection from actual gyro heading to get desired orientation
         
         robotSpeed = new Kinematics.LinearAngularSpeed(0, 0);

@@ -144,7 +144,7 @@ public class DriveCommand
 	    		put("DriveCommand/talonMode", talonMode.toString() );
 	    		put("DriveCommand/left",  wheelSpeed.left );
 	       		put("DriveCommand/right", wheelSpeed.right );
-	       		put("DriveCommand/brake", neutralMode.value );
+	       		put("DriveCommand/brake", (neutralMode == NeutralMode.Coast ? "Coast" : "Brake") );
         	}
         }
     };
