@@ -139,6 +139,10 @@ public class Constants extends ConstantsBase
     public static double kMaxBatteryVoltage = 12.0;
     
     
+    // ARM BAR
+    public static double kArmBarVelocity = 0.5;
+    
+    
     // Do not change anything after this line!
     
     // Motor Controllers
