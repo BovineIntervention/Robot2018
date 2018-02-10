@@ -160,6 +160,8 @@ public class Constants extends ConstantsBase
 
 	public static int kTalonCurrentLimit;
 	
+	public static int kHallEffectSensorId;
+	
 
     // Joystick Controls
     public static int kXboxButtonA  = 1;
@@ -293,6 +295,8 @@ public class Constants extends ConstantsBase
     		    kRightMotorSensorPhase = false;
     		    
     			kTalonCurrentLimit = 25;
+    			
+    			kHallEffectSensorId = 1;
 
     			break;
     			

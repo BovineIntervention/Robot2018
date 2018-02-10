@@ -2,7 +2,15 @@ package org.usfirst.frc.team686.robot.loops;
 
 import org.usfirst.frc.team686.robot.Constants;
 
-public class ElevatorLoop {
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
+import edu.wpi.first.wpilibj.DigitalInput;
+
+public class ElevatorLoop implements Loop{
+	
+	private static ElevatorLoop instance = new ElevatorLoop();
+	public static ElevatorLoop getInstance() { return instance; }
 	
 	public enum ElevatorState { UNINITIALIZED, ZEROING, RUNNING, ESTOPPED; }
 	private static double goal;
@@ -13,17 +21,27 @@ public class ElevatorLoop {
 	private static double error_;
 	private static double filteredGoal;
 	
+	private static DigitalInput hallEffect;
+	private static TalonSRX elevatorMotor;
+	private static ControlMode elevatorMotorControlMode;
+	
+	public ElevatorLoop(){
+		hallEffect = new DigitalInput(Constants.kHallEffectSensorId);
+		elevatorMotor = new TalonSRX(Constants.kElevatorTalonId);
+		elevatorMotorControlMode = ControlMode.PercentOutput; 
+		elevatorMotor.set(elevatorMotorControlMode, 0.0);
+	}
+	
 
 	public void setGoal(double goal_){ goal = goal_; }
+	
 	public double getGoal () { return goal; } 
 	
 	public double getFilteredGoal() { return filteredGoal; }
 
 	public ElevatorState getState() { return state; }
-
 	
-	
-	public double Update(double encoder, boolean limitTriggered, boolean enabled)
+	public double getVoltage(double encoder, boolean limitTriggered, boolean enabled)
 	{
 		// transition states
 		state = nextState;
@@ -61,9 +79,6 @@ public class ElevatorLoop {
 			filteredGoal = goal;
 			break;
 			
-		case ESTOPPED:
-			break;
-
 		default:
 			nextState = ElevatorState.UNINITIALIZED;
 		}
@@ -83,5 +98,28 @@ public class ElevatorLoop {
 		
 		return Math.min(Constants.kMaxBatteryVoltage, Math.max(-Constants.kMaxBatteryVoltage, voltage));
 	}
+
+	public static boolean limitTriggered(){ return !hallEffect.get(); }
+	
+
+	@Override
+	public void onStart() {
+	}
+
+	@Override
+	public void onLoop() {
+		double voltage = getVoltage(elevatorMotor.getSelectedSensorPosition(Constants.kTalonPidIdx), limitTriggered(), true);
+		voltage = voltage/Constants.kMaxBatteryVoltage;
+		
+		elevatorMotor.set(elevatorMotorControlMode, voltage);
+		
+	}
+
+	@Override
+	public void onStop() {
+		// TODO Auto-generated method stub
+		
+	}
+
 	
 }
