@@ -18,6 +18,7 @@ public class AutoActions {
 	PathSegment.Options pathOptions   = new PathSegment.Options(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, Constants.kPathFollowingLookahead, false);
 	PathSegment.Options visionOptions = new PathSegment.Options(Constants.kVisionMaxVel,        Constants.kVisionMaxAccel,        Constants.kPathFollowingLookahead, true);
 
+
 	
 	public SeriesAction LeftStartToLeftSwitchEdgeAction(){
 		
@@ -1058,7 +1059,6 @@ System.out.println(scaleBackupPosition.toString());
 			switchBackupPosition = switchStopPosition.add(backupPosition); 
 		
 		return null;
-		
 	}
 	
 	public SeriesAction LeftSwitchEdgeToRightPowerCubeAction() {

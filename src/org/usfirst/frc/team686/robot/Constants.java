@@ -3,7 +3,6 @@ package org.usfirst.frc.team686.robot;
 import org.usfirst.frc.team686.robot.lib.util.ConstantsBase;
 import org.usfirst.frc.team686.robot.lib.joystick.ArcadeDriveJoystick;
 import org.usfirst.frc.team686.robot.lib.joystick.JoystickControlsBase;
-import org.usfirst.frc.team686.robot.lib.sensors.GyroBase.GyroSelectionEnum;
 
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.SPI;
@@ -93,6 +92,7 @@ public class Constants extends ConstantsBase
     public static double kPathFollowingMaxAccel; // inches/sec^2	
     public static double kPathFollowingLookahead ; // inches
     public static double kPathFollowingCompletionTolerance; 
+    public static double kCollisionThreshold = 0.5;
     
     // Vision constants
     public static double kCameraPoseX ;	// camera location with respect to robot center of rotation, +X axis is in direction of travel
@@ -185,7 +185,8 @@ public class Constants extends ConstantsBase
     public static int kLedRelayPort = 0;
     
     // Gyro
-    public static GyroSelectionEnum GyroSelection;
+    public enum GyroSelectionEnum { BNO055, NAVX; }
+    public static GyroSelectionEnum GyroSelection = GyroSelectionEnum.NAVX;
 
 	// The I2C port the BNO055 is connected to
     public static final I2C.Port BNO055_PORT = I2C.Port.kOnboard;

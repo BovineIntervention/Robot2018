@@ -5,8 +5,8 @@ import com.kauailabs.navx.frc.AHRS;
 
 public class NavX extends GyroBase
 {
-	private static GyroBase instance = new NavX();
-	public static GyroBase getInstance() { return instance; }
+	private static NavX instance = new NavX();
+	public static NavX getInstance() { return instance; }
 	
 	 AHRS ahrs;
 	
@@ -24,4 +24,11 @@ public class NavX extends GyroBase
 		return -ahrs.getAngle();	// sign correction so that heading increases as robot turns to the left	 
 	}
 	
+	public double getWorldLinearAccelerationX(){
+		return ahrs.getWorldLinearAccelX();
+	}
+	
+	public double getWorldLinearAccelerationY(){
+		return ahrs.getWorldLinearAccelY();
+	}
 }
