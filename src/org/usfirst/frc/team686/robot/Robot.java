@@ -31,7 +31,7 @@ import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 
 public class Robot extends IterativeRobot {
@@ -76,6 +76,9 @@ public class Robot extends IterativeRobot {
 		try
     	{
     		CrashTracker.logRobotInit();
+    		
+    		LiveWindow.disableTelemetry(pdp);	// workaround to get rid of CTRE CAN Receive Timeout errors for PowerDistributionPanel.getPDPTotalCurrent()
+    											// TODO: re-enable to see if WPILib fixes this in the future
     		
     		loopController = new LoopController();
     		loopController.register(drive.getVelocityPIDLoop());
@@ -262,17 +265,17 @@ public class Robot extends IterativeRobot {
 			if ((autoModeExecuter == null) || (!autoModeExecuter.getAutoMode().isActive()))
 				drive.setOpenLoop(controls.getDriveCommand());
 			
-			// override operator controls if button board direction is set
-			Optional<Double> buttonBoardDirection = buttonBoard.getDirection();
-			if (buttonBoardDirection.isPresent())
-			{
-				if (autoModeExecuter != null)
-					autoModeExecuter.stop();	// kill any old commands
-				autoModeExecuter = new AutoModeExecuter();
-				AutoModeBase autoMode = new PointTurnMode( buttonBoardDirection.get().doubleValue() );
-				autoModeExecuter.setAutoMode( autoMode );
-				autoModeExecuter.start();
-			}
+//			// override operator controls if button board direction is set
+//			Optional<Double> buttonBoardDirection = buttonBoard.getDirection();
+//			if (buttonBoardDirection.isPresent())
+//			{
+//				if (autoModeExecuter != null)
+//					autoModeExecuter.stop();	// kill any old commands
+//				autoModeExecuter = new AutoModeExecuter();
+//				AutoModeBase autoMode = new PointTurnMode( buttonBoardDirection.get().doubleValue() );
+//				autoModeExecuter.setAutoMode( autoMode );
+//				autoModeExecuter.start();
+//			}
 		}
 		catch (Throwable t){
 			CrashTracker.logThrowableCrash(t);
