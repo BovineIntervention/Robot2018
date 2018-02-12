@@ -13,6 +13,7 @@ import org.usfirst.frc.team686.robot.lib.joystick.JoystickControlsBase;
 import org.usfirst.frc.team686.robot.subsystems.ArmBar;
 import org.usfirst.frc.team686.robot.subsystems.Drive;
 import org.usfirst.frc.team686.robot.util.DataLogController;
+import org.usfirst.frc.team686.robot2017.Constants;
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
 import org.usfirst.frc.team686.robot.command_status.DriveCommand;
 
@@ -23,6 +24,7 @@ import org.usfirst.frc.team686.robot.lib.util.CrashTracker;
 import org.usfirst.frc.team686.robot.lib.util.Pose;
 import org.usfirst.frc.team686.robot.loops.ArmBarLoop;
 import org.usfirst.frc.team686.robot.loops.DriveLoop;
+import org.usfirst.frc.team686.robot.loops.ElevatorLoop;
 import org.usfirst.frc.team686.robot.loops.LoopController;
 import org.usfirst.frc.team686.robot.loops.RobotStateLoop;
 
@@ -256,7 +258,6 @@ public class Robot extends IterativeRobot {
 			// Configure looper
 			loopController.start();
 
-			//gearShifter.setLowGear();
 			drive.setOpenLoop(DriveCommand.COAST());
 			armBar.enable();
 
@@ -270,8 +271,14 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		try{
+			boolean elevatorScaleButton = controls.getButton(Constants.kElevatorScaleButton);
+			boolean armBarButton = controls.getButton(Constants.kArmBarButton);
+			
 			if ((autoModeExecuter == null) || (!autoModeExecuter.getAutoMode().isActive()))
 				drive.setOpenLoop(controls.getDriveCommand());
+				if(armBarButton){ armBar.enable(); }
+				if(elevatorScaleButton){ elevator.setGoal(Constants.kScaleHeight); }
+				
 			
 			if (controls.getButton(Constants.kXboxButtonY))
 				armBar.up();

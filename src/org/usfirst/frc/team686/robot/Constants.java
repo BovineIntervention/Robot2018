@@ -137,6 +137,8 @@ public class Constants extends ConstantsBase
     public static double kElevatorOffset = 0.0; //encoder + offset = absolute position
     public static double kMaxBatteryVoltage = 12.0;
     
+    public static double kScaleHeight = 20;
+    
     
     // ARM BAR
     public static double kArmBarUpAngleDeg = 80;	// TODO: fix
@@ -194,6 +196,9 @@ public class Constants extends ConstantsBase
     public static int kXboxRTriggerAxis = 3;
     public static int kXboxRStickXAxis  = 4;
     public static int kXboxRStickYAxis  = 5;
+    
+    public static int kElevatorScaleButton = kXboxButtonY;
+    public static int kArmBarButton = kXboxButtonX;
 
     
         
