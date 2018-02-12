@@ -10,19 +10,18 @@ import org.usfirst.frc.team686.robot.command_status.RobotState;
 import org.usfirst.frc.team686.robot.lib.joystick.ArcadeDriveJoystick;
 import org.usfirst.frc.team686.robot.lib.joystick.ButtonBoard;
 import org.usfirst.frc.team686.robot.lib.joystick.JoystickControlsBase;
-import org.usfirst.frc.team686.robot.lib.sensors.SwitchableCameraServer;
+import org.usfirst.frc.team686.robot.subsystems.ArmBar;
 import org.usfirst.frc.team686.robot.subsystems.Drive;
 import org.usfirst.frc.team686.robot.util.DataLogController;
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
 import org.usfirst.frc.team686.robot.command_status.DriveCommand;
 
-import java.util.Optional;
-import java.util.List;
 import java.util.TimeZone;
 
 import org.usfirst.frc.team686.robot.Robot.OperationalMode;
 import org.usfirst.frc.team686.robot.lib.util.CrashTracker;
 import org.usfirst.frc.team686.robot.lib.util.Pose;
+import org.usfirst.frc.team686.robot.loops.ArmBarLoop;
 import org.usfirst.frc.team686.robot.loops.DriveLoop;
 import org.usfirst.frc.team686.robot.loops.LoopController;
 import org.usfirst.frc.team686.robot.loops.RobotStateLoop;
@@ -43,6 +42,7 @@ public class Robot extends IterativeRobot {
 
 	RobotState robotState = RobotState.getInstance();
 	Drive drive = Drive.getInstance();
+	ArmBar armBar = ArmBar.getInstance();
 	
 	AutoModeExecuter autoModeExecuter = null;
 	
@@ -83,7 +83,8 @@ public class Robot extends IterativeRobot {
     		loopController = new LoopController();
     		loopController.register(drive.getVelocityPIDLoop());
     		loopController.register(DriveLoop.getInstance());
-    		loopController.register(RobotStateLoop.getInstance());
+       		loopController.register(ArmBarLoop.getInstance());
+       		loopController.register(RobotStateLoop.getInstance());
     		
     		smartDashboardInteractions = new SmartDashboardInteractions();
     		smartDashboardInteractions.initWithDefaults();
@@ -95,6 +96,7 @@ public class Robot extends IterativeRobot {
     		robotLogger.register(Drive.getInstance().getLogger());
     		robotLogger.register(drive.getCommand().getLogger());
     		robotLogger.register(DriveState.getInstance().getLogger());
+    		robotLogger.register(ArmBar.getInstance().getLogger());
     		robotLogger.register(RobotState.getInstance().getLogger());
     		
     		setInitialPose(new Pose());
@@ -116,12 +118,14 @@ public class Robot extends IterativeRobot {
     public void zeroAllSensors()
     {
     	drive.zeroSensors();
+    	armBar.zeroSensors();
 		// mSuperstructure.zeroSensors();
     }
     
     public void stopAll()
     {
     	drive.stop();
+    	armBar.stop();
 		// mSuperstructure.stop();
     }
 
@@ -150,6 +154,7 @@ public class Robot extends IterativeRobot {
 
 			stopAll(); // stop all actuators
 			loopController.start();
+			armBar.disable();
 
 		}
 		catch (Throwable t)
@@ -205,6 +210,8 @@ public class Robot extends IterativeRobot {
 			setInitialPose( autoModeExecuter.getAutoMode().getInitialPose() );
 
 			autoModeExecuter.start();
+			
+			armBar.enable();
     	}
     	catch(Throwable t)
     	{
@@ -251,6 +258,7 @@ public class Robot extends IterativeRobot {
 
 			//gearShifter.setLowGear();
 			drive.setOpenLoop(DriveCommand.COAST());
+			armBar.enable();
 
 		} 
 		catch (Throwable t) 
@@ -264,6 +272,12 @@ public class Robot extends IterativeRobot {
 		try{
 			if ((autoModeExecuter == null) || (!autoModeExecuter.getAutoMode().isActive()))
 				drive.setOpenLoop(controls.getDriveCommand());
+			
+			if (controls.getButton(Constants.kXboxButtonY))
+				armBar.up();
+			if (controls.getButton(Constants.kXboxButtonA))
+				armBar.down();
+			
 			
 //			// override operator controls if button board direction is set
 //			Optional<Double> buttonBoardDirection = buttonBoard.getDirection();

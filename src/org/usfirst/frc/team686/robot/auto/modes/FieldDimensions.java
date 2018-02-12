@@ -75,6 +75,8 @@ public class FieldDimensions
 	public static Pose getCenterStartPose() { return new Pose(0, 0, 0); }
 	public static Pose getLeftStartPose() { return new Pose(0, (kAllianceStationLengthY/2) - Constants.kCenterToSideBumper, 0); }
 	public static Pose getRightStartPose() { return new Pose(0, -((kAllianceStationLengthY/2) - Constants.kCenterToSideBumper), 0); }
+	public static Pose getExchangeStartPose() { return new Pose(0, 0, 0); }	// temporary-- TODO: replace!
+	public static Pose getOtherStartPose() { return new Pose(0, 0, 0); }	// temporary-- TODO: replace!
 	
 	
 	public static Pose getLeftSwitchPose() { return new Pose(kLeftSwitchFromCenterStartDistX, kLeftSwitchFromCenterStartDistY, kLeftSwitchTurnAngle); }

@@ -24,10 +24,11 @@ public class Constants extends ConstantsBase
     public enum RobotSelectionEnum { COMPETITION_BOT, PRACTICE_BOT; }
     public static RobotSelectionEnum kRobotSelection;
 	
-    public static double kLoopDt;
-    public static double kDriveWatchdogTimerThreshold;    
-    public static int kTalonTimeoutMs;	// ms
-    public static int kTalonPidIdx;		// 0 for non-cascaded PIDs, 1 for cascaded PIDs
+    public static double kLoopDt = 0.01;
+    public static double kDriveWatchdogTimerThreshold = 0.500;    
+    public static int kTalonTimeoutMs = 5;	// ms
+    public static int kTalonPidIdx = 0;		// 0 for non-cascaded PIDs, 1 for cascaded PIDs
+    	
     
     // Bumpers
     public static double kCenterToFrontBumper;	// position of front bumper with respect to robot center of rotation
@@ -48,11 +49,9 @@ public class Constants extends ConstantsBase
     
     public static int    kQuadEncoderCodesPerRev;
     public static int    kQuadEncoderPulsesPerRev;
-    public static double kQuadEncoderStatusFramePeriod;
+    public static double kQuadEncoderStatusFramePeriod = 0.100;	// 100 ms
     
     // CONTROL LOOP GAINS
-    public static double kFullThrottleEncoderPulsePer100ms; 
-    
     
     // PID gains for drive velocity loop (sent to Talon)
     // Units: error is 4*256 counts/rev. Max output is +/- 1023 units.
@@ -140,8 +139,22 @@ public class Constants extends ConstantsBase
     
     
     // ARM BAR
-    public static double kArmBarVelocity = 0.5;
+    public static double kArmBarUpAngleDeg = 80;	// TODO: fix
+    public static double kArmBarDownAngleDeg = 0;	// TODO: fix
+    public static double kArmBarZeroingVelocity = 30.0;	// in degrees per second
+    public static double kArmBarVelocity = 150.0;	// in degrees per second
     
+	public static double kArmBarQuadEncoderGain = 81.0 * 2.0;			// two 9:1 gear stages plus a 24:12 tooth reduction 
+	public static double kArmBarQuadEncoderCodesPerRev = 4096;
+	public static double kArmBarEncoderPulsePerDeg = kArmBarQuadEncoderCodesPerRev / 360.0 * kArmBarQuadEncoderGain; 
+	
+	public static double kArmBarKf = 0.0;
+	public static double kArmBarKp = 0.4;
+	public static double kArmBarKd = 0.0;
+	public static double kArmBarKi = 0.0;
+
+	public static double kMaxArmBarVoltage = 6.0;	// may be less than 12V battery voltage when testing	
+	
     
     // Do not change anything after this line!
     
@@ -223,13 +236,6 @@ public class Constants extends ConstantsBase
     public Constants()
     {
         kRobotSelection = RobotSelectionEnum.COMPETITION_BOT;	// select which robot we are building code for (TODO: make this automatic?)
-    	
-        kLoopDt = 0.01;
-        kDriveWatchdogTimerThreshold = 0.500;    
-        kTalonTimeoutMs = 5;	// ms
-        kTalonPidIdx = 0;		// 0 for non-cascaded PIDs, 1 for cascaded PIDs
-    	
-        kQuadEncoderStatusFramePeriod = 0.100;	// sec        
     	
     	// place robot-specific constants here
     	
@@ -331,7 +337,7 @@ public class Constants extends ConstantsBase
     		    // CONTROL LOOP GAINS
     		//  kFullThrottleRPM = 4500 * kQuadEncoderGain;	// high gear: measured max RPM using NI web interface
     		    double kFullThrottleRPM = 520;	// low gear: measured max RPM using NI web interface
-    		    kFullThrottleEncoderPulsePer100ms = kFullThrottleRPM / 60.0 * kQuadEncoderStatusFramePeriod * kQuadEncoderPulsesPerRev; 
+    		    double kFullThrottleEncoderPulsePer100ms = kFullThrottleRPM / 60.0 * kQuadEncoderStatusFramePeriod * kQuadEncoderPulsesPerRev; 
 
     		    kDriveVelocityKp = 1.0;
     		    kDriveVelocityKi = 0.001;
