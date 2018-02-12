@@ -13,6 +13,7 @@ import org.usfirst.frc.team686.robot.lib.joystick.JoystickControlsBase;
 import org.usfirst.frc.team686.robot.lib.sensors.SwitchableCameraServer;
 import org.usfirst.frc.team686.robot.subsystems.Drive;
 import org.usfirst.frc.team686.robot.util.DataLogController;
+import org.usfirst.frc.team686.robot2017.Constants;
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
 import org.usfirst.frc.team686.robot.command_status.DriveCommand;
 
@@ -23,7 +24,9 @@ import java.util.TimeZone;
 import org.usfirst.frc.team686.robot.Robot.OperationalMode;
 import org.usfirst.frc.team686.robot.lib.util.CrashTracker;
 import org.usfirst.frc.team686.robot.lib.util.Pose;
+import org.usfirst.frc.team686.robot.loops.ArmBarLoop;
 import org.usfirst.frc.team686.robot.loops.DriveLoop;
+import org.usfirst.frc.team686.robot.loops.ElevatorLoop;
 import org.usfirst.frc.team686.robot.loops.LoopController;
 import org.usfirst.frc.team686.robot.loops.RobotStateLoop;
 
@@ -43,6 +46,8 @@ public class Robot extends IterativeRobot {
 
 	RobotState robotState = RobotState.getInstance();
 	Drive drive = Drive.getInstance();
+	ElevatorLoop elevator = new ElevatorLoop();
+	ArmBarLoop armBar = new ArmBarLoop();
 	
 	AutoModeExecuter autoModeExecuter = null;
 	
@@ -249,7 +254,6 @@ public class Robot extends IterativeRobot {
 			// Configure looper
 			loopController.start();
 
-			//gearShifter.setLowGear();
 			drive.setOpenLoop(DriveCommand.COAST());
 
 		} 
@@ -262,8 +266,15 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		try{
+			boolean elevatorScaleButton = controls.getButton(Constants.kElevatorScaleButton);
+			boolean armBarButton = controls.getButton(Constants.kArmBarButton);
+			
 			if ((autoModeExecuter == null) || (!autoModeExecuter.getAutoMode().isActive()))
 				drive.setOpenLoop(controls.getDriveCommand());
+				if(armBarButton){ armBar.enable(); }
+				if(elevatorScaleButton){ elevator.setGoal(Constants.kScaleHeight); }
+				
+			
 			
 //			// override operator controls if button board direction is set
 //			Optional<Double> buttonBoardDirection = buttonBoard.getDirection();
