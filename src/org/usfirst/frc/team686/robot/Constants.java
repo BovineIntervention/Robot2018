@@ -139,6 +139,11 @@ public class Constants extends ConstantsBase
     
     public static double kScaleHeight = 20;
     
+	public static double kElevatorKf = 0.0;
+	public static double kElevatorKp = 0.4;
+	public static double KElevatorKd = 0.0;
+	public static double KElevatorKi = 0.0;
+    
     
     // ARM BAR
     public static double kArmBarUpAngleDeg = 80;	// TODO: fix
