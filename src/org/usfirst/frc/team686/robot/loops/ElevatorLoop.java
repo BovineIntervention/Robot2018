@@ -55,7 +55,16 @@ public class ElevatorLoop implements Loop{
 		talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kTalonPidIdx, Constants.kTalonTimeoutMs);	// configure for closed-loop PID
 		talon.setSensorPhase(true);
 		talon.setInverted(false);
-		
+
+		// configure velocity loop PID
+        talon.config_kF(kVelocityControlSlot, Constants.kElevatorVelocityKf, Constants.kTalonTimeoutMs);
+        talon.config_kP(kVelocityControlSlot, Constants.kElevatorVelocityKp, Constants.kTalonTimeoutMs);
+        talon.config_kI(kVelocityControlSlot, Constants.kElevatorVelocityKi, Constants.kTalonTimeoutMs);
+        talon.config_kD(kVelocityControlSlot, Constants.kElevatorVelocityKd, Constants.kTalonTimeoutMs);
+        talon.config_IntegralZone(kVelocityControlSlot, Constants.kElevatorVelocityIZone, Constants.kTalonTimeoutMs);
+        talon.configAllowableClosedloopError(kVelocityControlSlot, Constants.kElevatorVelocityAllowableError, Constants.kTalonTimeoutMs);
+        talon.selectProfileSlot(kVelocityControlSlot, Constants.kTalonPidIdx);
+
 		hallEffect = new DigitalInput(Constants.kHallEffectSensorId);
 		
 		disable();
