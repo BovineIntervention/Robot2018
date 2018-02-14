@@ -120,7 +120,7 @@ public class Constants extends ConstantsBase
     public static double kStallCurrent = 126.145; //Stall Current in Amps
     public static double kFreeSpeed = 5015.562; //Free Speed in RPM
     public static double kFreeCurrent = 1.170; //Free Current in Amps
-    public static double kMas = 20.0; //Mass of the Elevator
+    public static double kMass = 20.0; //Mass of the Elevator
     
     public static double kNumMotors = 2.0; //Number of motors
     public static double kResistance = kVoltage/kStallCurrent; //Resistance of motor
@@ -132,17 +132,26 @@ public class Constants extends ConstantsBase
     
     public static double kDt = 0.010; //Control loop time step
     public static double kZeroingVelocity = 0.05; //zeroing velocity in m/s
-    public static double kMaxHeight = 0.45;
-    public static double kMinHeight = -0.45;
-    public static double kElevatorOffset = 0.0; //encoder + offset = absolute position
     public static double kMaxBatteryVoltage = 12.0;
     
     public static double kScaleHeight = 20;
+    public static double kSwitchHeight = 10;
+    public static double kElevatorDownHeight = 0.0;
     
-	public static double kElevatorKf = 0.0;
-	public static double kElevatorKp = 0.4;
-	public static double KElevatorKd = 0.0;
+    public static double kElevatorZeroingVelocity = 5;
+    public static double kElevatorVelocity = 5;
+    
+	public static double kElevatorQuadEncoderGain = 1.0;			// a 3:1 and 4:1 gear stages plus a 24:12 tooth reduction 
+	public static double kElevatorQuadEncoderCodesPerRev = 4096;
+	public static double kElevatorGearCircum = 4.538;
+	public static double kElevatorEncoderPulsePerInch = kElevatorQuadEncoderCodesPerRev / kElevatorGearCircum * kElevatorQuadEncoderGain; 
+    
+	public static  double kElevatorKf = 0.0;
+	public static double kElevatorKp = 7;
+	public static double KElevatorKd = 2.0;
 	public static double KElevatorKi = 0.0;
+	
+    public static double kMaxElevatorVoltage = 4.0;
     
     
     // ARM BAR
@@ -203,6 +212,7 @@ public class Constants extends ConstantsBase
     public static int kXboxRStickYAxis  = 5;
     
     public static int kElevatorScaleButton = kXboxButtonY;
+    public static int kElevatorSwitchButton = kXboxButtonB;
     public static int kArmBarButton = kXboxButtonX;
 
     
@@ -227,7 +237,7 @@ public class Constants extends ConstantsBase
     // using average of the above
     public static short kAccelOffsetX =  -7;
     public static short kAccelOffsetY = -53;
-    public static short kAccelOffsetZ =  25;
+    public static short kAccelOffsetZ =   25;
     public static short kAccelRadius  = -24;
     
     // The SPI port the NavX is connected to
@@ -316,7 +326,7 @@ public class Constants extends ConstantsBase
     		    
     			kTalonCurrentLimit = 25;
     			
-    			kHallEffectSensorId = 1;
+    			kHallEffectSensorId = 0;
 
     			break;
     			

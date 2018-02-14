@@ -115,7 +115,7 @@ public class ArmBarLoop implements Loop
 		double percentOutput = voltage / Constants.kMaxBatteryVoltage;			// normalize output to [-1,. +1]
 		armBarTalon.set(ControlMode.PercentOutput, percentOutput);				// send to motor control
 		
-		System.out.println(toString());
+		//System.out.println(toString());
 	}
 
 	@Override
@@ -139,10 +139,10 @@ public class ArmBarLoop implements Loop
 		{
 		case UNINITIALIZED:
 			// initial state.  stay here until enabled
+			filteredGoal = position;				// hold position
 			if (enabled)
 			{
 				nextState = ArmBarState.CALIBRATING;	// when enabled, state ZEROING
-				filteredGoal = position;				// hold position
 			}
 			break;
 			
@@ -154,7 +154,7 @@ public class ArmBarLoop implements Loop
 			{
 				// CALIBRATING is done when limit switch is hit
 				setPosition(Constants.kArmBarUpAngleDeg);	// write new position to Talon
-				position = Constants.kArmBarUpAngleDeg;		// override position before limit switch was hit
+				position = Constants.kArmBarUpAngleDeg;		// override positi;on before limit switch was hit
 				setGoal(position);							// initial goal is to stay in the same position
 				filteredGoal = position;					// initial goal is to stay in the same position
 				nextState = ArmBarState.RUNNING;			// start running state
@@ -170,7 +170,7 @@ public class ArmBarLoop implements Loop
 				filteredGoal += Constants.kArmBarVelocity * Constants.kLoopDt;
 				filteredGoal = Math.min(filteredGoal, goal);
 			}
-			else
+			else 
 			{
 				// moving down
 				filteredGoal -= Constants.kArmBarVelocity * Constants.kLoopDt;

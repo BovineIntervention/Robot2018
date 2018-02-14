@@ -29,7 +29,6 @@ public class ElevatorLoop implements Loop{
 	public double position;
 	public double goal;
 	public double filteredGoal;
-	public double offset;
 
 	public double error = 0.0;
 	public double dError = 0.0;
@@ -53,8 +52,8 @@ public class ElevatorLoop implements Loop{
 		
 		//configure encoder
 		elevatorTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kTalonPidIdx, Constants.kTalonTimeoutMs);	// configure for closed-loop PID
-		elevatorTalon.setSensorPhase(true);
-		elevatorTalon.setInverted(true);
+		elevatorTalon.setSensorPhase(false);
+		elevatorTalon.setInverted(false);
 		
 		hallEffect = new DigitalInput(Constants.kHallEffectSensorId);
 		
@@ -75,13 +74,21 @@ public class ElevatorLoop implements Loop{
 	
 	public double getPosition() { return position; }
 	
-	public void setPosition(int inches)  //?? not sure if need to convert to pulses
+	public void setPosition(double inches)  //?? not sure if need to convert to pulses
 	{
-		elevatorTalon.setSelectedSensorPosition(inches, Constants.kTalonPidIdx, Constants.kTalonTimeoutMs);
+		int encoderEdges = (int)(inches * Constants.kElevatorEncoderPulsePerInch);
+		elevatorTalon.setSelectedSensorPosition(encoderEdges, Constants.kTalonPidIdx, Constants.kTalonTimeoutMs);
 	}
 	
-	public int getPositionFromEncoder(){
-		int encoderPosition = elevatorTalon.getSelectedSensorPosition(Constants.kTalonPidIdx);
+	public int getEncoder()
+	{
+		int encoderEdges = elevatorTalon.getSensorCollection().getQuadraturePosition();
+		encoderEdges *= -1;	// CHEATING!!!!!!!!!!!  BAD SUSANNA!!!!!!!!!!!!
+		return encoderEdges;
+	}
+	
+	public double getPositionFromEncoder(){
+		double encoderPosition = getEncoder() / Constants.kElevatorEncoderPulsePerInch;
 		return encoderPosition;
 	}
 	
@@ -104,7 +111,7 @@ public class ElevatorLoop implements Loop{
 		double percentOutput = voltage / Constants.kMaxBatteryVoltage;
 		elevatorTalon.set(ControlMode.PercentOutput, percentOutput);
 		
-		
+		System.out.println(toString());
 	}
 
 	@Override
@@ -113,8 +120,9 @@ public class ElevatorLoop implements Loop{
 		
 	}
 	
-	public double getVoltage(double encoder, boolean limitTriggered, boolean enabled)
+	public double getVoltage(double position, boolean limitTriggered, boolean enabled)
 	{
+	
 		// transition states
 		state = nextState;
 		// start over if ever disabled
@@ -127,30 +135,44 @@ public class ElevatorLoop implements Loop{
 		{
 		case UNINITIALIZED:
 			// initial state.  stay here until enabled
+			filteredGoal = position;			// initial goal is to stay in the same position
 			if (enabled)
 			{
 				nextState = ElevatorState.ZEROING;	// when enabled, state ZEROING
-				filteredGoal = encoder;			// initial goal is to stay in the same position
 			}
 			break;
 			
 		case ZEROING:
 			// update goal to be slightly lowered, limited in velocity
-			filteredGoal  -= (Constants.kLoopDt * Constants.kZeroingVelocity);
+			filteredGoal  -= (Constants.kLoopDt * Constants.kElevatorZeroingVelocity);
 			
 			if (limitTriggered)
 			{
+				System.out.println("LIMIT TRIGGERED");
 				// ZEROING is done with limit switch is done. 
-				offset = encoder;					// set offset so that future position is zerored properly
-				setPosition(0);
-				position = 0.0;
-				filteredGoal = 0.0;
+				setPosition(Constants.kElevatorDownHeight);
+				position = Constants.kElevatorDownHeight;
+				setGoal(position);
+				filteredGoal = position;
 				nextState = ElevatorState.RUNNING;	// start running state
 			}
 			break;
 			
 		case RUNNING:
-			filteredGoal = goal;
+			// velocity control -- move filtered goal a little more towards the ultimate goal
+			
+			if (goal > filteredGoal)
+			{
+				// moving up
+				filteredGoal += Constants.kElevatorVelocity * Constants.kLoopDt;
+				filteredGoal = Math.min(filteredGoal, goal);
+			}
+			else
+			{
+				// moving down
+				filteredGoal -= Constants.kElevatorVelocity * Constants.kLoopDt;
+				filteredGoal = Math.max(filteredGoal, goal);
+			}
 			break;
 			
 		default:
@@ -158,23 +180,24 @@ public class ElevatorLoop implements Loop{
 		}
 
 		
-		position = encoder - offset;		// get true position, after calibrating out any encoder error
-		
 		error = filteredGoal - position;
 		dError = (error - lastError) / Constants.kLoopDt;
 		iError += (error * Constants.kLoopDt);
-		
+
 		lastError = error;
 		
 		voltage = Kp * error + Kd * dError + Ki * iError;
-		voltage = Math.min(Constants.kMaxBatteryVoltage, Math.max(-Constants.kMaxBatteryVoltage, voltage));
+		voltage = Math.min(Constants.kMaxElevatorVoltage, Math.max(-Constants.kMaxElevatorVoltage, voltage));
 		
 		if(limitTriggered)
-			voltage = Math.min(voltage, 0.0);
+			voltage = Math.max(voltage, 0.0);
 		return voltage;
 	}
 
-	
+	public String toString() 
+    {
+    	return String.format("%s, Enc: %d, Pos: %.1f, LimSwitch: %d, Goal: %.1f, FiltGoal = %.1f, e = %.1f, de = %.1f, ie = %.1f, voltage = %.1f", state.toString(), getEncoder(), getPosition(), getLimitSwitch() ? 1 : 0, goal, filteredGoal, error, dError, iError, voltage);
+    }
 
 	
 }
