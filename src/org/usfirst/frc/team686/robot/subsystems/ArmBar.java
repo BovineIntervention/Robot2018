@@ -20,8 +20,13 @@ public class ArmBar extends Subsystem {
 	public void enable()  { armBarLoop.enable(); }
 	
 	public void up()   { armBarLoop.setGoal(Constants.kArmBarUpAngleDeg); }	
-	public void down() {	armBarLoop.setGoal(Constants.kArmBarDownAngleDeg); 	}	
+	public void down() { armBarLoop.setGoal(Constants.kArmBarDownAngleDeg); }	
 
+	public double getGoalAngle()
+	{
+		return armBarLoop.getGoal();
+	}
+	
 	@Override
 	public void stop() {
 		armBarLoop.stop();

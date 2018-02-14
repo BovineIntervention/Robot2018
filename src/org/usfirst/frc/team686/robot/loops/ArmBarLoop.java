@@ -1,6 +1,7 @@
 package org.usfirst.frc.team686.robot.loops;
 
 import org.usfirst.frc.team686.robot.Constants;
+import org.usfirst.frc.team686.robot.loops.ElevatorLoop.ElevatorState;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -37,7 +38,7 @@ public class ArmBarLoop implements Loop
 	
 	public double voltage = 0.0;
 	
-	public TalonSRX armBarTalon;
+	public TalonSRX talon;
 	public DigitalInput limitSwitch;
 	
 	public ArmBarLoop()
@@ -45,25 +46,32 @@ public class ArmBarLoop implements Loop
 		System.out.println("ArmBarLoop constructor");
 		
 		// Configure Talon
-		armBarTalon = new TalonSRX(Constants.kArmBarTalonId);
-		armBarTalon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 10, Constants.kTalonTimeoutMs);
-		armBarTalon.set(ControlMode.PercentOutput, 0.0);
-		armBarTalon.setNeutralMode(NeutralMode.Brake);
+		talon = new TalonSRX(Constants.kArmBarTalonId);
+		talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 10, Constants.kTalonTimeoutMs);
+		talon.set(ControlMode.PercentOutput, 0.0);
+		talon.setNeutralMode(NeutralMode.Brake);
 				
 		// Configure Encoder
-		armBarTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kTalonPidIdx, Constants.kTalonTimeoutMs);	// configure for closed-loop PID
-		armBarTalon.setSensorPhase(true);
-		armBarTalon.setInverted(true);
+		talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kTalonPidIdx, Constants.kTalonTimeoutMs);	// configure for closed-loop PID
+		talon.setSensorPhase(true);
+		talon.setInverted(true);
 
 		// Configure Limit Switch
+		// TODO: switch back to Talon limit switch when cable fixed
 		limitSwitch = new DigitalInput(1);
 		
-		enable = false;
+		disable();;
 	}
 	
 
-	public void enable() { enable = true; }
-	public void disable() { enable = false; }
+	public void enable(){ enable = true; }
+	
+	public void disable()
+	{
+		enable = false; 
+		state = ArmBarState.UNINITIALIZED; 
+		nextState = ArmBarState.UNINITIALIZED;
+	}
 	
 	public void setGoal(double goal_){ goal = goal_; }
 	public double getGoal () { return goal; } 
@@ -78,23 +86,26 @@ public class ArmBarLoop implements Loop
 	
 	public void setPosition(double _angleDeg) 
 	{
-		int encoderEdges = (int)(_angleDeg * Constants.kArmBarEncoderPulsePerDeg);
-		armBarTalon.setSelectedSensorPosition(encoderEdges, Constants.kTalonPidIdx, Constants.kTalonTimeoutMs);
+		int encoderEdges = (int)(_angleDeg * Constants.kArmBarEncoderUnitsPerDeg);
+		talon.setSelectedSensorPosition(encoderEdges, Constants.kTalonPidIdx, Constants.kTalonTimeoutMs);
 	}
 	
 	public int getEncoder() 
 	{
-		int encoderEdges = armBarTalon.getSensorCollection().getQuadraturePosition();
+		//TODO: switch back to this once Talon encoder wire is fixed
+		//int encoderEdges = talon.getSelectedSensorPosition(Constants.kTalonPidIdx);
+		int encoderEdges = talon.getSensorCollection().getQuadraturePosition();
 		return encoderEdges;
 	}
 	
 	public double getPositionFromEncoder() 
 	{
 		// returns encoder angle in degrees
-		double angleDeg = getEncoder() / Constants.kArmBarEncoderPulsePerDeg;
+		double angleDeg = getEncoder() / Constants.kArmBarEncoderUnitsPerDeg;
 		return angleDeg;
 	}
 	
+	//TODO: switch back to this once Talon encoder wire is fixed
 	public boolean getLimitSwitch() { return !limitSwitch.get(); }	// returns true when limit switch is triggered 
 	
 	
@@ -112,8 +123,8 @@ public class ArmBarLoop implements Loop
 		boolean limitSwitch = getLimitSwitch();
 		
 		double voltage = calcVoltage(position, limitSwitch, enable);			// output in [-12, +12] volts	
-		double percentOutput = voltage / Constants.kMaxBatteryVoltage;			// normalize output to [-1,. +1]
-		armBarTalon.set(ControlMode.PercentOutput, percentOutput);				// send to motor control
+		double percentOutput = voltage / Constants.kNominalBatteryVoltage;			// normalize output to [-1,. +1]
+		talon.set(ControlMode.PercentOutput, percentOutput);				// send to motor control
 		
 		//System.out.println(toString());
 	}
@@ -157,6 +168,14 @@ public class ArmBarLoop implements Loop
 				position = Constants.kArmBarUpAngleDeg;		// override positi;on before limit switch was hit
 				setGoal(position);							// initial goal is to stay in the same position
 				filteredGoal = position;					// initial goal is to stay in the same position
+				
+				// set soft limits
+				talon.configReverseSoftLimitThreshold((int)(Constants.kArmBarDownAngleDeg * Constants.kArmBarEncoderUnitsPerDeg), Constants.kTalonTimeoutMs);
+				talon.configForwardSoftLimitThreshold((int)(Constants.kArmBarUpAngleDeg * Constants.kArmBarEncoderUnitsPerDeg), Constants.kTalonTimeoutMs);
+				talon.configReverseSoftLimitEnable(true, Constants.kTalonTimeoutMs);
+				talon.configForwardSoftLimitEnable(true, Constants.kTalonTimeoutMs);
+				talon.overrideLimitSwitchesEnable(true);	// enable soft limit switches
+								
 				nextState = ArmBarState.RUNNING;			// start running state
 			}
 			break;

@@ -38,31 +38,37 @@ public class ElevatorLoop implements Loop{
 	public double voltage = 0.0;
 	
 	private static DigitalInput hallEffect;
-	private static TalonSRX elevatorTalon;
+	private static TalonSRX talon;
 	
 	public ElevatorLoop(){
 		
 		System.out.println("ElevatorLoop constructor");
 		
 		//configure Talon
-		elevatorTalon = new TalonSRX(Constants.kElevatorTalonId);
-		elevatorTalon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 10, Constants.kTalonTimeoutMs);
-		elevatorTalon.set(ControlMode.PercentOutput, 0.0);
-		elevatorTalon.setNeutralMode(NeutralMode.Brake);
+		talon = new TalonSRX(Constants.kElevatorTalonId);
+		talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 10, Constants.kTalonTimeoutMs);
+		talon.set(ControlMode.PercentOutput, 0.0);
+		talon.setNeutralMode(NeutralMode.Brake);
 		
 		//configure encoder
-		elevatorTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kTalonPidIdx, Constants.kTalonTimeoutMs);	// configure for closed-loop PID
-		elevatorTalon.setSensorPhase(false);
-		elevatorTalon.setInverted(false);
+		talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kTalonPidIdx, Constants.kTalonTimeoutMs);	// configure for closed-loop PID
+		talon.setSensorPhase(true);
+		talon.setInverted(false);
 		
 		hallEffect = new DigitalInput(Constants.kHallEffectSensorId);
 		
-		enable = false;
+		disable();
 	}
 	
 
 	public void enable(){ enable = true; }
-	public void disable() { enable = false; }
+	
+	public void disable()
+	{
+		enable = false; 
+		state = ElevatorState.UNINITIALIZED; 
+		nextState = ElevatorState.UNINITIALIZED;
+	}
 	
 	public void setGoal(double goal_){ goal = goal_; }
 	public double getGoal () { return goal; } 
@@ -74,42 +80,43 @@ public class ElevatorLoop implements Loop{
 	
 	public double getPosition() { return position; }
 	
-	public void setPosition(double inches)  //?? not sure if need to convert to pulses
+	public void setPosition(double inches) 
 	{
-		int encoderEdges = (int)(inches * Constants.kElevatorEncoderPulsePerInch);
-		elevatorTalon.setSelectedSensorPosition(encoderEdges, Constants.kTalonPidIdx, Constants.kTalonTimeoutMs);
+		int encoderEdges = (int)(inches * Constants.kElevatorEncoderUnitsPerInch);
+		talon.setSelectedSensorPosition(encoderEdges, Constants.kTalonPidIdx, Constants.kTalonTimeoutMs);
 	}
 	
 	public int getEncoder()
 	{
-		int encoderEdges = elevatorTalon.getSensorCollection().getQuadraturePosition();
-		encoderEdges *= -1;	// CHEATING!!!!!!!!!!!  BAD SUSANNA!!!!!!!!!!!!
+		int encoderEdges = talon.getSelectedSensorPosition(Constants.kTalonPidIdx);
 		return encoderEdges;
 	}
 	
-	public double getPositionFromEncoder(){
-		double encoderPosition = getEncoder() / Constants.kElevatorEncoderPulsePerInch;
+	public double getPositionFromEncoder()
+	{
+		double encoderPosition = getEncoder() / Constants.kElevatorEncoderUnitsPerInch;
 		return encoderPosition;
 	}
 	
-	public static boolean getLimitSwitch(){ return !hallEffect.get(); }
+	public boolean getLimitSwitch(){ return !hallEffect.get(); }
 	
 	
 	@Override
-	public void onStart() {
+	public void onStart() 
+	{
 		state = ElevatorState.UNINITIALIZED;
 		nextState = ElevatorState.UNINITIALIZED;
 	}
 
 	@Override
-	public void onLoop() {
-		
+	public void onLoop()
+	{
 		position = getPositionFromEncoder();
 		boolean limitSwitch = getLimitSwitch();
 		
 		double voltage = getVoltage(position, limitSwitch, enable);
-		double percentOutput = voltage / Constants.kMaxBatteryVoltage;
-		elevatorTalon.set(ControlMode.PercentOutput, percentOutput);
+		double percentOutput = voltage / Constants.kNominalBatteryVoltage;
+		talon.set(ControlMode.PercentOutput, percentOutput);
 		
 		System.out.println(toString());
 	}
@@ -139,6 +146,7 @@ public class ElevatorLoop implements Loop{
 			if (enabled)
 			{
 				nextState = ElevatorState.ZEROING;	// when enabled, state ZEROING
+				talon.overrideLimitSwitchesEnable(false);	// disable soft limit switches during zeroing
 			}
 			break;
 			
@@ -148,12 +156,21 @@ public class ElevatorLoop implements Loop{
 			
 			if (limitTriggered)
 			{
-				System.out.println("LIMIT TRIGGERED");
-				// ZEROING is done with limit switch is done. 
-				setPosition(Constants.kElevatorDownHeight);
-				position = Constants.kElevatorDownHeight;
+				System.out.println("Elevator Limit Switch Triggered");
+				
+				// ZEROING is done with limit switch is triggered 
+				setPosition(Constants.kGroundHeight);
+				position = Constants.kGroundHeight;
 				setGoal(position);
 				filteredGoal = position;
+				
+				// set soft limits
+				talon.configReverseSoftLimitThreshold((int)(Constants.kElevatorMinHeightLimit * Constants.kElevatorEncoderUnitsPerInch), Constants.kTalonTimeoutMs);
+				talon.configForwardSoftLimitThreshold((int)(Constants.kElevatorMaxHeightLimit * Constants.kElevatorEncoderUnitsPerInch), Constants.kTalonTimeoutMs);
+				talon.configReverseSoftLimitEnable(true, Constants.kTalonTimeoutMs);
+				talon.configForwardSoftLimitEnable(true, Constants.kTalonTimeoutMs);
+				talon.overrideLimitSwitchesEnable(true);	// enable soft limit switches
+				
 				nextState = ElevatorState.RUNNING;	// start running state
 			}
 			break;

@@ -29,6 +29,8 @@ public class Constants extends ConstantsBase
     public static int kTalonTimeoutMs = 5;	// ms
     public static int kTalonPidIdx = 0;		// 0 for non-cascaded PIDs, 1 for cascaded PIDs
     	
+    public static double kNominalBatteryVoltage = 12.0;
+    
     
     // Bumpers
     public static double kCenterToFrontBumper;	// position of front bumper with respect to robot center of rotation
@@ -112,57 +114,49 @@ public class Constants extends ConstantsBase
     public static double kCameraLatencySeconds;			// Camera image capturing latency
     public static double kTargetLocationFilterConstant;		// 30 time constants in 1 second
     
+
+    // POWER UP FIELD
+    public static double kScaleHeightHigh = 72.0;
+    public static double kScaleHeightMed = 	60.0;
+    public static double kScaleHeightLow = 	48.0;
+    public static double kSwitchHeight = 	10.0;
+    public static double kExchangeHeight = 	 2.0;
+    public static double kGroundHeight = 	 0.0;
+
+    public static double kCubeClearance = 6.0;
+
     
-    //ELEVATOR TEST
-    public static double kVoltage = 12.0;
+    // ELEVATOR    
+    public static double kElevatorMinHeightLimit =  0.0;	// stop at min height
+    public static double kElevatorMaxHeightLimit = 65.0;	// stop at max height
     
-    public static double kStallTorque = 2.402; //Stall Torque in N*m
-    public static double kStallCurrent = 126.145; //Stall Current in Amps
-    public static double kFreeSpeed = 5015.562; //Free Speed in RPM
-    public static double kFreeCurrent = 1.170; //Free Current in Amps
-    public static double kMass = 20.0; //Mass of the Elevator
-    
-    public static double kNumMotors = 2.0; //Number of motors
-    public static double kResistance = kVoltage/kStallCurrent; //Resistance of motor
-    public static double Kv = ((kFreeSpeed / 60) * (2.0 * Math.PI)) / 
-    							(kVoltage - kResistance * kFreeCurrent); //Motor velocity constant (kFreeSpeed converted to rad/s)
-    public static double Kt = (kNumMotors * kStallTorque) / kStallCurrent; //Torque constant
-    public static double kG = 5; //Gear ratio
-    public static double kr = 17 * 0.25 * 0.0254 / Math.PI / 2.0; //radius of pulley
-    
-    public static double kDt = 0.010; //Control loop time step
-    public static double kZeroingVelocity = 0.05; //zeroing velocity in m/s
-    public static double kMaxBatteryVoltage = 12.0;
-    
-    public static double kScaleHeight = 20;
-    public static double kSwitchHeight = 10;
-    public static double kElevatorDownHeight = 0.0;
-    
-    public static double kElevatorZeroingVelocity = 5;
-    public static double kElevatorVelocity = 5;
+    public static double kElevatorZeroingVelocity = 1;
+    public static double kElevatorVelocity = 10;	//30;
     
 	public static double kElevatorQuadEncoderGain = 1.0;			// a 3:1 and 4:1 gear stages plus a 24:12 tooth reduction 
-	public static double kElevatorQuadEncoderCodesPerRev = 4096;
+	public static double kElevatorQuadEncoderUnitsPerRev = 4096;
 	public static double kElevatorGearCircum = 4.538;
-	public static double kElevatorEncoderPulsePerInch = kElevatorQuadEncoderCodesPerRev / kElevatorGearCircum * kElevatorQuadEncoderGain; 
+	public static double kElevatorEncoderUnitsPerInch = kElevatorQuadEncoderUnitsPerRev / kElevatorGearCircum * kElevatorQuadEncoderGain; 
     
-	public static  double kElevatorKf = 0.0;
-	public static double kElevatorKp = 7;
-	public static double KElevatorKd = 2.0;
+	public static double kElevatorKf = 0.0;
+	public static double kElevatorKp = 10;
+	public static double KElevatorKd = 0.0;
 	public static double KElevatorKi = 0.0;
 	
-    public static double kMaxElevatorVoltage = 4.0;
+    public static double kMaxElevatorVoltage = 12.0;
     
     
     // ARM BAR
+    public static double kArmBarLength = 14.0;
+    
     public static double kArmBarUpAngleDeg = 80;	// TODO: fix
-    public static double kArmBarDownAngleDeg = 0;	// TODO: fix
+    public static double kArmBarDownAngleDeg = -20;	// TODO: quick calculations show -34 is the right number
     public static double kArmBarZeroingVelocity = 30.0;	// in degrees per second
     public static double kArmBarVelocity = 150.0;	// in degrees per second
     
 	public static double kArmBarQuadEncoderGain = 81.0 * 2.0;			// two 9:1 gear stages plus a 24:12 tooth reduction 
-	public static double kArmBarQuadEncoderCodesPerRev = 4096;
-	public static double kArmBarEncoderPulsePerDeg = kArmBarQuadEncoderCodesPerRev / 360.0 * kArmBarQuadEncoderGain; 
+	public static double kArmBarQuadEncoderUnitsPerRev = 4096;
+	public static double kArmBarEncoderUnitsPerDeg = kArmBarQuadEncoderUnitsPerRev / 360.0 * kArmBarQuadEncoderGain; 
 	
 	public static double kArmBarKf = 0.0;
 	public static double kArmBarKp = 0.4;
@@ -171,6 +165,11 @@ public class Constants extends ConstantsBase
 
 	public static double kMaxArmBarVoltage = 6.0;	// may be less than 12V battery voltage when testing	
 	
+	
+    // CUBE HEIGHT
+    public static double kCubeGrabHeight = 8.5;		// inches above ground where cube is grabbed
+       
+    
     
     // Do not change anything after this line!
     

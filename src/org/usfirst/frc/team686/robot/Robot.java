@@ -13,6 +13,7 @@ import org.usfirst.frc.team686.robot.lib.joystick.JoystickControlsBase;
 import org.usfirst.frc.team686.robot.subsystems.ArmBar;
 import org.usfirst.frc.team686.robot.subsystems.Drive;
 import org.usfirst.frc.team686.robot.subsystems.Elevator;
+import org.usfirst.frc.team686.robot.subsystems.Elevator.ElevatorHeight;
 import org.usfirst.frc.team686.robot.util.DataLogController;
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
 import org.usfirst.frc.team686.robot.command_status.DriveCommand;
@@ -281,8 +282,8 @@ public class Robot extends IterativeRobot {
 			if ((autoModeExecuter == null) || (!autoModeExecuter.getAutoMode().isActive()))
 				drive.setOpenLoop(controls.getDriveCommand());
 
-			if(elevatorSwitchButton){ elevator.goToSwitch(); }
-			if(elevatorScaleButton){ elevator.goToScale(); }
+			if (elevatorSwitchButton) { elevator.set(ElevatorHeight.SWITCH); }
+			if (elevatorScaleButton)  { elevator.set(ElevatorHeight.SCALE_MED); }
 				
 			/*
 			if (controls.getButton(Constants.kXboxButtonY))
