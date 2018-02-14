@@ -35,7 +35,7 @@ public class ElevatorLoop implements Loop{
 	public double dError = 0.0;
 	public double iError = 0.0;
 	public static double lastError = 0.0;
-	
+
 	public double voltage = 0.0;
 	
 	private static DigitalInput hallEffect;
@@ -112,12 +112,11 @@ public class ElevatorLoop implements Loop{
 	@Override
 	public void onLoop()
 	{
-		position = getPositionFromEncoder();
+        position = getPositionFromEncoder();
 		boolean limitSwitch = getLimitSwitch();
 		
-		double voltage = getVoltage(position, limitSwitch, enable);
-		double percentOutput = voltage / Constants.kNominalBatteryVoltage;
-		talon.set(ControlMode.PercentOutput, percentOutput);
+		double velocity = getVelocity(position, limitSwitch, enable);
+		talon.set(ControlMode.Velocity, inchesPerSecondToEncoderUnitsPerFrame(velocity));
 		
 		System.out.println(toString());
 	}
@@ -128,7 +127,7 @@ public class ElevatorLoop implements Loop{
 		
 	}
 	
-	public double getVoltage(double position, boolean limitTriggered, boolean enabled)
+	public double getVelocity(double position, boolean limitTriggered, boolean enabled)
 	{
 	
 		// transition states
@@ -142,7 +141,9 @@ public class ElevatorLoop implements Loop{
 		switch (state)
 		{
 		case UNINITIALIZED:
+        default:
 			// initial state.  stay here until enabled
+            velocity = 0.0;
 			filteredGoal = position;			// initial goal is to stay in the same position
 			if (enabled)
 			{
@@ -153,8 +154,8 @@ public class ElevatorLoop implements Loop{
 			
 		case ZEROING:
 			// update goal to be slightly lowered, limited in velocity
-			filteredGoal  -= (Constants.kElevatorZeroingVelocity * Constants.kLoopDt);
-			
+            velocity = -Constants.kElevatorZeroingVelocity;
+
 			if (limitTriggered)
 			{
 				System.out.println("Elevator Limit Switch Triggered");
@@ -179,26 +180,25 @@ public class ElevatorLoop implements Loop{
 		case RUNNING:
 			// speed control: apply acceleration and velocity limits to filtered goal
 			velocity = speedControl(position, goal, velocity, Constants.kElevatorMaxVelocity, Constants.kElevatorMaxAccel);
-			filteredGoal += velocity * Constants.kLoopDt;	// filteredGoal will converge to goal
 			break;
-			
-		default:
-			nextState = ElevatorState.UNINITIALIZED;
 		}
 
-		// PID Loop
+        filteredGoal += velocity * Constants.kLoopDt;	// filteredGoal will converge to goal
+
+		// PID Loop to maintain position
 		error = filteredGoal - position;
 		dError = (error - lastError) / Constants.kLoopDt;
 		iError += (error * Constants.kLoopDt);
 
 		lastError = error;
-		
-		voltage = Kp * error + Kd * dError + Ki * iError;
-		voltage = Math.min(Constants.kMaxElevatorVoltage, Math.max(-Constants.kMaxElevatorVoltage, voltage));
-		
+
+		velocity += Kp * error + Kd * dError + Ki * iError;     // apply position correction
+        velocity = Math.min(Constants.kMaxElevatorVelocity, Math.max(-Constants.kMaxElevatorVelocity, velocity));
+
 		if(limitTriggered)
-			voltage = Math.max(voltage, 0.0);
-		return voltage;
+			velocity = Math.max(velocity, 0.0);
+
+		return velocity;
 	}
 
 	public double speedControl(double _currentPosition, double _goalPosition, double _currentVelocity, double _maxVelocity, double _maxAcceleration)
@@ -224,7 +224,7 @@ public class ElevatorLoop implements Loop{
 
 	public String toString() 
     {
-    	return String.format("%s, Enc: %d, Pos: %.1f, LimSwitch: %d, Goal: %.1f, FiltGoal = %.1f, e = %.1f, de = %.1f, ie = %.1f, voltage = %.1f", state.toString(), getEncoder(), getPosition(), getLimitSwitch() ? 1 : 0, goal, filteredGoal, error, dError, iError, voltage);
+    	return String.format("%s, Enc: %d, Pos: %.1f, LimSwitch: %d, Goal: %.1f, FiltGoal = %.1f, e = %.1f, de = %.1f, ie = %.1f, voltage = %.1f", state.toString(), getEncoder(), getPosition(), getLimitSwitch() ? 1 : 0, goal, filteredGoal, error, dError, iError, velocity);
     }
 
 	
