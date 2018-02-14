@@ -70,7 +70,11 @@ public class ElevatorLoop implements Loop{
 		nextState = ElevatorState.UNINITIALIZED;
 	}
 	
-	public void setGoal(double goal_){ goal = goal_; }
+	public void setGoal(double _goal)
+    {
+        // limit goal
+        goal = Math.min(Constants.kElevatorMaxHeightLimit, Math.max(Constants.ElevatorMinHeightLimit, _goal));
+	}
 	public double getGoal () { return goal; } 
 	public double getFilteredGoal() { return filteredGoal; }
 
