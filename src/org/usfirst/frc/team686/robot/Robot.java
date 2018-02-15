@@ -10,14 +10,14 @@ import org.usfirst.frc.team686.robot.command_status.RobotState;
 import org.usfirst.frc.team686.robot.lib.joystick.ArcadeDriveJoystick;
 import org.usfirst.frc.team686.robot.lib.joystick.ButtonBoard;
 import org.usfirst.frc.team686.robot.lib.joystick.JoystickControlsBase;
-import org.usfirst.frc.team686.robot.subsystems.ArmBar;
 import org.usfirst.frc.team686.robot.subsystems.Drive;
-import org.usfirst.frc.team686.robot.subsystems.Elevator;
-import org.usfirst.frc.team686.robot.subsystems.Elevator.ElevatorHeight;
+import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar;
+import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar.ElevatorArmBarState;
 import org.usfirst.frc.team686.robot.util.DataLogController;
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
 import org.usfirst.frc.team686.robot.command_status.DriveCommand;
 
+import java.util.Optional;
 import java.util.TimeZone;
 
 import org.usfirst.frc.team686.robot.Robot.OperationalMode;
@@ -45,8 +45,7 @@ public class Robot extends IterativeRobot {
 
 	RobotState robotState = RobotState.getInstance();
 	Drive drive = Drive.getInstance();
-	ArmBar armBar = ArmBar.getInstance();
-	Elevator elevator = Elevator.getInstance();
+	ElevatorArmBar elevatorArmBar = ElevatorArmBar.getInstance();
 	
 	AutoModeExecuter autoModeExecuter = null;
 	
@@ -101,7 +100,7 @@ public class Robot extends IterativeRobot {
     		robotLogger.register(Drive.getInstance().getLogger());
     		robotLogger.register(drive.getCommand().getLogger());
     		robotLogger.register(DriveState.getInstance().getLogger());
-    		robotLogger.register(ArmBar.getInstance().getLogger());
+    		robotLogger.register(ElevatorArmBar.getInstance().getLogger());
     		robotLogger.register(RobotState.getInstance().getLogger());
     		
     		setInitialPose(new Pose());
@@ -123,14 +122,14 @@ public class Robot extends IterativeRobot {
     public void zeroAllSensors()
     {
     	drive.zeroSensors();
-    	armBar.zeroSensors();
+    	elevatorArmBar.zeroSensors();
 		// mSuperstructure.zeroSensors();
     }
     
     public void stopAll()
     {
     	drive.stop();
-    	armBar.stop();
+    	elevatorArmBar.stop();
 		// mSuperstructure.stop();
     }
 
@@ -159,8 +158,7 @@ public class Robot extends IterativeRobot {
 
 			stopAll(); // stop all actuators
 			loopController.start();
-			armBar.disable();
-			elevator.disable();
+			elevatorArmBar.disable();
 		}
 		catch (Throwable t)
 		{
@@ -216,8 +214,7 @@ public class Robot extends IterativeRobot {
 
 			autoModeExecuter.start();
 			
-			armBar.enable();
-			elevator.enable();
+			elevatorArmBar.enable();
     	}
     	catch(Throwable t)
     	{
@@ -263,8 +260,7 @@ public class Robot extends IterativeRobot {
 			loopController.start();
 
 			drive.setOpenLoop(DriveCommand.COAST());
-			armBar.enable();
-			elevator.enable();
+			elevatorArmBar.enable();
 		} 
 		catch (Throwable t) 
 		{
@@ -273,37 +269,42 @@ public class Robot extends IterativeRobot {
 		}
 	}
 	@Override
-	public void teleopPeriodic() {
-		try{
-			boolean elevatorSwitchButton = controls.getButton(Constants.kElevatorSwitchButton);
-			boolean elevatorScaleButton = controls.getButton(Constants.kElevatorScaleButton);
+	public void teleopPeriodic() 
+	{
+		try
+		{
+			if (buttonBoard.getButton(Constants.kElevatorGroundButton))		{ elevatorArmBar.setHeight(ElevatorArmBarState.DRIVE); }
+			if (buttonBoard.getButton(Constants.kElevatorExchangeButton))	{ elevatorArmBar.setHeight(ElevatorArmBarState.EXCHANGE); }
+			if (buttonBoard.getButton(Constants.kElevatorSwitchButton))		{ elevatorArmBar.setHeight(ElevatorArmBarState.SWITCH); }
+			if (buttonBoard.getButton(Constants.kElevatorScaleLowButton))	{ elevatorArmBar.setHeight(ElevatorArmBarState.SCALE_LOW); }
+			if (buttonBoard.getButton(Constants.kElevatorScaleMedButton))	{ elevatorArmBar.setHeight(ElevatorArmBarState.SCALE_MED); }
+			if (buttonBoard.getButton(Constants.kElevatorScaleHighButton))	{ elevatorArmBar.setHeight(ElevatorArmBarState.SCALE_HIGH); }
+
+			// override operator controls if button board direction is set
+			Optional<Double> buttonBoardDirection = buttonBoard.getDirection();
+			if (buttonBoardDirection.isPresent())
+			{
+				if (autoModeExecuter != null)
+					autoModeExecuter.stop();	// kill any old commands
+				autoModeExecuter = new AutoModeExecuter();
+				AutoModeBase autoMode = new PointTurnMode( buttonBoardDirection.get().doubleValue() );
+				autoModeExecuter.setAutoMode( autoMode );
+				autoModeExecuter.start();
+			}
+				
+			if (controls.getButton(Constants.kIntakeButton) || controls.getButton(Constants.kOuttakeButton)) {
+				elevatorArmBar.extend(); }
+			else {
+				elevatorArmBar.retract();
+			}
+
 			
 			if ((autoModeExecuter == null) || (!autoModeExecuter.getAutoMode().isActive()))	// ignore joystick when doing auto turns
 				drive.setOpenLoop(controls.getDriveCommand());
-
-			if (elevatorSwitchButton) { elevator.set(ElevatorHeight.SWITCH); }
-			if (elevatorScaleButton)  { elevator.set(ElevatorHeight.SCALE_LOW); }
-				
-			
-			if (controls.getButton(Constants.kXboxButtonX))
-				armBar.up();
-			if (controls.getButton(Constants.kXboxButtonA))
-				armBar.down();
-			
-			
-//			// override operator controls if button board direction is set
-//			Optional<Double> buttonBoardDirection = buttonBoard.getDirection();
-//			if (buttonBoardDirection.isPresent())
-//			{
-//				if (autoModeExecuter != null)
-//					autoModeExecuter.stop();	// kill any old commands
-//				autoModeExecuter = new AutoModeExecuter();
-//				AutoModeBase autoMode = new PointTurnMode( buttonBoardDirection.get().doubleValue() );
-//				autoModeExecuter.setAutoMode( autoMode );
-//				autoModeExecuter.start();
-//			}
+		
 		}
-		catch (Throwable t){
+		catch (Throwable t)
+		{
 			CrashTracker.logThrowableCrash(t);
 			throw t;
 		}

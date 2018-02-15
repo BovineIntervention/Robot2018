@@ -1,6 +1,7 @@
 package org.usfirst.frc.team686.robot;
 
 import org.usfirst.frc.team686.robot.lib.util.ConstantsBase;
+import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar.ElevatorArmBarState;
 import org.usfirst.frc.team686.robot.lib.joystick.ArcadeDriveJoystick;
 import org.usfirst.frc.team686.robot.lib.joystick.JoystickControlsBase;
 
@@ -129,16 +130,15 @@ public class Constants extends ConstantsBase
     public static double kExchangeHeight = 	 2.00;	// field drawing 18127: 0.5" plywood + 1.0" pine + 0.125" polycarbonate + clearance 
     public static double kGroundHeight = 	 0.00;
 
-
+    // DESIRED CUBE HEIGHT (bottom of cube)
+    public static double kCubeScaleHeightHigh = kScaleHeightHigh + 1*kCubeHeight + kCubeClearance;
+    public static double kCubeScaleHeightMed = 	kScaleHeightMed  + 1*kCubeHeight + kCubeClearance;
+    public static double kCubeScaleHeightLow = 	kScaleHeightLow  + 1*kCubeHeight + kCubeClearance;
+    public static double kCubeSwitchHeight =	kSwitchHeight                    + kCubeClearance; 		
+    public static double kCubeExchangeHeight = 	kExchangeHeight; 
+    public static double kCubeGroundHeight = 	kGroundHeight;
     
     // ELEVATOR    
-    public static double kElevatorScaleHeightHigh = kScaleHeightHigh + 1*kCubeHeight + kCubeClearance;
-    public static double kElevatorScaleHeightMed = 	kScaleHeightMed  + 1*kCubeHeight + kCubeClearance;
-    public static double kElevatorScaleHeightLow = 	kScaleHeightLow  + 1*kCubeHeight + kCubeClearance;
-    public static double kElevatorSwitchHeight =	kSwitchHeight                    + kCubeClearance; 		
-    public static double kElevatorExchangeHeight = 	kExchangeHeight; 
-    public static double kElevatorGroundHeight = 	kGroundHeight;
-
     public static double kElevatorMinHeightLimit =  0.0;	// stop at min height
 	//public static double kElevatorMaxHeightLimit = 65.0;	// stop at max height	// TODO: figure out what this is
 	public static double kElevatorMaxHeightLimit = 65.0;	// protect the ceiling!  TODO: comment out for competition
@@ -237,10 +237,16 @@ public class Constants extends ConstantsBase
     public static int kXboxRTriggerAxis = 3;
     public static int kXboxRStickXAxis  = 4;
     public static int kXboxRStickYAxis  = 5;
-    
-    public static int kElevatorScaleButton = kXboxButtonY;
-    public static int kElevatorSwitchButton = kXboxButtonB;
-    public static int kArmBarButton = kXboxButtonX;
+
+	public static int kElevatorGroundButton 	= 0;
+	public static int kElevatorExchangeButton 	= 1;
+	public static int kElevatorSwitchButton 	= 2;
+	public static int kElevatorScaleLowButton 	= 3;
+	public static int kElevatorScaleMedButton 	= 4;
+	public static int kElevatorScaleHighButton 	= 5;
+
+	public static int kIntakeButton = kXboxButtonRB;
+	public static int kOuttakeButton = kXboxButtonLB;
 
     
         
