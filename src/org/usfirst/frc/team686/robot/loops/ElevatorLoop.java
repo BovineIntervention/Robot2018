@@ -73,7 +73,7 @@ public class ElevatorLoop implements Loop{
 	public void setGoal(double _goal)
     {
         // limit goal
-        goal = Math.min(Constants.kElevatorMaxHeightLimit, Math.max(Constants.ElevatorMinHeightLimit, _goal));
+        goal = Math.min(Constants.kElevatorMaxHeightLimit, Math.max(Constants.kElevatorMinHeightLimit, _goal));
 	}
 	public double getGoal () { return goal; } 
 	public double getFilteredGoal() { return filteredGoal; }

@@ -56,13 +56,13 @@ public class FieldDimensions
 	// get turn angles
 	public static double kTurnPositionOffsetY = 36;
 	
-	public static double kSwitchTurnPositionOffsetX = (kSwitchLengthX/2) + kPowerCubeZoneLengthX;// + Constants.kCenterToRearBumper;
+	public static double kSwitchTurnPositionOffsetX = (kSwitchLengthX/2);// + kPowerCubeZoneLengthX + Constants.kCenterToRearBumper;
 	public static double kSwitchTurnAngle =  Math.toRadians(-10);//Math.atan(kTurnPositionOffsetY/kSwitchTurnPositionOffsetX);
 	public static double kLeftSwitchTurnAngle = (Math.PI + kSwitchTurnAngle);
 	public static double kRightSwitchTurnAngle = -kLeftSwitchTurnAngle;
 
 
-	public static double kScaleTurnAngle = Math.toRadians(-5);
+	public static double kScaleTurnAngle = Math.toRadians(10);
 	public static double kLeftScaleTurnAngle = (Math.PI + kScaleTurnAngle);
 	public static double kRightScaleTurnAngle = -kLeftScaleTurnAngle;
 	
@@ -72,9 +72,9 @@ public class FieldDimensions
 	public static double kCollisionAvoidanceOffsetY = 1;
 	
 	// get poses
-	public static Pose getCenterStartPose() { return new Pose(0, 0, 0); }
-	public static Pose getLeftStartPose() { return new Pose(0, (kAllianceStationLengthY/2) - Constants.kCenterToSideBumper, 0); }
-	public static Pose getRightStartPose() { return new Pose(0, -((kAllianceStationLengthY/2) - Constants.kCenterToSideBumper), 0); }
+	public static Pose getCenterStartPose() { return new Pose(Constants.kCenterToRearBumper, 0, 0); }
+	public static Pose getLeftStartPose() { return new Pose(Constants.kCenterToRearBumper, (kAllianceStationLengthY/2) - Constants.kCenterToSideBumper, 0); }
+	public static Pose getRightStartPose() { return new Pose(Constants.kCenterToRearBumper, -((kAllianceStationLengthY/2) - Constants.kCenterToSideBumper), 0); }
 	public static Pose getExchangeStartPose() { return new Pose(0, 0, 0); }	// temporary-- TODO: replace!
 	public static Pose getOtherStartPose() { return new Pose(0, 0, 0); }	// temporary-- TODO: replace!
 	

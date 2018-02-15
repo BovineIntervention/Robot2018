@@ -2,7 +2,9 @@ package org.usfirst.frc.team686.robot.auto.modes;
 
 import org.usfirst.frc.team686.robot.auto.AutoModeBase;
 import org.usfirst.frc.team686.robot.auto.AutoModeEndedException;
+import org.usfirst.frc.team686.robot.auto.actions.AutoActions;
 import org.usfirst.frc.team686.robot.auto.actions.SeriesAction;
+import org.usfirst.frc.team686.robot.lib.util.Pose;
 
 /**
  * Fallback for when all autonomous modes do not work, resulting in a robot
@@ -22,4 +24,12 @@ public class RunSeriesActionMode extends AutoModeBase {
     	runAction( autoActions );
     	
     }
+    
+    @Override
+    public Pose getInitialPose()
+    {
+    	return AutoActions.getInitialPose();
+    }
+    
+    
 }

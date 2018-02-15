@@ -2,6 +2,7 @@ package org.usfirst.frc.team686.robot.lib.joystick;
 
 import org.usfirst.frc.team686.robot.lib.joystick.JoystickControlsBase;
 import org.usfirst.frc.team686.robot.lib.util.Util;
+import org.usfirst.frc.team686.robot.Constants;
 import org.usfirst.frc.team686.robot.command_status.DriveCommand;
 
 /**
@@ -24,6 +25,9 @@ public class ArcadeDriveJoystick extends JoystickControlsBase
 	    
     	double throttle = -mStick.getY();	// TODO: figure out why Y-axis is negated
         double turn     = -mStick.getX();	// TODO: figure out why X-axis is negated
+        
+        if(throttle < Constants.kDriveDeadzone && throttle > -Constants.kDriveDeadzone){throttle = 0;}
+        if(turn < Constants.kDriveDeadzone && turn > -Constants.kDriveDeadzone){turn = 0;}
      
 	    double moveValue   = Util.limit(throttle, 1.0);
 	    double rotateValue = Util.limit(turn,     1.0);

@@ -2,6 +2,7 @@ package org.usfirst.frc.team686.robot.auto.actions;
 
 import java.util.Optional;
 
+//import org.junit.Test;
 import org.usfirst.frc.team686.robot.Constants;
 import org.usfirst.frc.team686.robot.auto.modes.FieldDimensions;
 import org.usfirst.frc.team686.robot.lib.util.Path;
@@ -15,20 +16,25 @@ public class AutoActions {
 	
 	public AutoActions(){}
 	
+	static Pose initialPose;
 	PathSegment.Options pathOptions   = new PathSegment.Options(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, Constants.kPathFollowingLookahead, false);
 	PathSegment.Options visionOptions = new PathSegment.Options(Constants.kVisionMaxVel,        Constants.kVisionMaxAccel,        Constants.kPathFollowingLookahead, true);
 
+	
 
+	public static Pose getInitialPose() { return initialPose; }
 	
 	public SeriesAction LeftStartToLeftSwitchEdgeAction(){
-		
+System.out.println("RUNNING: LeftStartToLeftSwitchEdgeAction");
 		double isRight = -1;
 		
 		Path path;
+		Path pathAlign;
+		Path pathToSwitch;
 		Path pathBackup;
 		
 		// get initial position
-		Pose initialPose = FieldDimensions.getLeftStartPose();
+		initialPose = FieldDimensions.getLeftStartPose();
 		Vector2d initialPosition = initialPose.getPosition();
 		double initialHeading = initialPose.getHeading();
 		
@@ -70,6 +76,15 @@ System.out.println("INITIAL FORWARD POSITION: " + initialForwardPosition.toStrin
 		System.out.println(switchTurnPosition.toString());
 		path.add(new Waypoint(switchStopPosition, 	pathOptions));
 		
+		pathAlign = new Path();
+		pathAlign.add(new Waypoint(switchStopPosition, pathOptions));
+		pathAlign.add(new Waypoint(switchBackupPosition, pathOptions));
+		pathAlign.setReverseDirection();
+		
+		pathToSwitch = new Path();
+		pathToSwitch.add(new Waypoint(switchBackupPosition, pathOptions));
+		pathToSwitch.add(new Waypoint(switchStopPosition, pathOptions));
+		
 		pathBackup = new Path();
 		pathBackup.add(new Waypoint(switchStopPosition, pathOptions));
 System.out.println("SWITCH STOP POSITION: " + switchStopPosition.toString());
@@ -79,6 +94,8 @@ System.out.println("BACKUP POSITION: " + switchBackupPosition.toString());
 		
 		SeriesAction actions = new SeriesAction();
 		actions.add( new PathFollowerWithVisionAction( path ) );
+		actions.add( new PathFollowerWithVisionAction( pathAlign ) );
+		actions.add( new PathFollowerWithVisionAction(pathToSwitch) );
 		actions.add( new WaitAction(5) );
 		actions.add( new PathFollowerWithVisionAction( pathBackup ) );
 		
@@ -91,10 +108,12 @@ System.out.println("BACKUP POSITION: " + switchBackupPosition.toString());
 		double isRight = 1;
 		
 		Path path;
+		Path pathAlign;
+		Path pathToSwitch;
 		Path pathBackup;
 		
 		// get initial position
-		Pose initialPose = FieldDimensions.getLeftStartPose();
+		initialPose = FieldDimensions.getLeftStartPose();
 		Vector2d initialPosition = initialPose.getPosition();
 		double initialHeading = initialPose.getHeading();
 
@@ -166,6 +185,15 @@ System.out.println("CROSS POSITION: " + crossPosition.toString());
 System.out.println("SWITCH TURN POSITION: " + switchTurnPosition.toString());
 		path.add(new Waypoint(switchStopPosition, 	pathOptions));
 		
+		pathAlign = new Path();
+		pathAlign.add(new Waypoint(switchStopPosition, pathOptions));
+		pathAlign.add(new Waypoint(switchBackupPosition, pathOptions));
+		pathAlign.setReverseDirection();
+		
+		pathToSwitch = new Path();
+		pathToSwitch.add(new Waypoint(switchBackupPosition, pathOptions));
+		pathToSwitch.add(new Waypoint(switchStopPosition, pathOptions));
+		
 		pathBackup = new Path();
 		pathBackup.add(new Waypoint(switchStopPosition, pathOptions));
 System.out.println("SWITCH STOP POSITION" + switchStopPosition.toString());
@@ -175,6 +203,9 @@ System.out.println("SWITCH BACKUP POSITION: " + switchBackupPosition.toString())
 		
 		SeriesAction actions = new SeriesAction();
 		actions.add( new PathFollowerWithVisionAction( path ) );
+		actions.add( new PathFollowerWithVisionAction( pathAlign ) );
+		actions.add( new PathFollowerWithVisionAction( pathToSwitch ) );
+		//actions.add( new PointTurnAction(90) );
 		actions.add( new WaitAction(5) );
 		actions.add( new PathFollowerWithVisionAction( pathBackup ) );
 		
@@ -187,10 +218,12 @@ System.out.println("SWITCH BACKUP POSITION: " + switchBackupPosition.toString())
 		double isRight = -1;
 		
 		Path path;
+		Path pathAlign;
+		Path pathToSwitch;
 		Path pathBackup;
 		
 		// get initial position
-		Pose initialPose = FieldDimensions.getRightStartPose();
+		initialPose = FieldDimensions.getRightStartPose();
 		Vector2d initialPosition = initialPose.getPosition();
 		double initialHeading = initialPose.getHeading();
 
@@ -280,13 +313,17 @@ System.out.println("SWITCH BACKUP POSITION: " + switchBackupPosition.toString())
 	
 	public SeriesAction RightStartToRightSwitchEdgeAction(){
 		
+System.out.println("RUNNING: RightStartToRightSwitchEdgeAction");
+		
 		double isRight = 1;
 		
 		Path path;
+		Path pathAlign;
+		Path pathToSwitch;
 		Path pathBackup;
 		
 		// get initial position
-		Pose initialPose = FieldDimensions.getRightStartPose();
+		initialPose = FieldDimensions.getRightStartPose();
 		Vector2d initialPosition = initialPose.getPosition();
 		double initialHeading = initialPose.getHeading();
 		
@@ -328,6 +365,15 @@ System.out.println("INITIAL FORWARD POSITION: " + initialForwardPosition.toStrin
 		System.out.println(switchTurnPosition.toString());
 		path.add(new Waypoint(switchStopPosition, 	pathOptions));
 		
+		pathAlign = new Path();
+		pathAlign.add(new Waypoint(switchStopPosition, pathOptions));
+		pathAlign.add(new Waypoint(switchBackupPosition, pathOptions));
+		pathAlign.setReverseDirection();
+		
+		pathToSwitch = new Path();
+		pathToSwitch.add(new Waypoint(switchBackupPosition, pathOptions));
+		pathToSwitch.add(new Waypoint(switchStopPosition, pathOptions));
+		
 		pathBackup = new Path();
 		pathBackup.add(new Waypoint(switchStopPosition, pathOptions));
 System.out.println("SWITCH STOP POSITION: " + switchStopPosition.toString());
@@ -337,6 +383,9 @@ System.out.println("BACKUP POSITION: " + switchBackupPosition.toString());
 		
 		SeriesAction actions = new SeriesAction();
 		actions.add( new PathFollowerWithVisionAction( path ) );
+		actions.add( new PathFollowerWithVisionAction( pathAlign ) );
+		actions.add( new PathFollowerWithVisionAction( pathToSwitch ) );
+		//actions.add( new PointTurnAction(90) );
 		actions.add( new WaitAction(5) );
 		actions.add( new PathFollowerWithVisionAction( pathBackup ) );
 		
@@ -345,14 +394,18 @@ System.out.println("BACKUP POSITION: " + switchBackupPosition.toString());
 	}
 	
 	public SeriesAction CenterStartToLeftSwitchEdgeAction(){
+		
+System.out.println("RUNNING: CenterStartToLeftSwitchEdgeAction");
 
 		double isRight = -1;
 				
 		Path path;
+		Path pathAlign;
+		Path pathToSwitch;
 		Path pathBackup;
 		
 		// get initial position
-		Pose initialPose = FieldDimensions.getCenterStartPose();
+		initialPose = FieldDimensions.getCenterStartPose();
 		Vector2d initialPosition = initialPose.getPosition();
 		double initialHeading = initialPose.getHeading();
 		
@@ -409,6 +462,15 @@ System.out.println("BACKUP POSITION: " + switchBackupPosition.toString());
 		System.out.println(switchTurnPosition.toString());
 		path.add(new Waypoint(switchStopPosition, 	pathOptions));
 		
+		pathAlign = new Path();
+		pathAlign.add(new Waypoint(switchStopPosition, pathOptions));
+		pathAlign.add(new Waypoint(switchBackupPosition, pathOptions));
+		pathAlign.setReverseDirection();
+		
+		pathToSwitch = new Path();
+		pathToSwitch.add(new Waypoint(switchBackupPosition, pathOptions));
+		pathToSwitch.add(new Waypoint(switchStopPosition, pathOptions));
+		
 		pathBackup = new Path();
 		pathBackup.add(new Waypoint(switchStopPosition, pathOptions));
 		System.out.println(switchStopPosition.toString());
@@ -418,6 +480,9 @@ System.out.println("BACKUP POSITION: " + switchBackupPosition.toString());
 		
 		SeriesAction actions = new SeriesAction();
 		actions.add( new PathFollowerWithVisionAction( path ) );
+		actions.add( new PathFollowerWithVisionAction(pathAlign) );
+		actions.add( new PathFollowerWithVisionAction(pathToSwitch) );
+		//actions.add( new PointTurnAction(90) );
 		actions.add( new WaitAction(5) );
 		actions.add( new PathFollowerWithVisionAction( pathBackup ) );
 		
@@ -429,10 +494,12 @@ System.out.println("BACKUP POSITION: " + switchBackupPosition.toString());
 		double isRight = 1;
 		
 		Path path;
+		Path pathAlign;
+		Path pathToSwitch;
 		Path pathBackup;
 		
 		// get initial position
-		Pose initialPose = FieldDimensions.getCenterStartPose();
+		initialPose = FieldDimensions.getCenterStartPose();
 		Vector2d initialPosition = initialPose.getPosition();
 		double initialHeading = initialPose.getHeading();
 		
@@ -489,7 +556,17 @@ System.out.println("BACKUP POSITION: " + switchBackupPosition.toString());
 		System.out.println(switchTurnPosition.toString());
 		path.add(new Waypoint(switchStopPosition, 	pathOptions));
 		
+		pathAlign = new Path();
+		pathAlign.add(new Waypoint(switchStopPosition, pathOptions));
+		pathAlign.add(new Waypoint(switchBackupPosition, pathOptions));
+		pathAlign.setReverseDirection();
+		
+		pathToSwitch = new Path();
+		pathToSwitch.add(new Waypoint(switchBackupPosition, pathOptions));
+		pathToSwitch.add(new Waypoint(switchStopPosition, pathOptions));
+		
 		pathBackup = new Path();
+		//pathBackup.add(new Waypoint(switchBackupPosition, 		pathOptions));
 		pathBackup.add(new Waypoint(switchStopPosition, pathOptions));
 		System.out.println(switchStopPosition.toString());
 		pathBackup.add(new Waypoint(switchBackupPosition, 		pathOptions));
@@ -498,6 +575,8 @@ System.out.println("BACKUP POSITION: " + switchBackupPosition.toString());
 		
 		SeriesAction actions = new SeriesAction();
 		actions.add( new PathFollowerWithVisionAction( path ) );
+		actions.add(new PathFollowerWithVisionAction( pathAlign ));
+		actions.add(new PathFollowerWithVisionAction(pathToSwitch));
 		actions.add( new WaitAction(5) );
 		actions.add( new PathFollowerWithVisionAction( pathBackup ) );
 		
@@ -510,10 +589,12 @@ System.out.println("BACKUP POSITION: " + switchBackupPosition.toString());
 		double isRight = -1;
 		
 		Path path;
+		Path pathAlign;
+		Path pathToScale;
 		Path pathBackup;
 		
 		// get initial position
-		Pose initialPose = FieldDimensions.getLeftStartPose();
+		initialPose = FieldDimensions.getLeftStartPose();
 		Vector2d initialPosition = initialPose.getPosition();
 		double initialHeading = initialPose.getHeading();
 		   
@@ -572,6 +653,15 @@ System.out.println("BACKUP POSITION: " + switchBackupPosition.toString());
 System.out.println(scaleTurnPosition.toString());
 		path.add(new Waypoint(scaleStopPosition, 	pathOptions));
 		
+		pathAlign = new Path();
+		pathAlign.add(new Waypoint(scaleStopPosition, pathOptions));
+		pathAlign.add(new Waypoint(scaleBackupPosition, pathOptions));
+		pathAlign.setReverseDirection();
+		
+		pathToScale = new Path();
+		pathToScale.add(new Waypoint(scaleBackupPosition, pathOptions));
+		pathToScale.add(new Waypoint(scaleStopPosition, pathOptions));
+		
 		pathBackup = new Path();
 		pathBackup.add(new Waypoint(scaleStopPosition, pathOptions));
 System.out.println(scaleStopPosition.toString());
@@ -581,6 +671,8 @@ System.out.println(scaleBackupPosition.toString());
 		
 		SeriesAction actions = new SeriesAction();
 		actions.add( new PathFollowerWithVisionAction( path ) );
+		actions.add( new PathFollowerWithVisionAction(pathAlign) );
+		actions.add( new PathFollowerWithVisionAction(pathToScale) );
 		actions.add( new WaitAction(5) );
 		actions.add( new PathFollowerWithVisionAction( pathBackup ) );
 		
@@ -593,10 +685,12 @@ System.out.println(scaleBackupPosition.toString());
 		double isRight = 1;
 		
 		Path path;
+		Path pathAlign;
+		Path pathToScale;
 		Path pathBackup;
 		
 		// get initial position
-		Pose initialPose = FieldDimensions.getLeftStartPose();
+		initialPose = FieldDimensions.getLeftStartPose();
 		Vector2d initialPosition = initialPose.getPosition();
 		double initialHeading = initialPose.getHeading();
 
@@ -674,6 +768,15 @@ System.out.println("CROSS POSITION: " + crossPosition.toString());
 System.out.println("SWITCH TURN POSITION: " + switchTurnPosition.toString());
 		path.add(new Waypoint(scaleStopPosition, 	pathOptions));
 		
+		pathAlign = new Path();
+		pathAlign.add(new Waypoint(scaleStopPosition, pathOptions));
+		pathAlign.add(new Waypoint(scaleBackupPosition, pathOptions));
+		pathAlign.setReverseDirection();
+		
+		pathToScale = new Path();
+		pathToScale.add(new Waypoint(scaleBackupPosition, pathOptions));
+		pathToScale.add(new Waypoint(scaleStopPosition, pathOptions));
+		
 		pathBackup = new Path();
 		pathBackup.add(new Waypoint(scaleStopPosition, pathOptions));
 System.out.println("SWITCH STOP POSITION" + scaleStopPosition.toString());
@@ -683,6 +786,9 @@ System.out.println("SWITCH BACKUP POSITION: " + scaleBackupPosition.toString());
 		
 		SeriesAction actions = new SeriesAction();
 		actions.add( new PathFollowerWithVisionAction( path ) );
+		actions.add( new PathFollowerWithVisionAction(pathAlign) );
+		actions.add( new PathFollowerWithVisionAction(pathToScale) );
+		//actions.add( new PointTurnAction(90) );
 		actions.add( new WaitAction(5) );
 		actions.add( new PathFollowerWithVisionAction( pathBackup ) );
 		
@@ -694,10 +800,12 @@ System.out.println("SWITCH BACKUP POSITION: " + scaleBackupPosition.toString());
 		double isRight = -1;
 		
 		Path path;
+		Path pathAlign;
+		Path pathToScale;
 		Path pathBackup;
 		
 		// get initial position
-		Pose initialPose = FieldDimensions.getRightStartPose();
+		initialPose = FieldDimensions.getRightStartPose();
 		Vector2d initialPosition = initialPose.getPosition();
 		double initialHeading = initialPose.getHeading();
 
@@ -780,6 +888,15 @@ System.out.println("CROSS POSITION: " + crossPosition.toString());
 System.out.println("SWITCH TURN POSITION: " + switchTurnPosition.toString());
 		path.add(new Waypoint(scaleStopPosition, 	pathOptions));
 		
+		pathAlign = new Path();
+		pathAlign.add(new Waypoint(scaleStopPosition, pathOptions));
+		pathAlign.add(new Waypoint(scaleBackupPosition, pathOptions));
+		pathAlign.setReverseDirection();
+		
+		pathToScale = new Path();
+		pathToScale.add(new Waypoint(scaleBackupPosition, pathOptions));
+		pathToScale.add(new Waypoint(scaleStopPosition, pathOptions));
+		
 		pathBackup = new Path();
 		pathBackup.add(new Waypoint(scaleStopPosition, pathOptions));
 System.out.println("SWITCH STOP POSITION" + scaleStopPosition.toString());
@@ -789,6 +906,8 @@ System.out.println("SWITCH BACKUP POSITION: " + scaleBackupPosition.toString());
 		
 		SeriesAction actions = new SeriesAction();
 		actions.add( new PathFollowerWithVisionAction( path ) );
+		actions.add( new PathFollowerWithVisionAction( pathAlign ) );
+		actions.add( new PathFollowerWithVisionAction( pathToScale ) );
 		actions.add( new WaitAction(5) );
 		actions.add( new PathFollowerWithVisionAction( pathBackup ) );
 		
@@ -800,10 +919,12 @@ System.out.println("SWITCH BACKUP POSITION: " + scaleBackupPosition.toString());
 		double isRight = 1;
 		
 		Path path;
+		Path pathAlign;
+		Path pathToScale;
 		Path pathBackup;
 		
 		// get initial position
-		Pose initialPose = FieldDimensions.getRightStartPose();
+		initialPose = FieldDimensions.getRightStartPose();
 		Vector2d initialPosition = initialPose.getPosition();
 		double initialHeading = initialPose.getHeading();
 		   
@@ -861,6 +982,15 @@ System.out.println("SWITCH BACKUP POSITION: " + scaleBackupPosition.toString());
 System.out.println(scaleTurnPosition.toString());
 		path.add(new Waypoint(scaleStopPosition, 	pathOptions));
 		
+		pathAlign = new Path();
+		pathAlign.add(new Waypoint(scaleStopPosition, pathOptions));
+		pathAlign.add(new Waypoint(scaleBackupPosition, pathOptions));
+		pathAlign.setReverseDirection();
+		
+		pathToScale = new Path();
+		pathToScale.add(new Waypoint(scaleBackupPosition, pathOptions));
+		pathToScale.add(new Waypoint(scaleStopPosition, pathOptions));
+		
 		pathBackup = new Path();
 		pathBackup.add(new Waypoint(scaleStopPosition, pathOptions));
 System.out.println(scaleStopPosition.toString());
@@ -870,6 +1000,9 @@ System.out.println(scaleBackupPosition.toString());
 		
 		SeriesAction actions = new SeriesAction();
 		actions.add( new PathFollowerWithVisionAction( path ) );
+		actions.add( new PathFollowerWithVisionAction( pathAlign ) );
+		actions.add( new PathFollowerWithVisionAction(pathToScale) );
+		//actions.add( new PointTurnAction(90) );
 		actions.add( new WaitAction(5) );
 		actions.add( new PathFollowerWithVisionAction( pathBackup ) );
 		
@@ -882,10 +1015,12 @@ System.out.println(scaleBackupPosition.toString());
 		double isRight = -1;
 		
 		Path path;
+		Path pathAlign;
+		Path pathToScale;
 		Path pathBackup;
 		
 		// get initial position
-		Pose initialPose = FieldDimensions.getCenterStartPose();
+		initialPose = FieldDimensions.getCenterStartPose();
 		Vector2d initialPosition = initialPose.getPosition();
 		double initialHeading = initialPose.getHeading();
 
@@ -941,6 +1076,15 @@ System.out.println(scaleBackupPosition.toString());
 		System.out.println(switchTurnPosition.toString());
 		path.add(new Waypoint(scaleStopPosition, 	pathOptions));
 		
+		pathAlign = new Path();
+		pathAlign.add(new Waypoint(scaleStopPosition, pathOptions));
+		pathAlign.add(new Waypoint(scaleBackupPosition, pathOptions));
+		pathAlign.setReverseDirection();
+		
+		pathToScale = new Path();
+		pathToScale.add(new Waypoint(scaleBackupPosition, pathOptions));
+		pathToScale.add(new Waypoint(scaleStopPosition, pathOptions));
+		
 		pathBackup = new Path();
 		pathBackup.add(new Waypoint(scaleStopPosition, pathOptions));
 		System.out.println(scaleStopPosition.toString());
@@ -950,6 +1094,8 @@ System.out.println(scaleBackupPosition.toString());
 		
 		SeriesAction actions = new SeriesAction();
 		actions.add( new PathFollowerWithVisionAction( path ) );
+		actions.add( new PathFollowerWithVisionAction( pathAlign ) );
+		actions.add( new PathFollowerWithVisionAction( pathToScale ) );
 		actions.add( new WaitAction(5) );
 		actions.add( new PathFollowerWithVisionAction( pathBackup ) );
 		
@@ -962,10 +1108,12 @@ System.out.println(scaleBackupPosition.toString());
 		double isRight = 1;
 		
 		Path path;
+		Path pathAlign;
+		Path pathToScale;
 		Path pathBackup;
 		
 		// get initial position
-		Pose initialPose = FieldDimensions.getCenterStartPose();
+		initialPose = FieldDimensions.getCenterStartPose();
 		Vector2d initialPosition = initialPose.getPosition();
 		double initialHeading = initialPose.getHeading();
 
@@ -979,13 +1127,18 @@ System.out.println(scaleBackupPosition.toString());
 		Vector2d switchPosition = switchPose.getPosition();
 		double switchHeading = switchPose.getHeading();
 		
+		// get scale pose
+		Pose scalePose = FieldDimensions.getRightScalePose();
+		Vector2d scalePosition = scalePose.getPosition();
+		double scaleHeading = scalePose.getHeading();
+		
 
 		// get turn position
 		double switchTurnPositionX = FieldDimensions.getSwitchTurnPositionX();
 		Pose switchTurnPoseX = new Pose(switchTurnPositionX, 0, Math.toRadians(90*isRight));
 		
 		Vector2d switchTurnPositionY = new Vector2d(switchPosition.getX(), switchPosition.getY() - (FieldDimensions.getSwitchTurnOffsetY()*isRight) - (Constants.kCenterToFrontBumper*isRight));
-		Pose switchTurnPoseY = new Pose(switchTurnPositionY, switchHeading); // shift intersection line from switch pose 36" from the switch
+		Pose switchTurnPoseY = new Pose(switchTurnPositionY, scaleHeading); // shift intersection line from switch pose 36" from the switch
 		
 		Optional<Vector2d> intersection = Util.getLineIntersection(switchTurnPoseX, switchTurnPoseY);
 		Vector2d switchTurnPosition;
@@ -995,9 +1148,6 @@ System.out.println(scaleBackupPosition.toString());
 			switchTurnPosition = new Vector2d(switchTurnPositionX, switchPosition.getY() + FieldDimensions.getSwitchTurnOffsetY()*isRight);
 
 		
-		// get scale pose
-		Pose scalePose = FieldDimensions.getRightScalePose();
-		Vector2d scalePosition = scalePose.getPosition();
 		
 		// get scale stop position
 		Vector2d scaleStopPosition = new Vector2d(scalePosition.getX(), scalePosition.getY() - (Constants.kCenterToFrontBumper*isRight) - (FieldDimensions.getCollisionAvoidanceOffsetY()*isRight)); //avoid collision with fence
@@ -1021,6 +1171,15 @@ System.out.println(scaleBackupPosition.toString());
 		System.out.println(switchTurnPosition.toString());
 		path.add(new Waypoint(scaleStopPosition, 	pathOptions));
 		
+		pathAlign = new Path();
+		pathAlign.add(new Waypoint(scaleStopPosition, pathOptions));
+		pathAlign.add(new Waypoint(scaleBackupPosition, pathOptions));
+		pathAlign.setReverseDirection();
+		
+		pathToScale = new Path();
+		pathToScale.add(new Waypoint(scaleBackupPosition, pathOptions));
+		pathToScale.add(new Waypoint(scaleStopPosition, pathOptions));
+		
 		pathBackup = new Path();
 		pathBackup.add(new Waypoint(scaleStopPosition, pathOptions));
 		System.out.println(scaleStopPosition.toString());
@@ -1030,6 +1189,9 @@ System.out.println(scaleBackupPosition.toString());
 		
 		SeriesAction actions = new SeriesAction();
 		actions.add( new PathFollowerWithVisionAction( path ) );
+		actions.add( new PathFollowerWithVisionAction(pathAlign) );
+		actions.add( new PathFollowerWithVisionAction(pathToScale) );
+		//actions.add( new PointTurnAction(90) );
 		actions.add( new WaitAction(5) );
 		actions.add( new PathFollowerWithVisionAction( pathBackup ) );
 		

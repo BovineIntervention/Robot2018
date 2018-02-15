@@ -45,7 +45,7 @@ public class Robot extends IterativeRobot {
 
 	RobotState robotState = RobotState.getInstance();
 	Drive drive = Drive.getInstance();
-	//ArmBar armBar = ArmBar.getInstance();
+	ArmBar armBar = ArmBar.getInstance();
 	Elevator elevator = Elevator.getInstance();
 	
 	AutoModeExecuter autoModeExecuter = null;
@@ -88,7 +88,7 @@ public class Robot extends IterativeRobot {
     		loopController.register(drive.getVelocityPIDLoop());
     		loopController.register(DriveLoop.getInstance());
        		//loopController.register(ArmBarLoop.getInstance());
-    		loopController.register(ElevatorLoop.getInstance());
+    		//loopController.register(ElevatorLoop.getInstance());
        		loopController.register(RobotStateLoop.getInstance());
     		
     		smartDashboardInteractions = new SmartDashboardInteractions();
@@ -123,14 +123,14 @@ public class Robot extends IterativeRobot {
     public void zeroAllSensors()
     {
     	drive.zeroSensors();
-    	//armBar.zeroSensors();
+    	armBar.zeroSensors();
 		// mSuperstructure.zeroSensors();
     }
     
     public void stopAll()
     {
     	drive.stop();
-    	//armBar.stop();
+    	armBar.stop();
 		// mSuperstructure.stop();
     }
 
@@ -159,7 +159,7 @@ public class Robot extends IterativeRobot {
 
 			stopAll(); // stop all actuators
 			loopController.start();
-			//armBar.disable();
+			armBar.disable();
 			elevator.disable();
 		}
 		catch (Throwable t)
@@ -216,7 +216,7 @@ public class Robot extends IterativeRobot {
 
 			autoModeExecuter.start();
 			
-			//armBar.enable();
+			armBar.enable();
 			elevator.enable();
     	}
     	catch(Throwable t)
@@ -263,7 +263,7 @@ public class Robot extends IterativeRobot {
 			loopController.start();
 
 			drive.setOpenLoop(DriveCommand.COAST());
-			//armBar.enable();
+			armBar.enable();
 			elevator.enable();
 		} 
 		catch (Throwable t) 
@@ -282,15 +282,15 @@ public class Robot extends IterativeRobot {
 			if ((autoModeExecuter == null) || (!autoModeExecuter.getAutoMode().isActive()))
 				drive.setOpenLoop(controls.getDriveCommand());
 
-			if (elevatorSwitchButton) { elevator.set(ElevatorHeight.SWITCH); }
-			if (elevatorScaleButton)  { elevator.set(ElevatorHeight.SCALE_MED); }
+			//if (elevatorSwitchButton) { elevator.set(ElevatorHeight.SWITCH); }
+			//if (elevatorScaleButton)  { elevator.set(ElevatorHeight.SCALE_MED); }
 				
-			/*
+			
 			if (controls.getButton(Constants.kXboxButtonY))
 				armBar.up();
 			if (controls.getButton(Constants.kXboxButtonA))
 				armBar.down();
-			*/
+			
 			
 //			// override operator controls if button board direction is set
 //			Optional<Double> buttonBoardDirection = buttonBoard.getDirection();

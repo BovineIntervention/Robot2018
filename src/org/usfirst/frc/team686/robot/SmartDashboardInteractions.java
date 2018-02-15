@@ -85,27 +85,6 @@ public class SmartDashboardInteractions
     }
 
 
-    SendableChooser<AutoStartOption> startPositionChooser;
-
-    enum AutoStartOption
-    {
-        START_POS_1("Left Start Pos", 1, new Pose(1,1,0)),	// TODO: enter correct start position
-        START_POS_2("Center Start Pos", 2, new Pose(2,2,0)), 	// TODO: enter correct start position
-        START_POS_3("Right Start Pos", 3, new Pose(3,3,0));	// TODO: enter correct start position
-
-        public String name;
-        public int number;
-        public Pose startPose;
-
-        AutoStartOption(String _name, int _number, Pose _startPose)
-        {
-            name = _name;
-            number = _number;
-            startPose = _startPose;
-        }
-    }
-
-
     SendableChooser<JoystickOption> joystickModeChooser;
     
     enum JoystickOption 
@@ -145,12 +124,7 @@ public class SmartDashboardInteractions
         startDelayChooser.addObject(Integer.toString(3), 3);
         startDelayChooser.addObject(Integer.toString(4), 4);
         startDelayChooser.addObject(Integer.toString(5), 5);
-        
-    	startPositionChooser = new SendableChooser<AutoStartOption>();
-    	startPositionChooser.addDefault(AutoStartOption.START_POS_1.name, AutoStartOption.START_POS_1);
-    	startPositionChooser.addObject( AutoStartOption.START_POS_2.name, AutoStartOption.START_POS_2);
-    	startPositionChooser.addObject( AutoStartOption.START_POS_3.name, AutoStartOption.START_POS_3);
-    	SmartDashboard.putData("Start Position Chooser", startPositionChooser);
+       
     	
     	joystickModeChooser = new SendableChooser<JoystickOption>();
     	joystickModeChooser.addDefault(JoystickOption.ARCADE_DRIVE.name,        JoystickOption.ARCADE_DRIVE);
@@ -243,11 +217,8 @@ System.out.printf("GameData: %s, switchPose = %c, scalePose = %c\n ", gameData, 
     				actionSequence.add( autoActions.CenterStartToRightSwitchEdgeAction() );
     			}
     			break;
-    		default:
-    			break;
     		}
-    		break;
-    			
+    		break;	// case SWITCH_IF_SAME_SIDE
     			
     	case SCALE_IF_SAME_SIDE:
     		switch( startPose )
@@ -322,7 +293,7 @@ System.out.printf("GameData: %s, switchPose = %c, scalePose = %c\n ", gameData, 
     			break;
     		}
     		
-    		break;
+    		break;	// case SCALE_IF_SAME_SIDE
     			
     	case SWITCH_ALWAYS:
     		if( switchPose == 'L' )
@@ -331,10 +302,13 @@ System.out.printf("GameData: %s, switchPose = %c, scalePose = %c\n ", gameData, 
     			{
     			case LEFT_START:
     				actionSequence.add( autoActions.LeftStartToLeftSwitchEdgeAction() );
+    				break;
     			case RIGHT_START:
     				actionSequence.add( autoActions.RightStartToLeftSwitchEdgeAction() );
+    				break;
     			case CENTER_START:
     				actionSequence.add( autoActions.CenterStartToLeftSwitchEdgeAction() );
+    				break;
     			}
     		}
     		else
@@ -343,10 +317,13 @@ System.out.printf("GameData: %s, switchPose = %c, scalePose = %c\n ", gameData, 
     			{
     			case LEFT_START:
     				actionSequence.add( autoActions.LeftStartToRightSwitchEdgeAction() );
+    				break;
     			case RIGHT_START:
     				actionSequence.add( autoActions.RightStartToRightSwitchEdgeAction() );
+    				break;
     			case CENTER_START:
     				actionSequence.add( autoActions.CenterStartToRightSwitchEdgeAction() );
+    				break;
     			}
     		}
     		
@@ -360,10 +337,13 @@ System.out.printf("GameData: %s, switchPose = %c, scalePose = %c\n ", gameData, 
     			{
     			case LEFT_START:
     				actionSequence.add( autoActions.LeftStartToLeftScaleEdgeAction() );
+    				break;
     			case RIGHT_START:
     				actionSequence.add( autoActions.RightStartToLeftScaleEdgeAction() );
+    				break;
     			case CENTER_START:
-    				actionSequence.add( autoActions.CenterStartToLeftSwitchEdgeAction() );
+    				actionSequence.add( autoActions.CenterStartToLeftScaleEdgeAction() );
+    				break;
     			}
     		}
     		else
@@ -372,14 +352,18 @@ System.out.printf("GameData: %s, switchPose = %c, scalePose = %c\n ", gameData, 
     			{
     			case LEFT_START:
     				actionSequence.add( autoActions.LeftStartToRightScaleEdgeAction() );
+    				break;
     			case RIGHT_START:
     				actionSequence.add( autoActions.RightStartToRightScaleEdgeAction() );
+    				break;
     			case CENTER_START:
     				actionSequence.add( autoActions.CenterStartToRightScaleEdgeAction() );
+    				break;
     			}
     		}
-    		break;
+    		break; // case: SCALE_ALWAYS
     	}
+    	
     	return new SeriesAction(actionSequence);
     }
     

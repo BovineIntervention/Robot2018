@@ -284,7 +284,7 @@ public class Constants extends ConstantsBase
     		    
     		    kDriveVelocityKp = 20.0;
     		    kDriveVelocityKi = 0.01;
-    		    kDriveVelocityKd = 500.0;
+    		    kDriveVelocityKd = 70.0;
     		    kDriveVelocityKf = kNominalPercentOutput * 1023.0 / kNominalEncoderPulsePer100ms;
     		    kDriveVelocityIZone = 0;
     		    kDriveVelocityRampRate = 0.0;
@@ -422,8 +422,8 @@ public class Constants extends ConstantsBase
 	    kPointTurnCompletionTolerance = 1.0 * (Math.PI/180.0); 
 	    
 	    // Path following constants
-	    kPathFollowingMaxVel    = 80.0; // inches/sec  		
-	    kPathFollowingMaxAccel  = 48.0; // inches/sec^2	
+	    kPathFollowingMaxVel    = 40.0; // inches/sec  		
+	    kPathFollowingMaxAccel  = 24.0; // inches/sec^2	
 	    kPathFollowingLookahead = 24.0; // inches
 	    kPathFollowingCompletionTolerance = 1.0; 
 	    
