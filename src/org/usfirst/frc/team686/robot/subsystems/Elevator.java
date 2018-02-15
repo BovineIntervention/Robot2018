@@ -30,12 +30,12 @@ public class Elevator extends Subsystem {
 		{
 		case START_OF_MATCH:	goal = 0.0;		break;
 		case INTAKE:			goal = 0.0;		break;
-		case EXCHANGE:			goal = 0.0;		break;	// arm bar must move up a little
+		case EXCHANGE:			goal = calcElevatorHeight(Constants.kElevatorExchangeHeight,  Constants.kArmBarDownAngleDeg);	break;
 		case DRIVE:				goal = 0.0;		break;
-		case SWITCH:			goal = calcElevatorHeight(Constants.kSwitchHeight    + Constants.kCubeClearance, 0.0);		break;
-		case SCALE_LOW:			goal = calcElevatorHeight(Constants.kScaleHeightLow  + Constants.kCubeClearance, 0.0);		break;
-		case SCALE_MED:			goal = calcElevatorHeight(Constants.kScaleHeightMed  + Constants.kCubeClearance, 0.0);		break;
-		case SCALE_HIGH:		goal = calcElevatorHeight(Constants.kScaleHeightHigh + Constants.kCubeClearance, 0.0);		break;
+		case SWITCH:			goal = calcElevatorHeight(Constants.kElevatorSwitchHeight,    Constants.kArmBarFlatAngleDeg);	break;
+		case SCALE_LOW:			goal = calcElevatorHeight(Constants.kElevatorScaleHeightLow,  Constants.kArmBarFlatAngleDeg);	break;
+		case SCALE_MED:			goal = calcElevatorHeight(Constants.kElevatorScaleHeightMed,  Constants.kArmBarFlatAngleDeg);	break;
+		case SCALE_HIGH:		goal = calcElevatorHeight(Constants.kElevatorScaleHeightHigh, Constants.kArmBarFlatAngleDeg);	break;
 		default:				goal = 0.0;		break;
 		}
 		
