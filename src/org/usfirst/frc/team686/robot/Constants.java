@@ -128,14 +128,17 @@ public class Constants extends ConstantsBase
     
     // ELEVATOR    
     public static double kElevatorMinHeightLimit =  0.0;	// stop at min height
-    public static double kElevatorMaxHeightLimit = 65.0;	// stop at max height
-    
-    public static double kElevatorZeroingVelocity = 1;
-    public static double kElevatorVelocity = 10;	//30;
-    
-	public static double kElevatorQuadEncoderGain = 1.0;			// a 3:1 and 4:1 gear stages plus a 24:12 tooth reduction 
+	//public static double kElevatorMaxHeightLimit = 65.0;	// stop at max height	// TODO: figure out what this is
+	public static double kElevatorMaxHeightLimit = 65.0;	// protect the ceiling!  TODO: comment out for competition
+
+    public static double kElevatorZeroingVelocity = 1;		// inches per second
+	public static double kElevatorMaxVelocity = 10;	//30;	// inches per second
+	public static double kElevatorTimeToMaxVelocity = 0.25;	// seconds
+	public static double kElevatorMaxAccel = kElevatorMaxVelocity / kElevatorTimeToMaxVelocity;
+
+	public static double kElevatorQuadEncoderGain = 1.0;			// encoder is directly attached to motor drive shaft.  No gearing.
 	public static double kElevatorQuadEncoderUnitsPerRev = 4096;
-	public static double kElevatorGearCircum = 4.538;
+	public static double kElevatorGearCircum = 4.538;				// ~0.72 inch radius gear
 	public static double kElevatorEncoderUnitsPerInch = kElevatorQuadEncoderUnitsPerRev / kElevatorGearCircum * kElevatorQuadEncoderGain; 
     
 	public static double kElevatorKf = 0.0;

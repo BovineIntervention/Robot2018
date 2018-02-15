@@ -25,8 +25,9 @@ public class ElevatorLoop implements Loop{
 	private ElevatorState nextState = ElevatorState.UNINITIALIZED;
 	
 	public boolean enable = false;
-	
-	public double position;
+
+    public double position;
+    public double velocity;
 	public double goal;
 	public double filteredGoal;
 
@@ -156,7 +157,7 @@ public class ElevatorLoop implements Loop{
 			
 		case ZEROING:
 			// update goal to be slightly lowered, limited in velocity
-			filteredGoal  -= (Constants.kLoopDt * Constants.kElevatorZeroingVelocity);
+			filteredGoal  -= (Constants.kElevatorZeroingVelocity * Constants.kLoopDt);
 			
 			if (limitTriggered)
 			{
@@ -180,27 +181,16 @@ public class ElevatorLoop implements Loop{
 			break;
 			
 		case RUNNING:
-			// velocity control -- move filtered goal a little more towards the ultimate goal
-			
-			if (goal > filteredGoal)
-			{
-				// moving up
-				filteredGoal += Constants.kElevatorVelocity * Constants.kLoopDt;
-				filteredGoal = Math.min(filteredGoal, goal);
-			}
-			else
-			{
-				// moving down
-				filteredGoal -= Constants.kElevatorVelocity * Constants.kLoopDt;
-				filteredGoal = Math.max(filteredGoal, goal);
-			}
+			// speed control: apply acceleration and velocity limits to filtered goal
+			velocity = speedControl(position, goal, velocity, Constants.kElevatorMaxVelocity, Constants.kElevatorMaxAccel);
+			filteredGoal += velocity * Constants.kLoopDt;	// filteredGoal will converge to goal
 			break;
 			
 		default:
 			nextState = ElevatorState.UNINITIALIZED;
 		}
 
-		
+		// PID Loop
 		error = filteredGoal - position;
 		dError = (error - lastError) / Constants.kLoopDt;
 		iError += (error * Constants.kLoopDt);
@@ -213,6 +203,27 @@ public class ElevatorLoop implements Loop{
 		if(limitTriggered)
 			voltage = Math.max(voltage, 0.0);
 		return voltage;
+	}
+
+	public double speedControl(double _currentPosition, double _goalPosition, double _currentVelocity, double _maxVelocity, double _maxAcceleration)
+	{
+		double remainintDistance = _goalPosition - _currentPosition;
+		double directionSign = Math.signum(remainintDistance);
+
+		// calculate next velocity assuming we could use maximum acceleration
+		double nextVelocity = _currentVelocity + directionSign * (_maxAcceleration * Constants.kLoopDt);
+
+		// find the maximum stopping velocity for this distance
+		double stoppingVelocity = Math.sqrt(2.0 * _maxAcceleration * remainintDistance);
+
+		// apply velocity limits
+		nextVelocity = Math.min(nextVelocity, +stoppingVelocity);
+		nextVelocity = Math.max(nextVelocity, -stoppingVelocity);
+
+		nextVelocity = Math.min(nextVelocity, +_maxVelocity);
+		nextVelocity = Math.max(nextVelocity, -_maxVelocity);
+
+		return nextVelocity;
 	}
 
 	public String toString() 
