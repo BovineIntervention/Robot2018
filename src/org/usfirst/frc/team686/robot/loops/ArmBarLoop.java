@@ -5,6 +5,8 @@ import org.usfirst.frc.team686.robot.loops.ElevatorLoop.ElevatorState;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -57,10 +59,10 @@ public class ArmBarLoop implements Loop
 		talon.setInverted(true);
 
 		// Configure Limit Switch
-		// TODO: switch back to Talon limit switch when cable fixed
-		limitSwitch = new DigitalInput(1);
+		talon.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, Constants.kTalonTimeoutMs);
+		talon.overrideLimitSwitchesEnable(true); 	// enable limit switch
 		
-		disable();;
+		disable();
 	}
 	
 
@@ -92,9 +94,7 @@ public class ArmBarLoop implements Loop
 	
 	public int getEncoder() 
 	{
-		//TODO: switch back to this once Talon encoder wire is fixed
-		//int encoderEdges = talon.getSelectedSensorPosition(Constants.kTalonPidIdx);
-		int encoderEdges = talon.getSensorCollection().getQuadraturePosition();
+		int encoderEdges = talon.getSelectedSensorPosition(Constants.kTalonPidIdx);
 		return encoderEdges;
 	}
 	
@@ -105,8 +105,7 @@ public class ArmBarLoop implements Loop
 		return angleDeg;
 	}
 	
-	//TODO: switch back to this once Talon encoder wire is fixed
-	public boolean getLimitSwitch() { return !limitSwitch.get(); }	// returns true when limit switch is triggered 
+	public boolean getLimitSwitch() { return talon.getSensorCollection().isFwdLimitSwitchClosed(); }	// returns true when limit switch is triggered 
 	
 	
 	
@@ -126,7 +125,7 @@ public class ArmBarLoop implements Loop
 		double percentOutput = voltage / Constants.kNominalBatteryVoltage;			// normalize output to [-1,. +1]
 		talon.set(ControlMode.PercentOutput, percentOutput);				// send to motor control
 		
-		//System.out.println(toString());
+		System.out.println(toString());
 	}
 
 	@Override
@@ -154,6 +153,9 @@ public class ArmBarLoop implements Loop
 			if (enabled)
 			{
 				nextState = ArmBarState.CALIBRATING;	// when enabled, state ZEROING
+				talon.configReverseSoftLimitEnable(false, Constants.kTalonTimeoutMs);
+				talon.configForwardSoftLimitEnable(false, Constants.kTalonTimeoutMs);
+				talon.overrideLimitSwitchesEnable(false);	// disable soft limit switches during zeroing
 			}
 			break;
 			

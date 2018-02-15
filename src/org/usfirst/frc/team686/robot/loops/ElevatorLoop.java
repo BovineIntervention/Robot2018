@@ -20,7 +20,7 @@ public class ElevatorLoop implements Loop{
 	public double Kd = Constants.KElevatorKd;
 	public double Ki = Constants.KElevatorKi;
 	
-	public enum ElevatorState { UNINITIALIZED, ZEROING, RUNNING, ESTOPPED; }
+	public enum ElevatorState { UNINITIALIZED, ZEROING, MOVING, HOLDING, ESTOPPED; }
 	private ElevatorState state = ElevatorState.UNINITIALIZED;
 	private ElevatorState nextState = ElevatorState.UNINITIALIZED;
 	
@@ -75,6 +75,8 @@ public class ElevatorLoop implements Loop{
     {
         // limit goal
         goal = Math.min(Constants.kElevatorMaxHeightLimit, Math.max(Constants.kElevatorMinHeightLimit, _goal));
+        if (state == ElevatorState.HOLDING)
+        	nextState = ElevatorState.MOVING;  
 	}
 	public double getGoal () { return goal; } 
 	public double getFilteredGoal() { return filteredGoal; }
@@ -123,7 +125,7 @@ public class ElevatorLoop implements Loop{
 		double percentOutput = voltage / Constants.kNominalBatteryVoltage;
 		talon.set(ControlMode.PercentOutput, percentOutput);
 		
-		System.out.println(toString());
+		//System.out.println(toString());
 	}
 
 	@Override
@@ -151,6 +153,8 @@ public class ElevatorLoop implements Loop{
 			if (enabled)
 			{
 				nextState = ElevatorState.ZEROING;	// when enabled, state ZEROING
+				talon.configReverseSoftLimitEnable(false, Constants.kTalonTimeoutMs);
+				talon.configForwardSoftLimitEnable(false, Constants.kTalonTimeoutMs);
 				talon.overrideLimitSwitchesEnable(false);	// disable soft limit switches during zeroing
 			}
 			break;
@@ -176,14 +180,22 @@ public class ElevatorLoop implements Loop{
 				talon.configForwardSoftLimitEnable(true, Constants.kTalonTimeoutMs);
 				talon.overrideLimitSwitchesEnable(true);	// enable soft limit switches
 				
-				nextState = ElevatorState.RUNNING;	// start running state
+				nextState = ElevatorState.HOLDING;	// start running state
 			}
 			break;
 			
-		case RUNNING:
+		case HOLDING:
+			velocity = 0;
+			filteredGoal = position;
+			// stay here until a new goal is set
+			break;
+			
+		case MOVING:
 			// speed control: apply acceleration and velocity limits to filtered goal
-			velocity = speedControl(position, goal, velocity, Constants.kElevatorMaxVelocity, Constants.kElevatorMaxAccel);
+			velocity = speedControl(filteredGoal, goal, velocity, Constants.kElevatorMaxVelocity, Constants.kElevatorMaxAccel);
 			filteredGoal += velocity * Constants.kLoopDt;	// filteredGoal will converge to goal
+			if (Math.abs(position - goal) < Constants.kElevatorDistanceThreshold)
+				nextState = ElevatorState.HOLDING;
 			break;
 			
 		default:
@@ -205,16 +217,17 @@ public class ElevatorLoop implements Loop{
 		return voltage;
 	}
 
-	public double speedControl(double _currentPosition, double _goalPosition, double _currentVelocity, double _maxVelocity, double _maxAcceleration)
+	public double speedControl(double _filteredGoalPosition, double _goalPosition, double _currentVelocity, double _maxVelocity, double _maxAcceleration)
 	{
-		double remainintDistance = _goalPosition - _currentPosition;
-		double directionSign = Math.signum(remainintDistance);
+		double remainingDistance = _goalPosition - _filteredGoalPosition;
+		double directionSign = Math.signum(remainingDistance);
+		remainingDistance = Math.abs(remainingDistance);
 
 		// calculate next velocity assuming we could use maximum acceleration
 		double nextVelocity = _currentVelocity + directionSign * (_maxAcceleration * Constants.kLoopDt);
 
 		// find the maximum stopping velocity for this distance
-		double stoppingVelocity = Math.sqrt(2.0 * _maxAcceleration * remainintDistance);
+		double stoppingVelocity = Math.sqrt(2.0 * _maxAcceleration * remainingDistance);
 
 		// apply velocity limits
 		nextVelocity = Math.min(nextVelocity, +stoppingVelocity);
@@ -228,7 +241,7 @@ public class ElevatorLoop implements Loop{
 
 	public String toString() 
     {
-    	return String.format("%s, Enc: %d, Pos: %.1f, LimSwitch: %d, Goal: %.1f, FiltGoal = %.1f, e = %.1f, de = %.1f, ie = %.1f, voltage = %.1f", state.toString(), getEncoder(), getPosition(), getLimitSwitch() ? 1 : 0, goal, filteredGoal, error, dError, iError, voltage);
+    	return String.format("%s, Enc: %d, Pos: %.1f, LimSwitch: %d, Goal: %.1f, FiltGoal = %.1f, velocity = %.2f, e = %.1f, de = %.1f, ie = %.1f, voltage = %.1f", state.toString(), getEncoder(), getPosition(), getLimitSwitch() ? 1 : 0, goal, filteredGoal, velocity, error, dError, iError, voltage);
     }
 
 	

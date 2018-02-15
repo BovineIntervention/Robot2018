@@ -87,8 +87,8 @@ public class Robot extends IterativeRobot {
     		loopController = new LoopController();
     		loopController.register(drive.getVelocityPIDLoop());
     		loopController.register(DriveLoop.getInstance());
-       		//loopController.register(ArmBarLoop.getInstance());
-    		//loopController.register(ElevatorLoop.getInstance());
+       		loopController.register(ArmBarLoop.getInstance());
+    		loopController.register(ElevatorLoop.getInstance());
        		loopController.register(RobotStateLoop.getInstance());
     		
     		smartDashboardInteractions = new SmartDashboardInteractions();
@@ -277,16 +277,15 @@ public class Robot extends IterativeRobot {
 		try{
 			boolean elevatorSwitchButton = controls.getButton(Constants.kElevatorSwitchButton);
 			boolean elevatorScaleButton = controls.getButton(Constants.kElevatorScaleButton);
-			boolean armBarButton = controls.getButton(Constants.kArmBarButton);
 			
-			if ((autoModeExecuter == null) || (!autoModeExecuter.getAutoMode().isActive()))
+			if ((autoModeExecuter == null) || (!autoModeExecuter.getAutoMode().isActive()))	// ignore joystick when doing auto turns
 				drive.setOpenLoop(controls.getDriveCommand());
 
-			//if (elevatorSwitchButton) { elevator.set(ElevatorHeight.SWITCH); }
-			//if (elevatorScaleButton)  { elevator.set(ElevatorHeight.SCALE_MED); }
+			if (elevatorSwitchButton) { elevator.set(ElevatorHeight.SWITCH); }
+			if (elevatorScaleButton)  { elevator.set(ElevatorHeight.SCALE_LOW); }
 				
 			
-			if (controls.getButton(Constants.kXboxButtonY))
+			if (controls.getButton(Constants.kXboxButtonX))
 				armBar.up();
 			if (controls.getButton(Constants.kXboxButtonA))
 				armBar.down();

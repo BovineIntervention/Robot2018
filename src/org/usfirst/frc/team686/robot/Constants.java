@@ -131,8 +131,8 @@ public class Constants extends ConstantsBase
 	//public static double kElevatorMaxHeightLimit = 65.0;	// stop at max height	// TODO: figure out what this is
 	public static double kElevatorMaxHeightLimit = 65.0;	// protect the ceiling!  TODO: comment out for competition
 
-    public static double kElevatorZeroingVelocity = 1;		// inches per second
-	public static double kElevatorMaxVelocity = 10;	//30;	// inches per second
+    public static double kElevatorZeroingVelocity = 4;		// inches per second
+	public static double kElevatorMaxVelocity = 45;			// inches per second
 	public static double kElevatorTimeToMaxVelocity = 0.25;	// seconds
 	public static double kElevatorMaxAccel = kElevatorMaxVelocity / kElevatorTimeToMaxVelocity;
 
@@ -142,9 +142,11 @@ public class Constants extends ConstantsBase
 	public static double kElevatorEncoderUnitsPerInch = kElevatorQuadEncoderUnitsPerRev / kElevatorGearCircum * kElevatorQuadEncoderGain; 
     
 	public static double kElevatorKf = 0.0;
-	public static double kElevatorKp = 10;
+	public static double kElevatorKp = 10.0;
 	public static double KElevatorKd = 0.0;
 	public static double KElevatorKi = 0.0;
+	
+	public static double kElevatorDistanceThreshold = 0.1;
 	
     public static double kMaxElevatorVoltage = 12.0;
     
