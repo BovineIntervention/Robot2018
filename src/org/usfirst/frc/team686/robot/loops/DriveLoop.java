@@ -64,6 +64,9 @@ public class DriveLoop implements Loop
 		lMotorMaster.setNeutralMode(NeutralMode.Coast);
 		rMotorMaster.setNeutralMode(NeutralMode.Coast);
 
+		lMotorMaster.configOpenloopRamp(Constants.kDriveSecondsFromNeutralToFull, Constants.kTalonTimeoutMs);		
+		rMotorMaster.configOpenloopRamp(Constants.kDriveSecondsFromNeutralToFull, Constants.kTalonTimeoutMs);		
+		
 		// Set up the encoders
 		lMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, Constants.kTalonPidIdx, Constants.kTalonTimeoutMs);	// configure for closed-loop PID
 		rMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, Constants.kTalonPidIdx, Constants.kTalonTimeoutMs);

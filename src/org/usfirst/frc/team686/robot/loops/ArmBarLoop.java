@@ -125,7 +125,7 @@ public class ArmBarLoop implements Loop
 		double percentOutput = voltage / Constants.kNominalBatteryVoltage;			// normalize output to [-1,. +1]
 		talon.set(ControlMode.PercentOutput, percentOutput);				// send to motor control
 		
-		System.out.println(toString());
+		//System.out.println(toString());
 	}
 
 	@Override
