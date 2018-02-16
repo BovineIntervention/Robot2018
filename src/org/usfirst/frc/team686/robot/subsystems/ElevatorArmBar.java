@@ -98,18 +98,18 @@ public class ElevatorArmBar extends Subsystem {
 			elevatorLoop.setGoal(elevatorHeight);
 		}
 		
-		System.out.println(state.bottomOfCubeHeight + " " + state.retractedArmAngle + " " + state.extendedArmAngle);
+//		System.out.println(state.bottomOfCubeHeight + " " + state.retractedArmAngle + " " + state.extendedArmAngle);
 		
-		System.out.printf("ElevatorArmState = %s, Extend = %d, Elevator Goal: %.1f, ArmBar Goal = %.1f\n", state.toString(), (extended ? 1 : 0), elevatorLoop.getGoal(), armBarLoop.getGoal());
+//		System.out.printf("ElevatorArmState = %s, Extend = %d, Elevator Goal: %.1f, ArmBar Goal = %.1f\n", state.toString(), (extended ? 1 : 0), elevatorLoop.getGoal(), armBarLoop.getGoal());
 	}
 	
 	
 	private double calcElevatorHeight(double _bottomOfCubeHeight, double _armBarAngleDeg)
 	{
-		System.out.println("_bottomOfCubeHeight: " + _bottomOfCubeHeight);
-		System.out.println("_armBarAngleDeg: " + _armBarAngleDeg);
-		System.out.println("-Lsin(theta): " + (-Constants.kArmBarLength * Math.sin(_armBarAngleDeg * Math.PI / 180.0)));
-		System.out.println("+Lsinn(theta_down): " + (Constants.kArmBarLength * Math.sin(Constants.kArmBarDownAngleDeg * Math.PI / 180.0)));
+//		System.out.println("_bottomOfCubeHeight: " + _bottomOfCubeHeight);
+//		System.out.println("_armBarAngleDeg: " + _armBarAngleDeg);
+//		System.out.println("-Lsin(theta): " + (-Constants.kArmBarLength * Math.sin(_armBarAngleDeg * Math.PI / 180.0)));
+//		System.out.println("+Lsinn(theta_down): " + (Constants.kArmBarLength * Math.sin(Constants.kArmBarDownAngleDeg * Math.PI / 180.0)));
 		
 		// adjust height of elevator based on change in angle of arm bar from intake angle to expected outtake angle
 		return _bottomOfCubeHeight - Constants.kArmBarLength * Math.sin(_armBarAngleDeg * Math.PI / 180.0) + 

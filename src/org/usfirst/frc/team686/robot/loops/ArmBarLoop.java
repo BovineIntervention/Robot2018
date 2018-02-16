@@ -167,7 +167,7 @@ public class ArmBarLoop implements Loop
 			{
 				// CALIBRATING is done when limit switch is hit
 				setPosition(Constants.kArmBarUpAngleDeg);	// write new position to Talon
-				position = Constants.kArmBarUpAngleDeg;		// override positi;on before limit switch was hit
+				position = Constants.kArmBarUpAngleDeg;		// override position before limit switch was hit
 				setGoal(position);							// initial goal is to stay in the same position
 				filteredGoal = position;					// initial goal is to stay in the same position
 				
