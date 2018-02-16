@@ -175,6 +175,11 @@ public class Constants extends ConstantsBase
     public static double kCubeGrabHeight = 8.5;		// inches above ground where cube is grabbed
        
     
+    // INTAKE
+    public static double kBagMotorRPM = 13180;
+    public static double kIntakeRPM = 800;
+    public static double kIntakeSpeed = kIntakeRPM/kBagMotorRPM;
+    
     
     // Do not change anything after this line!
     
@@ -188,6 +193,11 @@ public class Constants extends ConstantsBase
 	public static int kLeftMotorSlave1TalonId;
 	public static int kLeftMotorSlave2TalonId;
 	public static int kArmBarTalonId;
+	public static int kLeftIntakeSparkChannel;
+	public static int kRightIntakeSparkChannel;
+	
+	public static int kIntakeSolenoidForwardChannel;
+	public static int kIntakeSolenoidReverseChannel;
 
     // left motors are inverted
     public static boolean	kLeftMotorInverted;
@@ -292,7 +302,7 @@ public class Constants extends ConstantsBase
     		    kDriveVelocityKd = 70.0;
     		    kDriveVelocityKf = kNominalPercentOutput * 1023.0 / kNominalEncoderPulsePer100ms;
     		    kDriveVelocityIZone = 0;
-    		    kDriveVelocityRampRate = 0.0;
+    		    kDriveVelocityRampRate = 0.375;
     		    kDriveVelocityAllowableError = 0;
 
     		    // PID gains for drive base lock loop
@@ -321,6 +331,11 @@ public class Constants extends ConstantsBase
     			kRightMotorMasterTalonId 	= 4;
     			kRightMotorSlave1TalonId 	= 5;
     			kArmBarTalonId 				= 6;
+    			
+    			kLeftIntakeSparkChannel		= 0;
+    			kRightIntakeSparkChannel	= 1;
+    			kIntakeSolenoidForwardChannel = 0;
+    			kIntakeSolenoidReverseChannel = 1;
 
     		    // left motors are inverted
     		    kLeftMotorInverted  = false;
