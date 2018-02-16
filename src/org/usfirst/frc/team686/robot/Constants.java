@@ -1,6 +1,7 @@
 package org.usfirst.frc.team686.robot;
 
 import org.usfirst.frc.team686.robot.lib.util.ConstantsBase;
+import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar.ElevatorArmBarState;
 import org.usfirst.frc.team686.robot.lib.joystick.ArcadeDriveJoystick;
 import org.usfirst.frc.team686.robot.lib.joystick.JoystickControlsBase;
 
@@ -54,6 +55,8 @@ public class Constants extends ConstantsBase
     public static double kQuadEncoderStatusFramePeriod = 0.100;	// 100 ms
     
     // CONTROL LOOP GAINS
+    
+    public static double kDriveSecondsFromNeutralToFull = 0.25;		// decrease acceleration (reduces current, robot tipping)
     
     // PID gains for drive velocity loop (sent to Talon)
     // Units: error is 4*256 counts/rev. Max output is +/- 1023 units.
@@ -116,15 +119,27 @@ public class Constants extends ConstantsBase
     
 
     // POWER UP FIELD
-    public static double kScaleHeightHigh = 72.0;
-    public static double kScaleHeightMed = 	60.0;
-    public static double kScaleHeightLow = 	48.0;
-    public static double kSwitchHeight = 	10.0;
-    public static double kExchangeHeight = 	 2.0;
-    public static double kGroundHeight = 	 0.0;
+    public static double kScaleWallHeight =  3.50;	// field drawing 18018: plate front wall rises ~3.5" above platform
+    public static double kCubeHeight = 		13.00;	// assuming cube is on its side
+    public static double kCubeClearance = 	 4.00;	// allow a few inches for clearing wall
 
-    public static double kCubeClearance = 6.0;
+    public static double kScaleHeightHigh = 72.00;	// game manual: 72"
+    public static double kScaleHeightMed = 	60.00;	// game manual: 60"
+    public static double kScaleHeightLow = 	48.00;	// game manual: 48"
+    public static double kSwitchHeight = 	18.75;	// field drawing 18150: 18.75" to top of fence	
+    public static double kExchangeHeight = 	 2.00;	// field drawing 18127: 0.5" plywood + 1.0" pine + 0.125" polycarbonate + clearance 
+    public static double kGroundHeight = 	 0.00;
 
+    // DESIRED CUBE HEIGHT (bottom of cube)
+    public static double kCubeScaleHeightHigh = kScaleHeightHigh + 1*kCubeHeight + kCubeClearance;
+    public static double kCubeScaleHeightMed = 	kScaleHeightMed  + 1*kCubeHeight + kCubeClearance;
+    public static double kCubeScaleHeightLow = 	kScaleHeightLow  + 1*kCubeHeight + kCubeClearance;
+    public static double kCubeSwitchHeight =	kSwitchHeight                    + kCubeClearance; 		
+    public static double kCubeExchangeHeight = 	kExchangeHeight; 
+    public static double kCubeGroundHeight = 	kGroundHeight;
+    public static double kCubeDriveHeight = 	kGroundHeight + 4.0; 
+    
+    
     
     // ELEVATOR    
     public static double kElevatorMinHeightLimit =  0.0;	// stop at min height
@@ -132,9 +147,6 @@ public class Constants extends ConstantsBase
 	public static double kElevatorMaxHeightLimit = 65.0;	// protect the ceiling!  TODO: comment out for competition
 
     public static double kElevatorZeroingVelocity = 4;		// inches per second
-	public static double kElevatorMaxVelocity = 45;			// inches per second
-	public static double kElevatorTimeToMaxVelocity = 0.25;	// seconds
-	public static double kElevatorMaxAccel = kElevatorMaxVelocity / kElevatorTimeToMaxVelocity;
 
 	public static double kElevatorQuadEncoderGain = 1.0;			// encoder is directly attached to motor drive shaft.  No gearing.
 	public static double kElevatorQuadEncoderUnitsPerRev = 4096;
@@ -142,22 +154,35 @@ public class Constants extends ConstantsBase
 	public static double kElevatorEncoderUnitsPerInch = kElevatorQuadEncoderUnitsPerRev / kElevatorGearCircum * kElevatorQuadEncoderGain; 
     
 	public static double kElevatorKf = 0.0;
-	public static double kElevatorKp = 10.0;
-	public static double KElevatorKd = 0.0;
-	public static double KElevatorKi = 0.0;
+	public static double kElevatorKp = 1;
+	public static double kElevatorKd = 0.0;
+	public static double kElevatorKi = 0.0;
+	public static int	 kElevatorIZone = 100;
+	public static int    kElevatorAllowableError = (int)(0.25 * kElevatorEncoderUnitsPerInch);
 	
-	public static double kElevatorDistanceThreshold = 0.1;
-	
-    public static double kMaxElevatorVoltage = 12.0;
+    public static double kMinElevatorVoltage = 2.0;
+    public static double kMaxElevatorVoltage = 8.0;
+    
     
     
     // ARM BAR
+    public static double kArmBarUpAngleDeg = 	 80.0;	// TODO: fix
+    public static double kArmBarFlatAngleDeg = 	  0.0;	// TODO: quick calculations show -34 is the right number
+    public static double kArmBarDownAngleDeg = 	-20.0;	// TODO: quick calculations show -34 is the right number
+
+    public static double kArmBarScaleHighAngle = 	kArmBarFlatAngleDeg;	// need to angle up?
+    public static double kArmBarScaleMedAngle = 	kArmBarFlatAngleDeg;
+    public static double kArmBarScaleLowAngle = 	kArmBarFlatAngleDeg;
+    public static double kArmBarSwitchAngle = 		kArmBarFlatAngleDeg;
+    public static double kArmBarExchangeAngle = 	kArmBarDownAngleDeg;	// keep tucked in so we don't smash into wall?
+    public static double kArmBarIntakeAngle = 		kArmBarFlatAngleDeg;
+    public static double kArmBarDriveAngle = 		kArmBarDownAngleDeg;
+    public static double kArmBarStartOfMatchAngle = kArmBarUpAngleDeg;
+    
     public static double kArmBarLength = 14.0;
     
-    public static double kArmBarUpAngleDeg = 80;	// TODO: fix
-    public static double kArmBarDownAngleDeg = -20;	// TODO: quick calculations show -34 is the right number
-    public static double kArmBarZeroingVelocity = 30.0;	// in degrees per second
-    public static double kArmBarVelocity = 150.0;	// in degrees per second
+    public static double kArmBarZeroingVelocity = 	 30.0;	// in degrees per second
+    public static double kArmBarVelocity = 			150.0;	// in degrees per second
     
 	public static double kArmBarQuadEncoderGain = 81.0 * 2.0;			// two 9:1 gear stages plus a 24:12 tooth reduction 
 	public static double kArmBarQuadEncoderUnitsPerRev = 4096;
@@ -210,17 +235,25 @@ public class Constants extends ConstantsBase
     
     public static int kXboxLStickXAxis  = 0;
     public static int kXboxLStickYAxis  = 1;
-    public static int kXboxLTrigger = 2;
-    public static int kXboxRTrigger = 3;
+    public static int kXboxLTriggerAxis = 2;
+    public static int kXboxRTriggerAxis = 3;
     public static int kXboxRStickXAxis  = 4;
     public static int kXboxRStickYAxis  = 5;
-    
-    public static int kElevatorScaleHighButton = kXboxButtonLB;
-    public static int kElevatorScaleMedButton = kXboxButtonX;
-    public static int kElevatorScaleLowButton = kXboxButtonY;
-    public static int kElevatorSwitchButton = kXboxLTrigger;
-    public static int kElevatorGroundButton = kXboxButtonB;
-    public static int kExchangeButton = kXboxButtonA;
+
+	public static int kIntakeButton 		= kXboxButtonRB;
+	public static int kOuttakeButton 		= kXboxButtonLB;
+	public static int kElevatorManualUp		= 999;	// TODO: map
+	public static int kElevatorManualDown	= 999;	// TODO: map
+
+	
+	// Button Board Controls
+	public static int kElevatorGroundButton 	= 2;
+	public static int kElevatorExchangeButton 	= 1;
+	public static int kElevatorSwitchButton 	= 6;
+	public static int kElevatorScaleLowButton 	= 4;
+	public static int kElevatorScaleMedButton 	= 3;
+	public static int kElevatorScaleHighButton 	= 5;
+
 
     
         

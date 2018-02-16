@@ -15,31 +15,19 @@ public class ElevatorLoop implements Loop{
 	private static ElevatorLoop instance = new ElevatorLoop();
 	public static ElevatorLoop getInstance() { return instance; }
 	
-	public double Kf = Constants.kElevatorKf;
-	public double Kp = Constants.kElevatorKp;
-	public double Kd = Constants.KElevatorKd;
-	public double Ki = Constants.KElevatorKi;
-	
-	public enum ElevatorState { UNINITIALIZED, ZEROING, MOVING, HOLDING, ESTOPPED; }
+	public enum ElevatorState { UNINITIALIZED, ZEROING, RUNNING, ESTOPPED; }
 	private ElevatorState state = ElevatorState.UNINITIALIZED;
 	private ElevatorState nextState = ElevatorState.UNINITIALIZED;
 	
-	public boolean enable = false;
+	public boolean enabled = false;
 
     public double position;
-    public double velocity;
 	public double goal;
 	public double filteredGoal;
 
-	public double error = 0.0;
-	public double dError = 0.0;
-	public double iError = 0.0;
-	public static double lastError = 0.0;
-	
-	public double voltage = 0.0;
-	
 	private static DigitalInput hallEffect;
 	private static TalonSRX talon;
+	private int kSlotIdx= 0;
 	
 	public ElevatorLoop(){
 		
@@ -56,17 +44,31 @@ public class ElevatorLoop implements Loop{
 		talon.setSensorPhase(true);
 		talon.setInverted(false);
 		
+		// configure position loop PID 
+        talon.config_kF(kSlotIdx, Constants.kElevatorKf, Constants.kTalonTimeoutMs); 
+        talon.config_kP(kSlotIdx, Constants.kElevatorKp, Constants.kTalonTimeoutMs); 
+        talon.config_kI(kSlotIdx, Constants.kElevatorKi, Constants.kTalonTimeoutMs); 
+        talon.config_kD(kSlotIdx, Constants.kElevatorKd, Constants.kTalonTimeoutMs); 
+        talon.config_IntegralZone(kSlotIdx, Constants.kElevatorIZone, Constants.kTalonTimeoutMs); 
+        talon.configAllowableClosedloopError(kSlotIdx, Constants.kElevatorAllowableError, Constants.kTalonTimeoutMs); 
+        talon.selectProfileSlot(kSlotIdx, Constants.kTalonPidIdx); 
+ 		
+        talon.configNominalOutputForward(+Constants.kMinElevatorVoltage/Constants.kNominalBatteryVoltage, Constants.kTalonTimeoutMs);
+        talon.configNominalOutputReverse(-Constants.kMinElevatorVoltage/Constants.kNominalBatteryVoltage, Constants.kTalonTimeoutMs);
+        talon.configPeakOutputForward(+Constants.kMaxElevatorVoltage/Constants.kNominalBatteryVoltage, Constants.kTalonTimeoutMs);
+        talon.configPeakOutputReverse(-Constants.kMaxElevatorVoltage/Constants.kNominalBatteryVoltage, Constants.kTalonTimeoutMs);
+        
 		hallEffect = new DigitalInput(Constants.kHallEffectSensorId);
 		
 		disable();
 	}
 	
 
-	public void enable(){ enable = true; }
+	public void enable(){ enabled = true; }
 	
 	public void disable()
 	{
-		enable = false; 
+		enabled = false; 
 		state = ElevatorState.UNINITIALIZED; 
 		nextState = ElevatorState.UNINITIALIZED;
 	}
@@ -75,8 +77,6 @@ public class ElevatorLoop implements Loop{
     {
         // limit goal
         goal = Math.min(Constants.kElevatorMaxHeightLimit, Math.max(Constants.kElevatorMinHeightLimit, _goal));
-        if (state == ElevatorState.HOLDING)
-        	nextState = ElevatorState.MOVING;  
 	}
 	public double getGoal () { return goal; } 
 	public double getFilteredGoal() { return filteredGoal; }
@@ -121,24 +121,9 @@ public class ElevatorLoop implements Loop{
 		position = getPositionFromEncoder();
 		boolean limitSwitch = getLimitSwitch();
 		
-		double voltage = getVoltage(position, limitSwitch, enable);
-		double percentOutput = voltage / Constants.kNominalBatteryVoltage;
-		talon.set(ControlMode.PercentOutput, percentOutput);
-		
-		//System.out.println(toString());
-	}
-
-	@Override
-	public void onStop() {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	public double getVoltage(double position, boolean limitTriggered, boolean enabled)
-	{
-	
 		// transition states
 		state = nextState;
+		
 		// start over if ever disabled
 		if (!enabled)
 		{
@@ -161,9 +146,9 @@ public class ElevatorLoop implements Loop{
 			
 		case ZEROING:
 			// update goal to be slightly lowered, limited in velocity
-			filteredGoal  -= (Constants.kElevatorZeroingVelocity * Constants.kLoopDt);
+			filteredGoal -= (Constants.kElevatorZeroingVelocity * Constants.kLoopDt);
 			
-			if (limitTriggered)
+			if (limitSwitch)
 			{
 				System.out.println("Elevator Limit Switch Triggered");
 				
@@ -180,68 +165,32 @@ public class ElevatorLoop implements Loop{
 				talon.configForwardSoftLimitEnable(true, Constants.kTalonTimeoutMs);
 				talon.overrideLimitSwitchesEnable(true);	// enable soft limit switches
 				
-				nextState = ElevatorState.HOLDING;	// start running state
+				nextState = ElevatorState.RUNNING;	// start running state
 			}
 			break;
 			
-		case HOLDING:
-			velocity = 0;
-			filteredGoal = position;
-			// stay here until a new goal is set
-			break;
-			
-		case MOVING:
-			// speed control: apply acceleration and velocity limits to filtered goal
-			velocity = speedControl(filteredGoal, goal, velocity, Constants.kElevatorMaxVelocity, Constants.kElevatorMaxAccel);
-			filteredGoal += velocity * Constants.kLoopDt;	// filteredGoal will converge to goal
-			if (Math.abs(position - goal) < Constants.kElevatorDistanceThreshold)
-				nextState = ElevatorState.HOLDING;
+		case RUNNING:
+			filteredGoal = goal;
 			break;
 			
 		default:
 			nextState = ElevatorState.UNINITIALIZED;
 		}
 
-		// PID Loop
-		error = filteredGoal - position;
-		dError = (error - lastError) / Constants.kLoopDt;
-		iError += (error * Constants.kLoopDt);
-
-		lastError = error;
+		talon.set(ControlMode.Position, filteredGoal * Constants.kElevatorEncoderUnitsPerInch);
 		
-		voltage = Kp * error + Kd * dError + Ki * iError;
-		voltage = Math.min(Constants.kMaxElevatorVoltage, Math.max(-Constants.kMaxElevatorVoltage, voltage));
-		
-		if(limitTriggered)
-			voltage = Math.max(voltage, 0.0);
-		return voltage;
+		System.out.println(toString());
 	}
 
-	public double speedControl(double _filteredGoalPosition, double _goalPosition, double _currentVelocity, double _maxVelocity, double _maxAcceleration)
-	{
-		double remainingDistance = _goalPosition - _filteredGoalPosition;
-		double directionSign = Math.signum(remainingDistance);
-		remainingDistance = Math.abs(remainingDistance);
-
-		// calculate next velocity assuming we could use maximum acceleration
-		double nextVelocity = _currentVelocity + directionSign * (_maxAcceleration * Constants.kLoopDt);
-
-		// find the maximum stopping velocity for this distance
-		double stoppingVelocity = Math.sqrt(2.0 * _maxAcceleration * remainingDistance);
-
-		// apply velocity limits
-		nextVelocity = Math.min(nextVelocity, +stoppingVelocity);
-		nextVelocity = Math.max(nextVelocity, -stoppingVelocity);
-
-		nextVelocity = Math.min(nextVelocity, +_maxVelocity);
-		nextVelocity = Math.max(nextVelocity, -_maxVelocity);
-
-		return nextVelocity;
+	@Override
+	public void onStop() {
+		// TODO Auto-generated method stub
+		
 	}
-
+	
 	public String toString() 
     {
-    	return String.format("%s, Enc: %d, Pos: %.1f, LimSwitch: %d, Goal: %.1f, FiltGoal = %.1f, velocity = %.2f, e = %.1f, de = %.1f, ie = %.1f, voltage = %.1f", state.toString(), getEncoder(), getPosition(), getLimitSwitch() ? 1 : 0, goal, filteredGoal, velocity, error, dError, iError, voltage);
+    	return String.format("%s, Goal: %.1f, FiltGoal = %.1f, Pos: %.1f, LimSwitch: %d", state.toString(), goal, filteredGoal, getPosition(), getLimitSwitch() ? 1 : 0);
     }
 
 	
