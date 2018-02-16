@@ -154,11 +154,14 @@ public class Constants extends ConstantsBase
 	public static double kElevatorEncoderUnitsPerInch = kElevatorQuadEncoderUnitsPerRev / kElevatorGearCircum * kElevatorQuadEncoderGain; 
     
 	public static double kElevatorKf = 0.0;
-	public static double kElevatorKp = 10.0;
-	public static double KElevatorKd = 0.4;
-	public static double KElevatorKi = 0.0;
+	public static double kElevatorKp = 1;
+	public static double kElevatorKd = 0.0;
+	public static double kElevatorKi = 0.0;
+	public static int	 kElevatorIZone = 100;
+	public static int    kElevatorAllowableError = (int)(0.25 * kElevatorEncoderUnitsPerInch);
 	
-    public static double kMaxElevatorVoltage = 12.0;
+    public static double kMinElevatorVoltage = 2.0;
+    public static double kMaxElevatorVoltage = 8.0;
     
     
     
