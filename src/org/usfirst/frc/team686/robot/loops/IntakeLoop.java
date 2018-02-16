@@ -119,7 +119,7 @@ public class IntakeLoop implements Loop
 			
 		case OUTTAKE:
 
-			velocity = -Constants.kIntakeSpeed;
+			velocity = Constants.kOuttakeSpeed;
 			break;
 			
 		default:

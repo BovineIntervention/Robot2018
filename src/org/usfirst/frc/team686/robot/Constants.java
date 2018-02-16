@@ -178,7 +178,9 @@ public class Constants extends ConstantsBase
     // INTAKE
     public static double kBagMotorRPM = 13180;
     public static double kIntakeRPM = 800;
+    public static double kOuttakeRPM = kBagMotorRPM;
     public static double kIntakeSpeed = kIntakeRPM/kBagMotorRPM;
+    public static double kOuttakeSpeed = -kOuttakeRPM/kBagMotorRPM;
     
     
     // Do not change anything after this line!
@@ -228,8 +230,7 @@ public class Constants extends ConstantsBase
     public static int kElevatorScaleButton = kXboxButtonY;
     public static int kElevatorSwitchButton = kXboxButtonB;
     public static int kArmBarButton = kXboxButtonX;
-    public static int
-    
+
         
     //Robot stops when joystick axis < 0.1 and >-0.1
     public static double kDriveDeadzone = 0.2;
