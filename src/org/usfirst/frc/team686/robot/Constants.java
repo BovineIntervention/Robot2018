@@ -228,7 +228,7 @@ public class Constants extends ConstantsBase
     public static int kElevatorScaleButton = kXboxButtonY;
     public static int kElevatorSwitchButton = kXboxButtonB;
     public static int kArmBarButton = kXboxButtonX;
-
+    public static int
     
         
     //Robot stops when joystick axis < 0.1 and >-0.1
