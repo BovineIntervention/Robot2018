@@ -280,6 +280,7 @@ public class Robot extends IterativeRobot {
 	{
 		try
 		{
+			// elevator controls
 			if (buttonBoard.getButton(Constants.kElevatorScaleHighButton))	{ elevatorArmBar.setHeight(ElevatorArmBarState.SCALE_HIGH); }
 			if (buttonBoard.getButton(Constants.kElevatorScaleMedButton))	{ elevatorArmBar.setHeight(ElevatorArmBarState.SCALE_MED); }
 			if (buttonBoard.getButton(Constants.kElevatorScaleLowButton))	{ elevatorArmBar.setHeight(ElevatorArmBarState.SCALE_LOW); }
@@ -287,7 +288,21 @@ public class Robot extends IterativeRobot {
 			if (buttonBoard.getButton(Constants.kElevatorExchangeButton))	{ elevatorArmBar.setHeight(ElevatorArmBarState.EXCHANGE); }
 			if (buttonBoard.getButton(Constants.kElevatorGroundButton))		{ elevatorArmBar.setHeight(ElevatorArmBarState.GROUND); }
 
-			// override operator controls if button board direction is set
+			// manual elevator controls (driver override)
+			if (controls.getButton(Constants.kElevatorManualUpButton)) 		{ elevatorArmBar.manualUp(); }
+			if (controls.getButton(Constants.kElevatorManualDownButton))	{ elevatorArmBar.manualDown(); }
+
+			// arm bar controls
+			if (controls.getButton(Constants.kIntakeButton) || controls.getButton(Constants.kOuttakeButton)) {
+				elevatorArmBar.extend(); }
+			else {
+				elevatorArmBar.retract();
+			}
+
+			// intake controls
+		
+			
+			// turn-to-angle controls
 			Optional<Double> buttonBoardDirection = buttonBoard.getDirection();
 			if (buttonBoardDirection.isPresent())
 			{
@@ -299,13 +314,7 @@ public class Robot extends IterativeRobot {
 				autoModeExecuter.start();
 			}
 				
-			if (controls.getButton(Constants.kIntakeButton) || controls.getButton(Constants.kOuttakeButton)) {
-				elevatorArmBar.extend(); }
-			else {
-				elevatorArmBar.retract();
-			}
-
-			
+			// drive controls
 			if ((autoModeExecuter == null) || (!autoModeExecuter.getAutoMode().isActive()))	// ignore joystick when doing auto turns
 				drive.setOpenLoop(controls.getDriveCommand());
 		

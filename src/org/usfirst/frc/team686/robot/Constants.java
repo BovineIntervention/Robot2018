@@ -152,16 +152,21 @@ public class Constants extends ConstantsBase
 	public static double kElevatorQuadEncoderUnitsPerRev = 4096;
 	public static double kElevatorGearCircum = 4.538;				// ~0.72 inch radius gear
 	public static double kElevatorEncoderUnitsPerInch = kElevatorQuadEncoderUnitsPerRev / kElevatorGearCircum * kElevatorQuadEncoderGain; 
+
+    public static double kElevataorMaxEncoderPulsePer100ms = 4060;		// velocity at a max throttle (measured using NI web interface)
+    public static double kElevatorMaxPercentOutput 		= 1.0;		// percent output of motor at above throttle (using NI web interface)
+
+    public static double kElevatorCruiseVelocity = 0.5 * kElevataorMaxEncoderPulsePer100ms;		// cruise below top speed
+    public static double kElevatorTimeToCruiseVelocity = 1.0;				// seconds to reach cruise velocity
+    public static double kElevatorAccel = kElevatorCruiseVelocity / kElevatorTimeToCruiseVelocity; 
     
-	public static double kElevatorKf = 0.0;
-	public static double kElevatorKp = 1;
-	public static double kElevatorKd = 0.0;
+	public static double kElevatorKf = kElevatorMaxPercentOutput * 1023.0 / kElevataorMaxEncoderPulsePer100ms;
+	public static double kElevatorKp = 1.0;	// respond with full power when error is 1023 / (Kp * dist_err) --> 1.13"/Kp   
+	public static double kElevatorKd = 0.0;	// to resolve any overshoot, start at 10*Kp 
 	public static double kElevatorKi = 0.0;
-	public static int	 kElevatorIZone = 100;
-	public static int    kElevatorAllowableError = (int)(0.25 * kElevatorEncoderUnitsPerInch);
 	
     public static double kMinElevatorVoltage = 2.0;
-    public static double kMaxElevatorVoltage = 8.0;
+    public static double kMaxElevatorVoltage = 12.0;
     
     
     
@@ -192,7 +197,7 @@ public class Constants extends ConstantsBase
 	public static double kArmBarKp = 0.4;
 	public static double kArmBarKd = 0.0;
 	public static double kArmBarKi = 0.0;
-
+   
 	public static double kMaxArmBarVoltage = 6.0;	// may be less than 12V battery voltage when testing	
 	
 	
@@ -220,9 +225,9 @@ public class Constants extends ConstantsBase
     public static boolean	kLeftMotorSensorPhase;
     public static boolean	kRightMotorSensorPhase;
 
-	public static int kTalonCurrentLimit;
+	public static int kDriveTrainCurrentLimit;
 	
-	public static int kHallEffectSensorId;
+	public static int kElevatorLimitSwitchPwmId;
 	
 
     // Joystick Controls
@@ -240,10 +245,10 @@ public class Constants extends ConstantsBase
     public static int kXboxRStickXAxis  = 4;
     public static int kXboxRStickYAxis  = 5;
 
-	public static int kIntakeButton 		= kXboxButtonRB;
-	public static int kOuttakeButton 		= kXboxButtonLB;
-	public static int kElevatorManualUp		= 999;	// TODO: map
-	public static int kElevatorManualDown	= 999;	// TODO: map
+	public static int kIntakeButton 			= kXboxButtonRB;
+	public static int kOuttakeButton 			= kXboxButtonLB;
+	public static int kElevatorManualUpButton	= kXboxButtonY;
+	public static int kElevatorManualDownButton	= kXboxButtonA;
 
 	
 	// Button Board Controls
@@ -320,7 +325,7 @@ public class Constants extends ConstantsBase
     		    kQuadEncoderCodesPerRev = 64;
      		    
     		    // CONTROL LOOP GAINS
-    		    double kNominalEncoderPulsePer100ms = 85;		// RPM at a nominal throttle (measured using NI web interface)
+    		    double kNominalEncoderPulsePer100ms = 85;		// velocity at a nominal throttle (measured using NI web interface)
     		    double kNominalPercentOutput 		 = 0.4447;	// percent output of motor at above throttle (using NI web interface)
     		    
     		    kDriveVelocityKp = 20.0;
@@ -364,9 +369,9 @@ public class Constants extends ConstantsBase
     		    kLeftMotorSensorPhase = false;
     		    kRightMotorSensorPhase = false;
     		    
-    			kTalonCurrentLimit = 25;
+    			kDriveTrainCurrentLimit = 25;
     			
-    			kHallEffectSensorId = 0;
+    			kElevatorLimitSwitchPwmId = 0;
 
     			break;
     			
@@ -443,7 +448,7 @@ public class Constants extends ConstantsBase
     		    kLeftMotorSensorPhase = true;
     		    kRightMotorSensorPhase = true;
     			
-    			kTalonCurrentLimit = 25;
+    			kDriveTrainCurrentLimit = 25;
     		    
     		    break;
     	}

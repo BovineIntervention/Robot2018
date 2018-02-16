@@ -1,6 +1,8 @@
 package org.usfirst.frc.team686.robot.subsystems;
 
 import org.usfirst.frc.team686.robot.Constants;
+import org.usfirst.frc.team686.robot.command_status.ArmBarState;
+import org.usfirst.frc.team686.robot.command_status.ElevatorState;
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
 import org.usfirst.frc.team686.robot.loops.ArmBarLoop;
 import org.usfirst.frc.team686.robot.loops.ElevatorLoop;
@@ -21,7 +23,8 @@ public class ElevatorArmBar extends Subsystem {
 		SWITCH(			Constants.kCubeSwitchHeight, 		Constants.kArmBarUpAngleDeg, 	Constants.kArmBarFlatAngleDeg),
 		SCALE_LOW(		Constants.kCubeScaleHeightLow, 		Constants.kArmBarUpAngleDeg, 	Constants.kArmBarFlatAngleDeg),
 		SCALE_MED(		Constants.kCubeScaleHeightMed, 		Constants.kArmBarUpAngleDeg, 	Constants.kArmBarFlatAngleDeg),
-		SCALE_HIGH(		Constants.kCubeScaleHeightHigh, 	Constants.kArmBarUpAngleDeg, 	Constants.kArmBarFlatAngleDeg);
+		SCALE_HIGH(		Constants.kCubeScaleHeightHigh, 	Constants.kArmBarUpAngleDeg, 	Constants.kArmBarFlatAngleDeg),
+		MANUAL(			0, 									Constants.kArmBarUpAngleDeg, 	Constants.kArmBarFlatAngleDeg);
 		
 		public double bottomOfCubeHeight;	// in inches 
 		public double retractedArmAngle; 	// in degrees
@@ -38,8 +41,10 @@ public class ElevatorArmBar extends Subsystem {
 	
 	public ElevatorLoop elevatorLoop = ElevatorLoop.getInstance();
 	public ArmBarLoop armBarLoop = ArmBarLoop.getInstance();
+
 	boolean extended = false;
-	
+	double armBarAngle = 0;
+	double elevatorHeight = 0;
 	
 	private ElevatorArmBar()
 	{
@@ -62,17 +67,33 @@ public class ElevatorArmBar extends Subsystem {
 
 	public void retract()
 	{
+		// retract arm bar (up/down based on current state)
+		// move elevator to maintain cube height
 		set(state, false);
 	}
 	
 	public void extend()
 	{
+		// extend arm bar (angle based on current state)
+		// move elevator to maintain cube height
 		set(state, true);
 	}
 
 	public void setHeight(ElevatorArmBarState _newState)
 	{
 		set(_newState, extended);
+	}
+
+	public void manualUp()
+	{
+		// driver override to move elevator up
+		elevatorLoop.manualUp();
+	}
+	
+	public void manualDown()
+	{
+		// driver override to move elevator down
+		elevatorLoop.manualDown();
 	}
 	
 
@@ -84,18 +105,28 @@ public class ElevatorArmBar extends Subsystem {
 		if (state == ElevatorArmBarState.START_OF_MATCH)
 		{
 			// special case where we need to force elevator and arm bar to correct positions for limit switch calibration
-			armBarLoop.setGoal(state.retractedArmAngle);
-			elevatorLoop.setGoal(state.bottomOfCubeHeight);
+			armBarAngle = state.retractedArmAngle;
+			armBarLoop.setTarget(armBarAngle);
+			
+			elevatorHeight = state.bottomOfCubeHeight;
+			elevatorLoop.setTarget(elevatorHeight);
+		}
+		else if (state == ElevatorArmBarState.MANUAL)
+		{
+			// special case where we need to force elevator and arm bar to correct positions for limit switch calibration
+			armBarAngle = (extended ? state.extendedArmAngle : state.retractedArmAngle);
+			armBarLoop.setTarget(armBarAngle);
+			// DON'T ADJUST ELEVATOR TO PREVIOUS ELEVATOR TARGET
 		}
 		else
 		{
 			// first, set arm bar angle based on current elevator state
-			double armBarAngle = (extended ? state.extendedArmAngle : state.retractedArmAngle);
-			armBarLoop.setGoal(armBarAngle);
+			armBarAngle = (extended ? state.extendedArmAngle : state.retractedArmAngle);
+			armBarLoop.setTarget(armBarAngle);
 
 			// next, command elevator to correct height
-			double elevatorHeight = calcElevatorHeight(state.bottomOfCubeHeight, armBarAngle);
-			elevatorLoop.setGoal(elevatorHeight);
+			elevatorHeight = calcElevatorHeight(state.bottomOfCubeHeight, armBarAngle);
+			elevatorLoop.setTarget(elevatorHeight);
 		}
 		
 //		System.out.println(state.bottomOfCubeHeight + " " + state.retractedArmAngle + " " + state.extendedArmAngle);
@@ -132,18 +163,15 @@ public class ElevatorArmBar extends Subsystem {
         @Override
         public void log()
         {
-			put("ElevatorArmBar/Extended", extended );
+			put("ElevatorArmBar/state", state.toString() );
+			put("ElevatorArmBar/bottomOfCubeHeight", state.bottomOfCubeHeight );
+			put("ElevatorArmBar/armBarAngle", armBarAngle );
+			put("ElevatorArmBar/elevatorHeight", elevatorHeight );
 			
-			put("ArmBar/State", armBarLoop.state.toString() );
-			put("ArmBar/Position", armBarLoop.getPosition() );
-			put("ArmBar/Goal", armBarLoop.getGoal() );
-			put("ArmBar/LimitSwitch", armBarLoop.getLimitSwitch() );
-
-			put("Elevator/State", elevatorLoop.toString() );
-			put("Elevator/Position", elevatorLoop.getPosition() );
-			put("Elevator/Goal", elevatorLoop.getGoal() );
-			put("Elevator/LimitSwitch", elevatorLoop.getLimitSwitch() );
+			ArmBarState.getInstance().getLogger().log();
+			ElevatorState.getInstance().getLogger().log();
         }
+        
     };
     
     public DataLogger getLogger() { return logger; }

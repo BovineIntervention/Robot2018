@@ -1,7 +1,7 @@
 package org.usfirst.frc.team686.robot.loops;
 
 import org.usfirst.frc.team686.robot.Constants;
-import org.usfirst.frc.team686.robot.loops.ElevatorLoop.ElevatorState;
+import org.usfirst.frc.team686.robot.command_status.ArmBarState;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -23,15 +23,17 @@ public class ArmBarLoop implements Loop
 	public double Kd = Constants.kArmBarKd;
 	public double Ki = Constants.kArmBarKi;
 	
-	public enum ArmBarState { UNINITIALIZED, CALIBRATING, RUNNING, ESTOPPED; }
-	public ArmBarState state = ArmBarState.UNINITIALIZED;
-	public ArmBarState nextState = ArmBarState.UNINITIALIZED;
+	public enum ArmBarStateEnum { UNINITIALIZED, CALIBRATING, RUNNING, ESTOPPED; }
+	public ArmBarStateEnum state = ArmBarStateEnum.UNINITIALIZED;
+	public ArmBarStateEnum nextState = ArmBarStateEnum.UNINITIALIZED;
+
+	private ArmBarState armBarState = ArmBarState.getInstance();
 	
 	public boolean enable = false;
 	
 	public double position;
-	public double goal;
-	public double filteredGoal;
+	public double target;
+	public double filteredTarget;
 
 	public double error = 0.0;
 	public double dError = 0.0;
@@ -71,66 +73,55 @@ public class ArmBarLoop implements Loop
 	public void disable()
 	{
 		enable = false; 
-		state = ArmBarState.UNINITIALIZED; 
-		nextState = ArmBarState.UNINITIALIZED;
+		state = ArmBarStateEnum.UNINITIALIZED; 
+		nextState = ArmBarStateEnum.UNINITIALIZED;
 	}
 	
-	public void setGoal(double goal_){ goal = goal_; }
-	public double getGoal () { return goal; } 
+	public void setTarget(double _target) { target = _target; }
+	public double getTarget () { return target; } 
 	
-	public double getFilteredGoal() { return filteredGoal; }
+	public double getFilteredTarget() { return filteredTarget; }
 
-	public ArmBarState getState() { return state; }
+	public ArmBarStateEnum getState() { return state; }
 	
-	public void stop() { goal = getPosition(); }
+	public void stop() { target = getPosition(); }
 
 	public double getPosition() { return position; }
 	
-	public void setPosition(double _angleDeg) 
+	public void calibrateAngleDeg(double _angleDeg) 
 	{
-		int encoderEdges = (int)(_angleDeg * Constants.kArmBarEncoderUnitsPerDeg);
-		talon.setSelectedSensorPosition(encoderEdges, Constants.kTalonPidIdx, Constants.kTalonTimeoutMs);
+		talon.setSelectedSensorPosition( angleDegToEncoderUnits(_angleDeg), Constants.kTalonPidIdx, Constants.kTalonTimeoutMs);
 	}
 	
-	public int getEncoder() 
-	{
-		int encoderEdges = talon.getSelectedSensorPosition(Constants.kTalonPidIdx);
-		return encoderEdges;
-	}
-	
-	public double getPositionFromEncoder() 
-	{
-		// returns encoder angle in degrees
-		double angleDeg = getEncoder() / Constants.kArmBarEncoderUnitsPerDeg;
-		return angleDeg;
-	}
-	
-	public boolean getLimitSwitch() { return talon.getSensorCollection().isFwdLimitSwitchClosed(); }	// returns true when limit switch is triggered 
 	
 	
 	
 	@Override
 	public void onStart() {
-		state = ArmBarState.UNINITIALIZED;
-		nextState = ArmBarState.UNINITIALIZED;
+		state = ArmBarStateEnum.UNINITIALIZED;
+		nextState = ArmBarStateEnum.UNINITIALIZED;
 	}
 
 	@Override
 	public void onLoop() 
 	{
-		position = getPositionFromEncoder();
-		boolean limitSwitch = getLimitSwitch();
+		getState();
 		
-		double voltage = calcVoltage(position, limitSwitch, enable);			// output in [-12, +12] volts	
+		double voltage = calcVoltage(armBarState.getAngleDeg(), armBarState.isLimitSwitchTriggered(), enable);			// output in [-12, +12] volts	
 		double percentOutput = voltage / Constants.kNominalBatteryVoltage;			// normalize output to [-1,. +1]
 		talon.set(ControlMode.PercentOutput, percentOutput);				// send to motor control
-		
+
+		// set PID status before we leave
+		armBarState.setTargetAngleDeg(target);		
+		armBarState.setFilteredTargetAngleDeg(filteredTarget);
+		armBarState.setPidError(voltage);
+				
 		//System.out.println(toString());
 	}
 
 	@Override
 	public void onStop() {
-		// TODO Auto-generated method stub
+		talon.set(ControlMode.PercentOutput, 0.0);
 	}	
 	
 	
@@ -139,20 +130,21 @@ public class ArmBarLoop implements Loop
 	{
 		// transition states
 		state = nextState;
+		
 		// start over if ever disabled
 		if (!enabled)
 		{
-			state = ArmBarState.UNINITIALIZED;
+			state = ArmBarStateEnum.UNINITIALIZED;
 		}
 		
 		switch (state)
 		{
 		case UNINITIALIZED:
 			// initial state.  stay here until enabled
-			filteredGoal = position;				// hold position
+			filteredTarget = position;				// hold position
 			if (enabled)
 			{
-				nextState = ArmBarState.CALIBRATING;	// when enabled, state ZEROING
+				nextState = ArmBarStateEnum.CALIBRATING;	// when enabled, state ZEROING
 				talon.configReverseSoftLimitEnable(false, Constants.kTalonTimeoutMs);
 				talon.configForwardSoftLimitEnable(false, Constants.kTalonTimeoutMs);
 				talon.overrideLimitSwitchesEnable(false);	// disable soft limit switches during zeroing
@@ -161,50 +153,50 @@ public class ArmBarLoop implements Loop
 			
 		case CALIBRATING:
 			// slowly move up towards limit switch
-			filteredGoal += (Constants.kArmBarZeroingVelocity * Constants.kLoopDt);
+			filteredTarget += (Constants.kArmBarZeroingVelocity * Constants.kLoopDt);
 			
 			if (limitSwitchTriggered)
 			{
 				// CALIBRATING is done when limit switch is hit
-				setPosition(Constants.kArmBarUpAngleDeg);	// write new position to Talon
+				calibrateAngleDeg(Constants.kArmBarUpAngleDeg);	// write new position to Talon
 				position = Constants.kArmBarUpAngleDeg;		// override position before limit switch was hit
-				setGoal(position);							// initial goal is to stay in the same position
-				filteredGoal = position;					// initial goal is to stay in the same position
+				setTarget(position);							// initial goal is to stay in the same position
+				filteredTarget = position;					// initial goal is to stay in the same position
 				
 				// set soft limits
-				talon.configReverseSoftLimitThreshold((int)(Constants.kArmBarDownAngleDeg * Constants.kArmBarEncoderUnitsPerDeg), Constants.kTalonTimeoutMs);
-				talon.configForwardSoftLimitThreshold((int)(Constants.kArmBarUpAngleDeg * Constants.kArmBarEncoderUnitsPerDeg), Constants.kTalonTimeoutMs);
+				talon.configReverseSoftLimitThreshold( angleDegToEncoderUnits(Constants.kArmBarDownAngleDeg), Constants.kTalonTimeoutMs);
+				talon.configForwardSoftLimitThreshold( angleDegToEncoderUnits(Constants.kArmBarUpAngleDeg),   Constants.kTalonTimeoutMs);
 				talon.configReverseSoftLimitEnable(true, Constants.kTalonTimeoutMs);
 				talon.configForwardSoftLimitEnable(true, Constants.kTalonTimeoutMs);
 				talon.overrideLimitSwitchesEnable(true);	// enable soft limit switches
 								
-				nextState = ArmBarState.RUNNING;			// start running state
+				nextState = ArmBarStateEnum.RUNNING;		// start running state
 			}
 			break;
 			
 		case RUNNING:
 			// velocity control -- move filtered goal a little more towards the ultimate goal
 			
-			if (goal > filteredGoal)
+			if (target > filteredTarget)
 			{
 				// moving up
-				filteredGoal += Constants.kArmBarVelocity * Constants.kLoopDt;
-				filteredGoal = Math.min(filteredGoal, goal);
+				filteredTarget += Constants.kArmBarVelocity * Constants.kLoopDt;
+				filteredTarget = Math.min(filteredTarget, target);
 			}
 			else 
 			{
 				// moving down
-				filteredGoal -= Constants.kArmBarVelocity * Constants.kLoopDt;
-				filteredGoal = Math.max(filteredGoal, goal);
+				filteredTarget -= Constants.kArmBarVelocity * Constants.kLoopDt;
+				filteredTarget = Math.max(filteredTarget, target);
 			}
 
 			break;
 			
 		default:
-			nextState = ArmBarState.UNINITIALIZED;
+			nextState = ArmBarStateEnum.UNINITIALIZED;
 		}
 		
-		error = filteredGoal - position;
+		error = filteredTarget - position;
 		dError = (error - lastError) / Constants.kLoopDt;
 		iError += (error * Constants.kLoopDt);
 
@@ -215,12 +207,54 @@ public class ArmBarLoop implements Loop
 		
 		if (limitSwitchTriggered)
 			voltage = Math.min(voltage, 0.0);	// do not let elevator continue up when at limit switch
-		
+
 		return voltage;
 	}	
 	
+	public double encoderUnitsToAngleDeg(int _encoderUnits)
+	{
+		return _encoderUnits / Constants.kArmBarEncoderUnitsPerDeg;
+	}
+	
+	public int angleDegToEncoderUnits(double _deg)
+	{
+		return (int)(_deg * Constants.kArmBarEncoderUnitsPerDeg);
+	}
+	
+	
+	
+	public void getStatus()
+	{
+		// read status once per update
+		armBarState.setAngleDeg( encoderUnitsToAngleDeg( talon.getSelectedSensorPosition(Constants.kTalonPidIdx) ) );		
+
+		armBarState.setMotorPercentOutput( talon.getMotorOutputPercent() );
+		armBarState.setMotorCurrent( talon.getOutputCurrent() );
+
+		armBarState.setLimitSwitchTriggered( talon.getSensorCollection().isFwdLimitSwitchClosed() );
+	}
+
+	
     public String toString() 
     {
-    	return String.format("%s, Enc: %d, Pos: %.1f, LimSwitch: %d, Goal: %.1f, FiltGoal = %.1f, e = %.1f, de = %.1f, ie = %.1f, voltage = %.1f", state.toString(), getEncoder(), getPosition(), getLimitSwitch() ? 1 : 0, goal, filteredGoal, error, dError, iError, voltage);
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(state.toString());
+		sb.append("\tTarget: ");
+		sb.append(armBarState.getTargetAngleDeg());
+		sb.append("\tFilteredTarget: ");
+		sb.append(armBarState.getFilteredTargetAngleDeg());
+		sb.append("\tAngle: ");
+		sb.append(armBarState.getAngleDeg());
+		sb.append("\tPIDError: ");
+		sb.append(armBarState.getPidError());
+		sb.append("\tMotorPercentOutput: ");
+		sb.append(armBarState.getMotorPercentOutput());
+		sb.append("\tMotorCurrent: ");
+		sb.append(armBarState.getMotorCurrent());
+		sb.append("\tLimitSwitch: ");
+		sb.append(armBarState.isLimitSwitchTriggered());
+		
+		return sb.toString();
     }
 }
