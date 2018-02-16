@@ -210,14 +210,17 @@ public class Constants extends ConstantsBase
     
     public static int kXboxLStickXAxis  = 0;
     public static int kXboxLStickYAxis  = 1;
-    public static int kXboxLTriggerAxis = 2;
-    public static int kXboxRTriggerAxis = 3;
+    public static int kXboxLTrigger = 2;
+    public static int kXboxRTrigger = 3;
     public static int kXboxRStickXAxis  = 4;
     public static int kXboxRStickYAxis  = 5;
     
-    public static int kElevatorScaleButton = kXboxButtonY;
-    public static int kElevatorSwitchButton = kXboxButtonB;
-    public static int kArmBarButton = kXboxButtonX;
+    public static int kElevatorScaleHighButton = kXboxButtonLB;
+    public static int kElevatorScaleMedButton = kXboxButtonX;
+    public static int kElevatorScaleLowButton = kXboxButtonY;
+    public static int kElevatorSwitchButton = kXboxLTrigger;
+    public static int kElevatorGroundButton = kXboxButtonB;
+    public static int kExchangeButton = kXboxButtonA;
 
     
         
