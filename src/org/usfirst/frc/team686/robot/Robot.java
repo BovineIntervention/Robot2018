@@ -7,6 +7,7 @@ import org.usfirst.frc.team686.robot.auto.modes.CollisionTestMode;
 import org.usfirst.frc.team686.robot.auto.modes.PointTurnMode;
 import org.usfirst.frc.team686.robot.auto.modes.RunSeriesActionMode;
 import org.usfirst.frc.team686.robot.command_status.DriveState;
+import org.usfirst.frc.team686.robot.command_status.ElevatorState;
 import org.usfirst.frc.team686.robot.command_status.RobotState;
 import org.usfirst.frc.team686.robot.lib.joystick.ArcadeDriveJoystick;
 import org.usfirst.frc.team686.robot.lib.joystick.ButtonBoard;
@@ -45,6 +46,7 @@ public class Robot extends IterativeRobot {
 	RobotState robotState = RobotState.getInstance();
 	Drive drive = Drive.getInstance();
 	ElevatorArmBar elevatorArmBar = ElevatorArmBar.getInstance();
+	ElevatorState elevatorState = ElevatorState.getInstance();
 	
 	AutoModeExecuter autoModeExecuter = null;
 	
@@ -305,7 +307,9 @@ public class Robot extends IterativeRobot {
 //				
 //			// drive controls
 //			if ((autoModeExecuter == null) || (!autoModeExecuter.getAutoMode().isActive()))	// ignore joystick when doing auto turns
-				drive.setOpenLoop(controls.getDriveCommand());
+			double elevatorHeight = elevatorState.getPositionInches();
+			double driveReduction = (elevatorHeight/Constants.kElevatorMaxHeightLimit) * Constants.kDriveVelocityReductionMultiplier;
+			drive.setOpenLoop(controls.getDriveCommand(), driveReduction);
 		
 		}
 		catch (Throwable t)

@@ -64,6 +64,7 @@ public class Constants extends ConstantsBase
     public static int    kDriveVelocityIZone;
     public static double kDriveVelocityRampRate;
     public static int    kDriveVelocityAllowableError;
+    public static double kDriveVelocityReductionMultiplier; // how much to reduce the drive velocity when the 
 
     // PID gains for drive base lock loop
     // Units: error is 4*256 counts/rev. Max output is +/- 1023 units.
@@ -325,6 +326,7 @@ public class Constants extends ConstantsBase
     		    kDriveVelocityIZone = 0;
     		    kDriveVelocityRampRate = 0.0;
     		    kDriveVelocityAllowableError = 0;
+    		    kDriveVelocityReductionMultiplier = 2;
 
     		    // PID gains for drive base lock loop
     		    // Units: error is 4*256 counts/rev. Max output is +/- 1023 units.
