@@ -1,6 +1,7 @@
 package org.usfirst.frc.team686.robot.loops;
 
 import org.usfirst.frc.team686.robot.Constants;
+import org.usfirst.frc.team686.robot.command_status.IntakeState;
 import org.usfirst.frc.team686.robot.loops.ElevatorLoop.ElevatorState;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -21,10 +22,11 @@ public class IntakeLoop implements Loop
 	private static IntakeLoop instance = new IntakeLoop();
 	public static IntakeLoop getInstance() { return instance; }
 
+	private IntakeState intakeState = IntakeState.getInstance();
 	
-	public enum IntakeState { UNINITIALIZED, INTAKE, OUTTAKE; }
-	public IntakeState state = IntakeState.UNINITIALIZED;
-	public IntakeState nextState = IntakeState.UNINITIALIZED;
+	public enum IntakeStateEnum { UNINITIALIZED, INTAKE, OUTTAKE; }
+	public IntakeStateEnum state = IntakeStateEnum.UNINITIALIZED;
+	public IntakeStateEnum nextState = IntakeStateEnum.UNINITIALIZED;
 	
 	public boolean enable = false;
 	
@@ -57,22 +59,22 @@ public class IntakeLoop implements Loop
 	public void disable()
 	{
 		enable = false; 
-		state = IntakeState.UNINITIALIZED; 
-		nextState = IntakeState.UNINITIALIZED;
+		state = IntakeStateEnum.UNINITIALIZED; 
+		nextState = IntakeStateEnum.UNINITIALIZED;
 	}
 	
 
-	public IntakeState getState() { return state; }
+	public IntakeStateEnum getState() { return state; }
 	
-	public void intake(){ state = IntakeState.INTAKE; }
+	public void intake(){ state = IntakeStateEnum.INTAKE; }
 	
-	public void outtake(){ state = IntakeState.OUTTAKE; }
+	public void outtake(){ state = IntakeStateEnum.OUTTAKE; }
 	
-	public void stop(){ state = IntakeState.UNINITIALIZED; }
+	public void stop(){ state = IntakeStateEnum.UNINITIALIZED; }
 	
 	@Override
 	public void onStart() {
-		state = IntakeState.UNINITIALIZED;
+		state = IntakeStateEnum.UNINITIALIZED;
 	}
 
 	@Override
@@ -99,7 +101,7 @@ public class IntakeLoop implements Loop
 		// start over if ever disabled
 		if (!enabled)
 		{
-			state = IntakeState.UNINITIALIZED;
+			state = IntakeStateEnum.UNINITIALIZED;
 		}
 		
 		switch (state)
@@ -123,7 +125,7 @@ public class IntakeLoop implements Loop
 			break;
 			
 		default:
-			nextState = IntakeState.UNINITIALIZED;
+			nextState = IntakeStateEnum.UNINITIALIZED;
 		}
 		
 		return velocity;
@@ -132,7 +134,7 @@ public class IntakeLoop implements Loop
 	public Value getValue(boolean enabled){
 		if (!enabled)
 		{
-			state = IntakeState.UNINITIALIZED;
+			state = IntakeStateEnum.UNINITIALIZED;
 		}
 		
 		switch (state)
@@ -156,7 +158,7 @@ public class IntakeLoop implements Loop
 			break;
 			
 		default:
-			nextState = IntakeState.UNINITIALIZED;
+			nextState = IntakeStateEnum.UNINITIALIZED;
 		}
 		
 		return solenoidValue;
