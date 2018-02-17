@@ -104,7 +104,7 @@ public class Robot extends IterativeRobot {
     		
     		setInitialPose(new Pose());
 
-    		//cameraServer.getInstance().startAutomaticCapture();
+    		cameraServer.getInstance().startAutomaticCapture();
     	}
     	catch(Throwable t)
     	{
@@ -339,7 +339,6 @@ public class Robot extends IterativeRobot {
 	public void robotPeriodic()
 	{
 		robotLogger.log();
-		//switchableCameraServer.outputToSmartDashboard();
 	}
 
 
