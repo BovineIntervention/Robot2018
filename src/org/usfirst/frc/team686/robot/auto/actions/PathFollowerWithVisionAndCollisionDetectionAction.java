@@ -1,8 +1,6 @@
 package org.usfirst.frc.team686.robot.auto.actions;
 
 import org.usfirst.frc.team686.robot.Constants;
-import org.usfirst.frc.team686.robot.lib.sensors.BNO055;
-import org.usfirst.frc.team686.robot.lib.sensors.GyroBase;
 import org.usfirst.frc.team686.robot.lib.sensors.NavX;
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
 import org.usfirst.frc.team686.robot.lib.util.Path;
@@ -53,9 +51,6 @@ public class PathFollowerWithVisionAndCollisionDetectionAction implements Action
     @Override
     public boolean isFinished() 
     {
-    	
-    	if( (Timer.getFPGATimestamp() - startTime) > 1 ) { return true; }
-    	
         boolean collisionDetected = false;
         
         double currWorldLinearAccelerationX = gyro.getWorldLinearAccelerationX();
@@ -64,6 +59,8 @@ public class PathFollowerWithVisionAndCollisionDetectionAction implements Action
         double currWorldLinearAccelerationY = gyro.getWorldLinearAccelerationY();
         double currentJerkY = currWorldLinearAccelerationY - lastWorldLinearAccelerationY;
         lastWorldLinearAccelerationY = currWorldLinearAccelerationY;
+        
+//System.out.println("jerkX: " + currentJerkX + ", jerkY: " + currentJerkY + ", threshold: " + Constants.kCollisionThreshold);  
         
         if ( ( Math.abs(currentJerkX) > Constants.kCollisionThreshold ) ||
              ( Math.abs(currentJerkY) > Constants.kCollisionThreshold) ) {
