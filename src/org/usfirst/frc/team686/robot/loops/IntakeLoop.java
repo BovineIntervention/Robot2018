@@ -24,16 +24,16 @@ public class IntakeLoop implements Loop
 
 	private IntakeState intakeState = IntakeState.getInstance();
 	
-	public enum IntakeStateEnum { UNINITIALIZED, INTAKE, OUTTAKE; }
-	public IntakeStateEnum state = IntakeStateEnum.UNINITIALIZED;
-	public IntakeStateEnum nextState = IntakeStateEnum.UNINITIALIZED;
+	public enum IntakeStateEnum { STOP, INTAKE, OUTTAKE; }
+	public IntakeStateEnum state = IntakeStateEnum.STOP;
+	public IntakeStateEnum nextState = IntakeStateEnum.STOP;
 	
 	public boolean enabled = false;
 	
 	private static Spark leftSpark;
 	private static Spark rightSpark;
 	
-	private static DoubleSolenoid solenoid;
+	private static DoubleSolenoid grabber;
 	
 	public double leftVelocity;
 	public double rightVelocity;
@@ -47,7 +47,7 @@ public class IntakeLoop implements Loop
 		leftSpark = new Spark(Constants.kLeftIntakeSparkChannel);
 		rightSpark = new Spark(Constants.kRightIntakeSparkChannel);
 
-		solenoid = new DoubleSolenoid(0, Constants.kIntakeSolenoidForwardChannel, Constants.kIntakeSolenoidReverseChannel);
+		grabber = new DoubleSolenoid(0, Constants.kIntakeSolenoidForwardChannel, Constants.kIntakeSolenoidReverseChannel);
 		
 		disable();
 	}
@@ -60,8 +60,8 @@ public class IntakeLoop implements Loop
 	public void disable()
 	{
 		enabled = false; 
-		state = IntakeStateEnum.UNINITIALIZED; 
-		nextState = IntakeStateEnum.UNINITIALIZED;
+		state = IntakeStateEnum.STOP; 
+		nextState = IntakeStateEnum.STOP;
 	}
 	
 
@@ -71,11 +71,21 @@ public class IntakeLoop implements Loop
 	
 	public void outtake(){ state = IntakeStateEnum.OUTTAKE; }
 	
-	public void stop(){ state = IntakeStateEnum.UNINITIALIZED; }
+	public void closeGrabber(){ 
+		if( state != IntakeStateEnum.OUTTAKE )
+			solenoidValue = DoubleSolenoid.Value.kForward; 
+	}
+	
+	public void openGrabber(){ 
+		if( state != IntakeStateEnum.OUTTAKE )
+			solenoidValue = DoubleSolenoid.Value.kReverse; 
+	}
+	
+	public void stop(){ state = IntakeStateEnum.STOP; }
 	
 	@Override
 	public void onStart() {
-		state = IntakeStateEnum.UNINITIALIZED;
+		state = IntakeStateEnum.STOP;
 	}
 
 	@Override
@@ -88,12 +98,12 @@ public class IntakeLoop implements Loop
 		
 		if (!enabled)
 		{
-			state = IntakeStateEnum.UNINITIALIZED;
+			state = IntakeStateEnum.STOP;
 		}
 		
 		switch (state)
 		{
-		case UNINITIALIZED:
+		case STOP:
 
 			if (enabled)
 			{
@@ -102,6 +112,7 @@ public class IntakeLoop implements Loop
 				
 				solenoidValue = DoubleSolenoid.Value.kOff;
 			}
+			
 			break;
 			
 		case INTAKE:
@@ -109,7 +120,6 @@ public class IntakeLoop implements Loop
 			leftVelocity = Constants.kIntakeSpeed;
 			rightVelocity = Constants.kIntakeSpeed;
 			
-			solenoidValue = DoubleSolenoid.Value.kForward;
 			break;
 			
 		case OUTTAKE:
@@ -117,19 +127,19 @@ public class IntakeLoop implements Loop
 			leftVelocity = Constants.kOuttakeSpeed;
 			rightVelocity = Constants.kOuttakeSpeed;
 			
-			solenoidValue = DoubleSolenoid.Value.kReverse;
+			solenoidValue = DoubleSolenoid.Value.kForward;
 			
 			break;
 			
 		default:
-			nextState = IntakeStateEnum.UNINITIALIZED;
+			nextState = IntakeStateEnum.STOP;
 		}
 		
 		
 		leftSpark.set(leftVelocity);
 		rightSpark.set(rightVelocity);
 		
-		solenoid.set(solenoidValue);
+		grabber.set(solenoidValue);
 		
 		System.out.println(toString());
 	}

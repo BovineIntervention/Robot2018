@@ -23,6 +23,8 @@ public class Intake extends Subsystem {
 	
 	public void intake()   { intakeLoop.intake(); }	
 	public void outtake() { intakeLoop.outtake(); }	
+	public void closeGrabber() { intakeLoop.closeGrabber(); }
+	public void openGrabber() { intakeLoop.openGrabber(); }
 
 	
 	@Override
