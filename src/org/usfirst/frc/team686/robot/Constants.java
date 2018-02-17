@@ -56,7 +56,7 @@ public class Constants extends ConstantsBase
     
     // CONTROL LOOP GAINS
     
-    public static double kDriveSecondsFromNeutralToFull = 0.25;		// decrease acceleration (reduces current, robot tipping)
+    public static double kDriveSecondsFromNeutralToFull = 0.375;		// decrease acceleration (reduces current, robot tipping)
     
     // PID gains for drive velocity loop (sent to Talon)
     // Units: error is 4*256 counts/rev. Max output is +/- 1023 units.
@@ -96,7 +96,7 @@ public class Constants extends ConstantsBase
     public static double kPathFollowingMaxAccel; // inches/sec^2	
     public static double kPathFollowingLookahead ; // inches
     public static double kPathFollowingCompletionTolerance; 
-    public static double kCollisionThreshold = 0.5;
+    public static double kCollisionThreshold = 0.3;		// maximum JerkY was 0.9 for a 24 inch/sec collision into wall (<0.1 when driving normal)
     
     // Vision constants
     public static double kCameraPoseX ;	// camera location with respect to robot center of rotation, +X axis is in direction of travel

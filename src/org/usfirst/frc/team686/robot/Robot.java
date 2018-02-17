@@ -3,6 +3,7 @@ package org.usfirst.frc.team686.robot;
 import org.usfirst.frc.team686.robot.auto.AutoModeBase;
 import org.usfirst.frc.team686.robot.auto.AutoModeExecuter;
 import org.usfirst.frc.team686.robot.auto.actions.SeriesAction;
+import org.usfirst.frc.team686.robot.auto.modes.CollisionTestMode;
 import org.usfirst.frc.team686.robot.auto.modes.PointTurnMode;
 import org.usfirst.frc.team686.robot.auto.modes.RunSeriesActionMode;
 import org.usfirst.frc.team686.robot.command_status.DriveState;
@@ -41,7 +42,7 @@ public class Robot extends IterativeRobot {
 	PowerDistributionPanel pdp = new PowerDistributionPanel();
 	
 	JoystickControlsBase controls = ArcadeDriveJoystick.getInstance();
-	ButtonBoard buttonBoard = ButtonBoard.getInstance();
+//	ButtonBoard buttonBoard = ButtonBoard.getInstance();
 
 	RobotState robotState = RobotState.getInstance();
 	Drive drive = Drive.getInstance();
@@ -86,8 +87,8 @@ public class Robot extends IterativeRobot {
     		loopController = new LoopController();
     		loopController.register(drive.getVelocityPIDLoop());
     		loopController.register(DriveLoop.getInstance());
-       		loopController.register(ArmBarLoop.getInstance());
-    		loopController.register(ElevatorLoop.getInstance());
+       		//loopController.register(ArmBarLoop.getInstance());
+    		//loopController.register(ElevatorLoop.getInstance());
        		loopController.register(RobotStateLoop.getInstance());
     		
     		smartDashboardInteractions = new SmartDashboardInteractions();
@@ -280,42 +281,42 @@ public class Robot extends IterativeRobot {
 	{
 		try
 		{
-			// elevator controls
-			if (buttonBoard.getButton(Constants.kElevatorScaleHighButton))	{ elevatorArmBar.setHeight(ElevatorArmBarState.SCALE_HIGH); }
-			if (buttonBoard.getButton(Constants.kElevatorScaleMedButton))	{ elevatorArmBar.setHeight(ElevatorArmBarState.SCALE_MED); }
-			if (buttonBoard.getButton(Constants.kElevatorScaleLowButton))	{ elevatorArmBar.setHeight(ElevatorArmBarState.SCALE_LOW); }
-			if (buttonBoard.getButton(Constants.kElevatorSwitchButton))		{ elevatorArmBar.setHeight(ElevatorArmBarState.SWITCH); }
-			if (buttonBoard.getButton(Constants.kElevatorExchangeButton))	{ elevatorArmBar.setHeight(ElevatorArmBarState.EXCHANGE); }
-			if (buttonBoard.getButton(Constants.kElevatorGroundButton))		{ elevatorArmBar.setHeight(ElevatorArmBarState.GROUND); }
-
-			// manual elevator controls (driver override)
-			if (controls.getButton(Constants.kElevatorManualUpButton)) 		{ elevatorArmBar.manualUp(); }
-			if (controls.getButton(Constants.kElevatorManualDownButton))	{ elevatorArmBar.manualDown(); }
-
-			// arm bar controls
-			if (controls.getButton(Constants.kIntakeButton) || controls.getButton(Constants.kOuttakeButton)) {
-				elevatorArmBar.extend(); }
-			else {
-				elevatorArmBar.retract();
-			}
-
-			// intake controls
-		
-			
-			// turn-to-angle controls
-			Optional<Double> buttonBoardDirection = buttonBoard.getDirection();
-			if (buttonBoardDirection.isPresent())
-			{
-				if (autoModeExecuter != null)
-					autoModeExecuter.stop();	// kill any old commands
-				autoModeExecuter = new AutoModeExecuter();
-				AutoModeBase autoMode = new PointTurnMode( buttonBoardDirection.get().doubleValue() );
-				autoModeExecuter.setAutoMode( autoMode );
-				autoModeExecuter.start();
-			}
-				
-			// drive controls
-			if ((autoModeExecuter == null) || (!autoModeExecuter.getAutoMode().isActive()))	// ignore joystick when doing auto turns
+//			// elevator controls
+//			if (buttonBoard.getButton(Constants.kElevatorScaleHighButton))	{ elevatorArmBar.setHeight(ElevatorArmBarState.SCALE_HIGH); }
+//			if (buttonBoard.getButton(Constants.kElevatorScaleMedButton))	{ elevatorArmBar.setHeight(ElevatorArmBarState.SCALE_MED); }
+//			if (buttonBoard.getButton(Constants.kElevatorScaleLowButton))	{ elevatorArmBar.setHeight(ElevatorArmBarState.SCALE_LOW); }
+//			if (buttonBoard.getButton(Constants.kElevatorSwitchButton))		{ elevatorArmBar.setHeight(ElevatorArmBarState.SWITCH); }
+//			if (buttonBoard.getButton(Constants.kElevatorExchangeButton))	{ elevatorArmBar.setHeight(ElevatorArmBarState.EXCHANGE); }
+//			if (buttonBoard.getButton(Constants.kElevatorGroundButton))		{ elevatorArmBar.setHeight(ElevatorArmBarState.GROUND); }
+//
+//			// manual elevator controls (driver override)
+//			if (controls.getButton(Constants.kElevatorManualUpButton)) 		{ elevatorArmBar.manualUp(); }
+//			if (controls.getButton(Constants.kElevatorManualDownButton))	{ elevatorArmBar.manualDown(); }
+//
+//			// arm bar controls
+//			if (controls.getButton(Constants.kIntakeButton) || controls.getButton(Constants.kOuttakeButton)) {
+//				elevatorArmBar.extend(); }
+//			else {
+//				elevatorArmBar.retract();
+//			}
+//
+//			// intake controls
+//		
+//			
+//			// turn-to-angle controls
+//			Optional<Double> buttonBoardDirection = buttonBoard.getDirection();
+//			if (buttonBoardDirection.isPresent())
+//			{
+//				if (autoModeExecuter != null)
+//					autoModeExecuter.stop();	// kill any old commands
+//				autoModeExecuter = new AutoModeExecuter();
+//				AutoModeBase autoMode = new PointTurnMode( buttonBoardDirection.get().doubleValue() );
+//				autoModeExecuter.setAutoMode( autoMode );
+//				autoModeExecuter.start();
+//			}
+//				
+//			// drive controls
+//			if ((autoModeExecuter == null) || (!autoModeExecuter.getAutoMode().isActive()))	// ignore joystick when doing auto turns
 				drive.setOpenLoop(controls.getDriveCommand());
 		
 		}
