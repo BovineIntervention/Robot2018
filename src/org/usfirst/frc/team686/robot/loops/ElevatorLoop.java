@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
 
 public class ElevatorLoop implements Loop{
 	
@@ -32,6 +33,8 @@ public class ElevatorLoop implements Loop{
 	private static DigitalInput limitSwitch;
 	private static TalonSRX talon;
 	private int kSlotIdx= 0;
+	
+	private double startZeroingTime;
 	
 	public ElevatorLoop(){
 		
@@ -120,6 +123,16 @@ public class ElevatorLoop implements Loop{
 		talon.set(ControlMode.PercentOutput, -manualPercentOutput);
 	}
 	
+	public boolean getLimitSwitchDuringZeroing()
+	{
+		double elapsedZeroingTime = Timer.getFPGATimestamp() - startZeroingTime;
+		double maxZeroingTime = Constants.kElevatorMaxHeightLimit / Constants.kElevatorZeroingVelocity + 2.0;
+		
+		return (elevatorState.isLimitSwitchTriggered() || 
+				(elevatorState.getMotorCurrent() > Constants.kElevatorMotorStallCurrentThreshold) ||
+				elapsedZeroingTime > maxZeroingTime); 
+	}
+	
 	
 	
 	@Override
@@ -165,6 +178,8 @@ public class ElevatorLoop implements Loop{
 				talon.configReverseSoftLimitEnable(false, Constants.kTalonTimeoutMs);
 				talon.configForwardSoftLimitEnable(false, Constants.kTalonTimeoutMs);
 				talon.overrideLimitSwitchesEnable(false);	// disable soft limit switches during zeroing
+				
+				startZeroingTime = Timer.getFPGATimestamp();
 			}
 			break;
 			

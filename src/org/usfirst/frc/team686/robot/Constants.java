@@ -137,7 +137,6 @@ public class Constants extends ConstantsBase
     public static double kCubeSwitchHeight =	kSwitchHeight                    + kCubeClearance; 		
     public static double kCubeExchangeHeight = 	kExchangeHeight; 
     public static double kCubeGroundHeight = 	kGroundHeight;
-    public static double kCubeDriveHeight = 	kGroundHeight + 4.0; 
     
     
     
@@ -167,7 +166,7 @@ public class Constants extends ConstantsBase
 	
     public static double kMinElevatorVoltage = 2.0;
     public static double kMaxElevatorVoltage = 12.0;
-    
+    public static double kElevatorMotorStallCurrentThreshold = 10.0 / Constants.kMaxElevatorVoltage;	// current at which we will assume the limit switch didn't catch it and we are stalled
     
     
     // ARM BAR
@@ -175,15 +174,6 @@ public class Constants extends ConstantsBase
     public static double kArmBarFlatAngleDeg = 	  0.0;	// TODO: quick calculations show -34 is the right number
     public static double kArmBarDownAngleDeg = 	-20.0;	// TODO: quick calculations show -34 is the right number
 
-    public static double kArmBarScaleHighAngle = 	kArmBarFlatAngleDeg;	// need to angle up?
-    public static double kArmBarScaleMedAngle = 	kArmBarFlatAngleDeg;
-    public static double kArmBarScaleLowAngle = 	kArmBarFlatAngleDeg;
-    public static double kArmBarSwitchAngle = 		kArmBarFlatAngleDeg;
-    public static double kArmBarExchangeAngle = 	kArmBarDownAngleDeg;	// keep tucked in so we don't smash into wall?
-    public static double kArmBarIntakeAngle = 		kArmBarFlatAngleDeg;
-    public static double kArmBarDriveAngle = 		kArmBarDownAngleDeg;
-    public static double kArmBarStartOfMatchAngle = kArmBarUpAngleDeg;
-    
     public static double kArmBarLength = 14.0;
     
     public static double kArmBarZeroingVelocity = 	 30.0;	// in degrees per second
@@ -199,7 +189,7 @@ public class Constants extends ConstantsBase
 	public static double kArmBarKi = 0.0;
    
 	public static double kMaxArmBarVoltage = 6.0;	// may be less than 12V battery voltage when testing	
-	
+	public static double kArmBarMotorStallCurrentThreshold = 5.0 / Constants.kMaxArmBarVoltage;	// current at which we will assume the limit switch didn't catch it and we are stalled
 	
     // CUBE HEIGHT
     public static double kCubeGrabHeight = 8.5;		// inches above ground where cube is grabbed

@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
 
 public class ArmBarLoop implements Loop
 {
@@ -44,6 +45,8 @@ public class ArmBarLoop implements Loop
 	
 	public TalonSRX talon;
 	public DigitalInput limitSwitch;
+	
+	private double startZeroingTime;
 	
 	public ArmBarLoop()
 	{
@@ -93,6 +96,15 @@ public class ArmBarLoop implements Loop
 		talon.setSelectedSensorPosition( angleDegToEncoderUnits(_angleDeg), Constants.kTalonPidIdx, Constants.kTalonTimeoutMs);
 	}
 	
+	public boolean getLimitSwitchDuringZeroing()
+	{
+		double elapsedZeroingTime = Timer.getFPGATimestamp() - startZeroingTime;
+		double maxZeroingTime = Constants.kElevatorMaxHeightLimit / Constants.kElevatorZeroingVelocity + 2.0;
+		
+		return (armBarState.isLimitSwitchTriggered() || 
+				(armBarState.getMotorCurrent() > Constants.kArmBarMotorStallCurrentThreshold) ||
+				elapsedZeroingTime > maxZeroingTime); 
+	}
 	
 	
 	
