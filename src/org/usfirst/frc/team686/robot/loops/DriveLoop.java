@@ -107,6 +107,9 @@ public class DriveLoop implements Loop
 
 		lMotorMaster.configAllowableClosedloopError(kBaseLockControlSlot, Constants.kDriveBaseLockAllowableError, Constants.kTalonTimeoutMs);
 		rMotorMaster.configAllowableClosedloopError(kBaseLockControlSlot, Constants.kDriveBaseLockAllowableError, Constants.kTalonTimeoutMs);
+		
+		lMotorMaster.configOpenloopRamp(Constants.kDriveVelocityRampRate, 0);
+		rMotorMaster.configOpenloopRamp(Constants.kDriveVelocityRampRate, 0);
 
 		/*****************************************************************
 		 * Configure Slave Motor Controllers

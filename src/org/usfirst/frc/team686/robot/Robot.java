@@ -14,6 +14,7 @@ import org.usfirst.frc.team686.robot.lib.joystick.ButtonBoard;
 import org.usfirst.frc.team686.robot.lib.joystick.JoystickControlsBase;
 import org.usfirst.frc.team686.robot.subsystems.Drive;
 import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar;
+import org.usfirst.frc.team686.robot.subsystems.Intake;
 import org.usfirst.frc.team686.robot.util.DataLogController;
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
 import org.usfirst.frc.team686.robot.command_status.DriveCommand;
@@ -26,6 +27,7 @@ import org.usfirst.frc.team686.robot.lib.util.Pose;
 import org.usfirst.frc.team686.robot.loops.ArmBarLoop;
 import org.usfirst.frc.team686.robot.loops.DriveLoop;
 import org.usfirst.frc.team686.robot.loops.ElevatorLoop;
+import org.usfirst.frc.team686.robot.loops.IntakeLoop;
 import org.usfirst.frc.team686.robot.loops.LoopController;
 import org.usfirst.frc.team686.robot.loops.RobotStateLoop;
 
@@ -47,6 +49,7 @@ public class Robot extends IterativeRobot {
 	Drive drive = Drive.getInstance();
 	ElevatorArmBar elevatorArmBar = ElevatorArmBar.getInstance();
 	ElevatorState elevatorState = ElevatorState.getInstance();
+	Intake intake = Intake.getInstance();
 	
 	AutoModeExecuter autoModeExecuter = null;
 	
@@ -89,6 +92,7 @@ public class Robot extends IterativeRobot {
     		loopController.register(DriveLoop.getInstance());
        		loopController.register(ArmBarLoop.getInstance());
     		loopController.register(ElevatorLoop.getInstance());
+    		loopController.register(IntakeLoop.getInstance());
        		loopController.register(RobotStateLoop.getInstance());
     		
     		smartDashboardInteractions = new SmartDashboardInteractions();
@@ -159,6 +163,7 @@ public class Robot extends IterativeRobot {
 
 			stopAll(); // stop all actuators
 			loopController.start();
+			intake.disable();
 			elevatorArmBar.disable();
 		}
 		catch (Throwable t)
@@ -216,6 +221,7 @@ public class Robot extends IterativeRobot {
 			autoModeExecuter.start();
 			
 			elevatorArmBar.enable();
+			intake.enable();
     	}
     	catch(Throwable t)
     	{
@@ -262,6 +268,7 @@ public class Robot extends IterativeRobot {
 
 			drive.setOpenLoop(DriveCommand.COAST());
 			elevatorArmBar.enable();
+			intake.enable();
 		} 
 		catch (Throwable t) 
 		{
