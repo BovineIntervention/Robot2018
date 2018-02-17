@@ -19,6 +19,7 @@ import org.usfirst.frc.team686.robot.util.DataLogController;
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
 import org.usfirst.frc.team686.robot.command_status.DriveCommand;
 
+import java.awt.EventQueue;
 import java.util.Optional;
 import java.util.TimeZone;
 
@@ -31,6 +32,9 @@ import org.usfirst.frc.team686.robot.loops.IntakeLoop;
 import org.usfirst.frc.team686.robot.loops.LoopController;
 import org.usfirst.frc.team686.robot.loops.RobotStateLoop;
 
+import edu.wpi.cscore.CvSink;
+import edu.wpi.cscore.MjpegServer;
+import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -59,6 +63,7 @@ public class Robot extends IterativeRobot {
 	DataLogController robotLogger;
 
 	CameraServer cameraServer;
+	UsbCamera camera = new UsbCamera("USB Camera 1", 1);
 
 	
 	enum OperationalMode 
@@ -90,9 +95,9 @@ public class Robot extends IterativeRobot {
     		loopController = new LoopController();
     		loopController.register(drive.getVelocityPIDLoop());
     		loopController.register(DriveLoop.getInstance());
-       		loopController.register(ArmBarLoop.getInstance());
-    		loopController.register(ElevatorLoop.getInstance());
-    		loopController.register(IntakeLoop.getInstance());
+       		//loopController.register(ArmBarLoop.getInstance());
+    		//loopController.register(ElevatorLoop.getInstance());
+    		//loopController.register(IntakeLoop.getInstance());
        		loopController.register(RobotStateLoop.getInstance());
     		
     		smartDashboardInteractions = new SmartDashboardInteractions();
@@ -111,6 +116,15 @@ public class Robot extends IterativeRobot {
     		setInitialPose(new Pose());
 
     		cameraServer.getInstance().startAutomaticCapture();
+    		cameraServer.getInstance().getVideo();
+    		CameraServer.getInstance().putVideo("cam", 640, 480);
+    		
+    		MjpegServer mjpegServer = new MjpegServer("serve_Blur", "http://roborio-686-frc.local:1181/stream.mjpg", 1181);
+    		mjpegServer.setSource(camera); 
+    		CvSink cvSink = new CvSink("USB Camera 1");
+    		cvSink.setSource(camera);
+
+    		
     	}
     	catch(Throwable t)
     	{

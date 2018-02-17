@@ -101,6 +101,13 @@ public class Drive extends Subsystem
 		driveCmd.setMotors(cmd.getLeftMotor()/driveReduction, cmd.getRightMotor()/driveReduction);
 	}
 
+	
+	public void setOpenLoop(DriveCommand cmd) 
+	{
+		driveCmd.setDriveMode(DriveControlMode.OPEN_LOOP);
+		driveCmd.setMotors(cmd.getLeftMotor(), cmd.getRightMotor());
+	}
+
 	public void setBaseLockOn() 
 	{
 		driveCmd.setDriveMode(DriveControlMode.BASE_LOCKED);
