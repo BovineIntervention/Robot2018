@@ -28,14 +28,15 @@ public class IntakeLoop implements Loop
 	public IntakeStateEnum state = IntakeStateEnum.UNINITIALIZED;
 	public IntakeStateEnum nextState = IntakeStateEnum.UNINITIALIZED;
 	
-	public boolean enable = false;
+	public boolean enabled = false;
 	
 	private static Spark leftSpark;
 	private static Spark rightSpark;
 	
 	private static DoubleSolenoid solenoid;
 	
-	public double velocity;
+	public double leftVelocity;
+	public double rightVelocity;
 	public Value solenoidValue;
 	
 	public IntakeLoop()
@@ -54,11 +55,11 @@ public class IntakeLoop implements Loop
 	
 	
 
-	public void enable(){ enable = true; }
+	public void enable(){ enabled = true; }
 	
 	public void disable()
 	{
-		enable = false; 
+		enabled = false; 
 		state = IntakeStateEnum.UNINITIALIZED; 
 		nextState = IntakeStateEnum.UNINITIALIZED;
 	}
@@ -81,10 +82,54 @@ public class IntakeLoop implements Loop
 	public void onLoop() 
 	{
 		
+		//leftVelocity = intakeState.getLeftVelocityInchesPerSec();
+		//rightVelocity = intakeState.getRightVelocityInchesPerSec();
+		//solenoidValue = intakeState.getSolenoidValue();
 		
-		double velocity = getVelocity(enable);
-		leftSpark.set(velocity);
-		rightSpark.set(velocity);
+		if (!enabled)
+		{
+			state = IntakeStateEnum.UNINITIALIZED;
+		}
+		
+		switch (state)
+		{
+		case UNINITIALIZED:
+
+			if (enabled)
+			{
+				leftVelocity = 0.0;
+				rightVelocity = 0.0;
+				
+				solenoidValue = DoubleSolenoid.Value.kOff;
+			}
+			break;
+			
+		case INTAKE:
+
+			leftVelocity = Constants.kIntakeSpeed;
+			rightVelocity = Constants.kIntakeSpeed;
+			
+			solenoidValue = DoubleSolenoid.Value.kForward;
+			break;
+			
+		case OUTTAKE:
+
+			leftVelocity = Constants.kOuttakeSpeed;
+			rightVelocity = Constants.kOuttakeSpeed;
+			
+			solenoidValue = DoubleSolenoid.Value.kReverse;
+			
+			break;
+			
+		default:
+			nextState = IntakeStateEnum.UNINITIALIZED;
+		}
+		
+		
+		leftSpark.set(leftVelocity);
+		rightSpark.set(rightVelocity);
+		
+		solenoid.set(solenoidValue);
 		
 		System.out.println(toString());
 	}
@@ -95,74 +140,17 @@ public class IntakeLoop implements Loop
 	}	
 	
 	
-	
-	public double getVelocity(boolean enabled)
-	{
-		// start over if ever disabled
-		if (!enabled)
-		{
-			state = IntakeStateEnum.UNINITIALIZED;
-		}
+	public void getStatus(){
 		
-		switch (state)
-		{
-		case UNINITIALIZED:
-
-			if (enabled)
-			{
-				velocity = 0.0;
-			}
-			break;
-			
-		case INTAKE:
-
-			velocity = Constants.kIntakeSpeed;
-			break;
-			
-		case OUTTAKE:
-
-			velocity = Constants.kOuttakeSpeed;
-			break;
-			
-		default:
-			nextState = IntakeStateEnum.UNINITIALIZED;
-		}
+		intakeState.setLeftVelocityInchesPerSec(leftVelocity);
+		intakeState.setRightVelocityInchesPerSec(rightVelocity);
 		
-		return velocity;
-	}	
-	
-	public Value getValue(boolean enabled){
-		if (!enabled)
-		{
-			state = IntakeStateEnum.UNINITIALIZED;
-		}
+		//intakeState.setLeftMotorCurrent(leftSpark.); not sure how to get current from Sparks
 		
-		switch (state)
-		{
-		case UNINITIALIZED:
-
-			if (enabled)
-			{
-				solenoidValue = DoubleSolenoid.Value.kOff;
-			}
-			break;
-			
-		case INTAKE:
-
-			solenoidValue = DoubleSolenoid.Value.kForward;
-			break;
-			
-		case OUTTAKE:
-
-			solenoidValue = DoubleSolenoid.Value.kReverse;
-			break;
-			
-		default:
-			nextState = IntakeStateEnum.UNINITIALIZED;
-		}
+		intakeState.setSolenoidValue(solenoidValue);
 		
-		return solenoidValue;
 	}
+	
 	
     public String toString() 
     {

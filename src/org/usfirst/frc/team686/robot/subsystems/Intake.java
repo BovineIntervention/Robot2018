@@ -1,6 +1,7 @@
 package org.usfirst.frc.team686.robot.subsystems;
 
 import org.usfirst.frc.team686.robot.Constants;
+import org.usfirst.frc.team686.robot.command_status.IntakeState;
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
 import org.usfirst.frc.team686.robot.loops.ArmBarLoop;
 import org.usfirst.frc.team686.robot.loops.IntakeLoop;
@@ -41,11 +42,13 @@ public class Intake extends Subsystem {
         @Override
         public void log()
         {
-			try // pathFollowingController doesn't exist until started
+			try 
 			{
-				put("Intake/State", intakeLoop.state.toString() );
+				put("Intake/state", intakeLoop.state.toString() );
+				
+				IntakeState.getInstance().getLogger().log();
 			} catch (NullPointerException e) {
-				// skip logging pathFollowingController when it doesn't exist
+				
 			}
         }
     };
