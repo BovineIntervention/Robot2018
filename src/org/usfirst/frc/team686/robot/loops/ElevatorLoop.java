@@ -3,6 +3,7 @@ package org.usfirst.frc.team686.robot.loops;
 import org.usfirst.frc.team686.robot.Constants;
 import org.usfirst.frc.team686.robot.command_status.ElevatorState;
 import org.usfirst.frc.team686.robot.lib.util.Util;
+import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar.ManualAutoStateEnum;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -25,7 +26,7 @@ public class ElevatorLoop implements Loop{
 	private ElevatorStateEnum nextState = ElevatorStateEnum.UNINITIALIZED;
 	
 	public boolean enabled = false;
-	public boolean manualControl = false;
+	public boolean manualControls = false;
 	
     public double position;
 	public double target;
@@ -35,9 +36,10 @@ public class ElevatorLoop implements Loop{
 	private int kSlotIdx= 0;
 	
 	private double startZeroingTime;
+	private int printCnt = 0;
 	
-	public ElevatorLoop(){
-		
+	public ElevatorLoop()
+	{
 		System.out.println("ElevatorLoop constructor");
 		
 		// configure Talon
@@ -55,10 +57,10 @@ public class ElevatorLoop implements Loop{
 		talon.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, (int)(1000 * Constants.kLoopDt), Constants.kTalonTimeoutMs);
 
         // set min and max outputs
-        talon.configNominalOutputForward(+Constants.kMinElevatorVoltage/Constants.kNominalBatteryVoltage, Constants.kTalonTimeoutMs);
-        talon.configNominalOutputReverse(-Constants.kMinElevatorVoltage/Constants.kNominalBatteryVoltage, Constants.kTalonTimeoutMs);
-        talon.configPeakOutputForward(+Constants.kMaxElevatorVoltage/Constants.kNominalBatteryVoltage, Constants.kTalonTimeoutMs);
-        talon.configPeakOutputReverse(-Constants.kMaxElevatorVoltage/Constants.kNominalBatteryVoltage, Constants.kTalonTimeoutMs);
+        talon.configNominalOutputForward(+Constants.kMinElevatorOutput, Constants.kTalonTimeoutMs);
+        talon.configNominalOutputReverse(-Constants.kMinElevatorOutput, Constants.kTalonTimeoutMs);
+        talon.configPeakOutputForward(+Constants.kMaxElevatorOutput, Constants.kTalonTimeoutMs);
+        talon.configPeakOutputReverse(-Constants.kMaxElevatorOutput, Constants.kTalonTimeoutMs);
 		
 		// configure position loop PID 
         talon.selectProfileSlot(kSlotIdx, Constants.kTalonPidIdx); 
@@ -71,6 +73,7 @@ public class ElevatorLoop implements Loop{
 		talon.configMotionCruiseVelocity((int)Constants.kElevatorCruiseVelocity, Constants.kTalonTimeoutMs);
 		talon.configMotionAcceleration((int)Constants.kElevatorAccel, Constants.kTalonTimeoutMs);	
 
+		talon.configAllowableClosedloopError(kSlotIdx, Constants.kElevatorAllowableError, Constants.kTalonTimeoutMs);
   		
         // limit switch
 		limitSwitch = new DigitalInput(Constants.kElevatorLimitSwitchPwmId);
@@ -84,22 +87,25 @@ public class ElevatorLoop implements Loop{
 	public void disable()
 	{
 		enabled = false;
-		manualControl = false;
+		manualControls = false;
 		state = ElevatorStateEnum.UNINITIALIZED; 
 		nextState = ElevatorStateEnum.UNINITIALIZED;
 	}
 	
 	public void setTarget(double _target)
     {
-        target = Util.limit(_target, Constants.kElevatorMaxHeightLimit, Constants.kElevatorMinHeightLimit);
-        manualControl = false;
-	}
+		//System.out.printf("Elevator setTarget(%.1f)\n", _target);
+        target = Util.limit(_target, Constants.kElevatorMinHeightLimit, Constants.kElevatorMaxHeightLimit);
+        manualControls = false;
+ 	}
+	
+	public double getTarget() { return target; }
 	
 	public ElevatorStateEnum getState() { return state; }
 	
 	public void stop()
 	{
-		setTarget( elevatorState.getPositionInches() );
+		disable();
 		talon.set(ControlMode.PercentOutput, 0.0);
 	}
 	
@@ -113,20 +119,28 @@ public class ElevatorLoop implements Loop{
 	
 	public void manualUp()
 	{
-		manualControl = true; 
-		talon.set(ControlMode.PercentOutput, +manualPercentOutput);
+        manualControls = true;
+		talon.set(ControlMode.PercentOutput, +Constants.kElevatorManualOutput);
 	}
 	
 	public void manualDown()
 	{
-		manualControl = true; 
-		talon.set(ControlMode.PercentOutput, -manualPercentOutput);
+        manualControls = true;
+		talon.set(ControlMode.PercentOutput, -Constants.kElevatorManualOutput);
+	}
+	
+	public void manualStop()
+	{
+        manualControls = true;
+		talon.set(ControlMode.PercentOutput, 0.0);
 	}
 	
 	public boolean getLimitSwitchDuringZeroing()
 	{
 		double elapsedZeroingTime = Timer.getFPGATimestamp() - startZeroingTime;
 		double maxZeroingTime = Constants.kElevatorMaxHeightLimit / Constants.kElevatorZeroingVelocity + 2.0;
+		
+		//System.out.printf("limSwitch: %d, elevCurrent = %.1f, elapsedTime = %.1f\n",  elevatorState.isLimitSwitchTriggered() ? 1 : 0, elevatorState.getMotorCurrent(), elapsedZeroingTime);
 		
 		return (elevatorState.isLimitSwitchTriggered() || 
 				(elevatorState.getMotorCurrent() > Constants.kElevatorMotorStallCurrentThreshold) ||
@@ -142,6 +156,9 @@ public class ElevatorLoop implements Loop{
 		nextState = ElevatorStateEnum.UNINITIALIZED;
 	}
 
+	
+	
+	
 	@Override
 	public void onLoop()
 	{
@@ -156,7 +173,7 @@ public class ElevatorLoop implements Loop{
 		if (!enabled)
 			state = ElevatorStateEnum.UNINITIALIZED;
 
-		if (manualControl)
+		if (manualControls)
 		{
 			// do not run remaining function when being manually controlled
 			// we need to keep talon in PercentOutput mode, controlled by joystick buttons
@@ -188,13 +205,13 @@ public class ElevatorLoop implements Loop{
 			target -= (Constants.kElevatorZeroingVelocity * Constants.kLoopDt);
 
 			// simple P loop during zeroing (no motion magic)
-			double Kp = 0.4;
+			double Kp = 1.0;
 			double error = target - position;
 			double percentOutput = Kp * error;
 			percentOutput = Util.limit(percentOutput, -1.0, +1.0);
 			talon.set(ControlMode.PercentOutput, percentOutput);
 			
-			if (elevatorState.isLimitSwitchTriggered())
+			if (getLimitSwitchDuringZeroing())
 			{
 				System.out.println("Elevator Limit Switch Triggered");
 				
@@ -214,6 +231,9 @@ public class ElevatorLoop implements Loop{
 				nextState = ElevatorStateEnum.RUNNING;	// start running state
 			}
 			
+			
+			System.out.printf("target: %.1f, position: %.1f, error: %.1f, percentOutput: %.1f\n", target, position, error, percentOutput);
+			
 			talon.set(ControlMode.PercentOutput, percentOutput);
 			break;
 			
@@ -226,7 +246,12 @@ public class ElevatorLoop implements Loop{
 			nextState = ElevatorStateEnum.UNINITIALIZED;
 		}
 		
-		System.out.println(toString());
+		printCnt++;
+		if (printCnt==5)
+		{
+			System.out.println(toString());
+			printCnt = 0;
+		}
 	}
 
 	public void getStatus()
@@ -235,11 +260,14 @@ public class ElevatorLoop implements Loop{
 		elevatorState.setPositionInches( encoderUnitsToInches( talon.getSelectedSensorPosition(Constants.kTalonPidIdx) ) );
 		elevatorState.setVelocityInchesPerSec( encoderVelocityToInchesPerSec(talon.getSelectedSensorVelocity(Constants.kTalonPidIdx)) );
 		
-		elevatorState.setTrajectoryTargetInches( encoderUnitsToInches(talon.getClosedLoopTarget(Constants.kTalonPidIdx)) );
-		elevatorState.setTrajectoryPositionInches( encoderUnitsToInches(talon.getActiveTrajectoryPosition()) );
-		elevatorState.setTrajectoryVelocityInchesPerSec( encoderVelocityToInchesPerSec(talon.getActiveTrajectoryVelocity()) );
-
-		elevatorState.setPidError( talon.getClosedLoopError(Constants.kTalonPidIdx) );
+		if (talon.getControlMode() == ControlMode.MotionMagic)
+		{
+			elevatorState.setTrajectoryTargetInches( encoderUnitsToInches(talon.getClosedLoopTarget(Constants.kTalonPidIdx)) );
+			elevatorState.setTrajectoryPositionInches( encoderUnitsToInches(talon.getActiveTrajectoryPosition()) );
+			elevatorState.setTrajectoryVelocityInchesPerSec( encoderVelocityToInchesPerSec(talon.getActiveTrajectoryVelocity()) );
+			elevatorState.setPidError( talon.getClosedLoopError(Constants.kTalonPidIdx) );
+		}
+		
 		elevatorState.setMotorPercentOutput( talon.getMotorOutputPercent() );
 		elevatorState.setMotorCurrent( talon.getOutputCurrent() );
 
@@ -264,35 +292,15 @@ public class ElevatorLoop implements Loop{
 	
 	@Override
 	public void onStop() {
-		// TODO Auto-generated method stub
-		
+		stop();
 	}
 	
 	public String toString() 
     {
-		StringBuilder sb = new StringBuilder();
-
-		sb.append(state.toString());
-		sb.append("\tTarget: ");
-		sb.append(elevatorState.getTrajectoryTargetInches());
-		sb.append("\tTrajPos: ");
-		sb.append(elevatorState.getTrajectoryPositionInches());
-		sb.append("\tTrajVel: ");
-		sb.append(elevatorState.getTrajectoryVelocityInchesPerSec());
-		sb.append("\tSensorPos: ");
-		sb.append(elevatorState.getPositionInches());
-		sb.append("\tSensorVel: ");
-		sb.append(elevatorState.getVelocityInchesPerSec());
-		sb.append("\tPIDError: ");
-		sb.append(elevatorState.getPidError());
-		sb.append("\tMotorPercentOutput: ");
-		sb.append(elevatorState.getMotorPercentOutput());
-		sb.append("\tMotorCurrent: ");
-		sb.append(elevatorState.getMotorCurrent());
-		sb.append("\tLimitSwitch: ");
-		sb.append(elevatorState.isLimitSwitchTriggered());
-		
-		return sb.toString();
+		return String.format("%s, Target: %4.1f, TrajPos %4.1f, TrajVel: %5.1f, SensorPos: %4.1f, SensorVel: %5.1f, PIDError: %7.1f, Motor%%Output: %6.3f, MotorCurrent: %5.1f, LimitSwitch: %d",
+				state.toString(), elevatorState.getTrajectoryTargetInches(), elevatorState.getTrajectoryPositionInches(), elevatorState.getTrajectoryVelocityInchesPerSec(),
+				elevatorState.getPositionInches(), elevatorState.getVelocityInchesPerSec(), elevatorState.getPidError(), 
+				elevatorState.getMotorPercentOutput(), elevatorState.getMotorCurrent(), elevatorState.isLimitSwitchTriggered() ? 1 : 0);
     }
 
 	

@@ -54,7 +54,8 @@ public class ArmBarLoop implements Loop
 		
 		// Configure Talon
 		talon = new TalonSRX(Constants.kArmBarTalonId);
-		talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 10, Constants.kTalonTimeoutMs);
+		talon.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General,   (int)(1000 * Constants.kLoopDt), Constants.kTalonTimeoutMs);
+		talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, (int)(1000 * Constants.kLoopDt), Constants.kTalonTimeoutMs);
 		talon.set(ControlMode.PercentOutput, 0.0);
 		talon.setNeutralMode(NeutralMode.Brake);
 				
@@ -117,7 +118,7 @@ public class ArmBarLoop implements Loop
 	@Override
 	public void onLoop() 
 	{
-		getState();
+		getStatus();
 		
 		double voltage = calcVoltage(armBarState.getAngleDeg(), armBarState.isLimitSwitchTriggered(), enable);			// output in [-12, +12] volts	
 		double percentOutput = voltage / Constants.kNominalBatteryVoltage;			// normalize output to [-1,. +1]
@@ -133,6 +134,7 @@ public class ArmBarLoop implements Loop
 
 	@Override
 	public void onStop() {
+		disable();
 		talon.set(ControlMode.PercentOutput, 0.0);
 	}	
 	
@@ -244,6 +246,9 @@ public class ArmBarLoop implements Loop
 		armBarState.setMotorCurrent( talon.getOutputCurrent() );
 
 		armBarState.setLimitSwitchTriggered( talon.getSensorCollection().isFwdLimitSwitchClosed() );
+		
+//		System.out.println(talon.getSelectedSensorPosition(Constants.kTalonPidIdx) + ",  " + talon.getMotorOutputPercent()  + ",  " + talon.getOutputCurrent() + ",  " + talon.getSensorCollection().isFwdLimitSwitchClosed());;
+		
 	}
 
 	

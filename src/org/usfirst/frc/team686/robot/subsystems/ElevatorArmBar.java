@@ -12,12 +12,15 @@ public class ElevatorArmBar extends Subsystem {
 	private static ElevatorArmBar instance = new ElevatorArmBar();
 	public static ElevatorArmBar getInstance() { return instance; }
 	
-	public enum ElevatorArmBarState 
+	public enum ManualAutoStateEnum { MANUAL, AUTO };
+	ManualAutoStateEnum manualAutoState = ManualAutoStateEnum.AUTO; 
+			
+	public enum ElevatorArmBarStateEnum 
 	{
 		// state		Bottom of Cube Height				Retracted Arm Angle				Extended Arm Angle
 		// -----		---------------------				-------------------				------------------
 		START_OF_MATCH(	Constants.kCubeGroundHeight, 		Constants.kArmBarUpAngleDeg, 	Constants.kArmBarUpAngleDeg),	// needed for elevator / armbar limit switch calibration
-		GROUND(			Constants.kCubeGroundHeight, 		Constants.kArmBarUpAngleDeg, 	Constants.kArmBarFlatAngleDeg),
+		GROUND(			Constants.kCubeGroundHeight, 		Constants.kArmBarUpAngleDeg, 	Constants.kArmBarDownAngleDeg),
 		EXCHANGE(		Constants.kCubeExchangeHeight, 		Constants.kArmBarDownAngleDeg, 	Constants.kArmBarDownAngleDeg),
 		SWITCH(			Constants.kCubeSwitchHeight, 		Constants.kArmBarUpAngleDeg, 	Constants.kArmBarUpAngleDeg),
 		SCALE_LOW(		Constants.kCubeScaleHeightLow, 		Constants.kArmBarUpAngleDeg, 	Constants.kArmBarUpAngleDeg),
@@ -29,14 +32,14 @@ public class ElevatorArmBar extends Subsystem {
 		public double retractedArmAngle; 	// in degrees
 		public double extendedArmAngle; 	// in degrees
 		
-		ElevatorArmBarState(double _bottomOfCubeHeight, double _retractedArmAngle, double _extendedArmAngle)
+		ElevatorArmBarStateEnum(double _bottomOfCubeHeight, double _retractedArmAngle, double _extendedArmAngle)
 		{
 			this.bottomOfCubeHeight = _bottomOfCubeHeight;
 			this.retractedArmAngle =  _retractedArmAngle;
 			this.extendedArmAngle =   _extendedArmAngle;
 		}
 	}
-	ElevatorArmBarState state = ElevatorArmBarState.START_OF_MATCH;
+	ElevatorArmBarStateEnum state = ElevatorArmBarStateEnum.START_OF_MATCH;
 	
 	public ElevatorLoop elevatorLoop = ElevatorLoop.getInstance();
 	public ArmBarLoop armBarLoop = ArmBarLoop.getInstance();
@@ -48,7 +51,7 @@ public class ElevatorArmBar extends Subsystem {
 	private ElevatorArmBar()
 	{
 		disable();
-		state = ElevatorArmBarState.START_OF_MATCH;
+		state = ElevatorArmBarStateEnum.START_OF_MATCH;
 		set(state, false);
 	}
 	
@@ -64,82 +67,88 @@ public class ElevatorArmBar extends Subsystem {
 		armBarLoop.enable();
 	}
 
-	public void retract()
-	{
-		// retract arm bar (up/down based on current state)
-		// move elevator to maintain cube height
-		set(state, false);
-	}
 	
-	public void extend()
+	// elevator controls
+	public void processInputs( boolean _manualUpButton, boolean _manualDownButton, boolean _intakeButton, boolean _outtakeButton,
+			boolean _groundButton, boolean _exchangeButton, boolean _switchButton, boolean _scaleLowButton, boolean _scaleMedButton, boolean _scaleHighButton)
 	{
-		// extend arm bar (angle based on current state)
-		// move elevator to maintain cube height
-		set(state, true);
-	}
+		// manual / auto state machine
+		if (_manualUpButton || _manualDownButton)
+			manualAutoState = ManualAutoStateEnum.MANUAL;
 
-	public void setHeight(ElevatorArmBarState _newState)
-	{
-		set(_newState, extended);
-	}
-
-	public void manualUp()
-	{
-		// driver override to move elevator up
-		elevatorLoop.manualUp();
-	}
-	
-	public void manualDown()
-	{
-		// driver override to move elevator down
-		elevatorLoop.manualDown();
-	}
-	
-
-	private void set(ElevatorArmBarState _newState, boolean _extended)
-	{
-		state = _newState;
-		extended = _extended;
+		if (_groundButton || _exchangeButton || _switchButton || _scaleLowButton || _scaleMedButton || _scaleHighButton)
+			manualAutoState = ManualAutoStateEnum.AUTO;
 		
-		if (state == ElevatorArmBarState.START_OF_MATCH)
+		
+		
+		if (manualAutoState == ManualAutoStateEnum.MANUAL)
 		{
-			// special case where we need to force elevator and arm bar to correct positions for limit switch calibration
-			armBarAngle = state.retractedArmAngle;
-			armBarLoop.setTarget(armBarAngle);
-			
-			elevatorHeight = state.bottomOfCubeHeight;
-			elevatorLoop.setTarget(elevatorHeight);
+			if (_manualUpButton)
+				elevatorLoop.manualUp();
+			else if (_manualDownButton)
+				elevatorLoop.manualDown();
+			else
+				elevatorLoop.manualStop();
 		}
-		if (state == ElevatorArmBarState.GROUND)
+		
+		if (manualAutoState == ManualAutoStateEnum.AUTO)
 		{
-			// special case where we need to force elevator and arm bar to correct positions for limit switch calibration
-			armBarAngle = (extended ? state.extendedArmAngle : state.retractedArmAngle);
-			armBarLoop.setTarget(armBarAngle);
-			
-			elevatorHeight = 0;
-			elevatorLoop.setTarget(elevatorHeight);
+			if (_groundButton) 		{ set(ElevatorArmBarStateEnum.GROUND, extended); }
+			if (_exchangeButton) 	{ set(ElevatorArmBarStateEnum.EXCHANGE, extended); }
+			if (_switchButton) 		{ set(ElevatorArmBarStateEnum.SWITCH, extended); }
+			if (_scaleLowButton) 	{ set(ElevatorArmBarStateEnum.SCALE_LOW, extended); }
+			if (_scaleMedButton) 	{ set(ElevatorArmBarStateEnum.SCALE_MED, extended); }
+			if (_scaleHighButton) 	{ set(ElevatorArmBarStateEnum.SCALE_HIGH, extended); }
 		}
-		else if (state == ElevatorArmBarState.MANUAL)
-		{
-			// special case where we need to force elevator and arm bar to correct positions for limit switch calibration
-			armBarAngle = (extended ? state.extendedArmAngle : state.retractedArmAngle);
-			armBarLoop.setTarget(armBarAngle);
-			// DON'T ADJUST ELEVATOR TO PREVIOUS ELEVATOR TARGET
-		}
+
+		
+		if (_intakeButton)
+			set(state, true);
 		else
+			set(state, false);
+		
+	}
+	
+	
+	private void set(ElevatorArmBarStateEnum _newState, boolean _extended)
+	{
+		if (state != _newState || extended != _extended)
 		{
-			// first, set arm bar angle based on current elevator state
-			armBarAngle = (extended ? state.extendedArmAngle : state.retractedArmAngle);
-			armBarLoop.setTarget(armBarAngle);
-
-			// next, command elevator to correct height
-			elevatorHeight = calcElevatorHeight(state.bottomOfCubeHeight, armBarAngle);
-			elevatorLoop.setTarget(elevatorHeight);
+			state = _newState;
+			extended = _extended;
+			
+			if (state == ElevatorArmBarStateEnum.START_OF_MATCH)
+			{
+				// special case where we need to force elevator and arm bar to correct positions for limit switch calibration
+				armBarAngle = state.retractedArmAngle;
+				armBarLoop.setTarget(armBarAngle);
+				
+				elevatorHeight = state.bottomOfCubeHeight;
+				elevatorLoop.setTarget(elevatorHeight);
+			}
+			else if (state == ElevatorArmBarStateEnum.GROUND)
+			{
+				// special case where we need to force elevator and arm bar to correct positions for limit switch calibration
+				armBarAngle = (extended ? state.extendedArmAngle : state.retractedArmAngle);
+				armBarLoop.setTarget(armBarAngle);
+				
+				elevatorHeight = 0;
+				elevatorLoop.setTarget(elevatorHeight);
+			}
+			else
+			{
+				// first, set arm bar angle based on current elevator state
+				armBarAngle = (extended ? state.extendedArmAngle : state.retractedArmAngle);
+				armBarLoop.setTarget(armBarAngle);
+	
+				// next, command elevator to correct height
+				elevatorHeight = calcElevatorHeight(state.bottomOfCubeHeight, armBarAngle);
+				elevatorLoop.setTarget(elevatorHeight);
+			}
+			
+			//System.out.println(state.bottomOfCubeHeight + " " + state.retractedArmAngle + " " + state.extendedArmAngle);
+			//System.out.printf("ElevatorArmState = %s, Extend = %d, Elevator Target: %.1f, ArmBar Target = %.1f\n", state.toString(), (extended ? 1 : 0), elevatorLoop.getTarget(), armBarLoop.getTarget());
 		}
-		
-//		System.out.println(state.bottomOfCubeHeight + " " + state.retractedArmAngle + " " + state.extendedArmAngle);
-		
-//		System.out.printf("ElevatorArmState = %s, Extend = %d, Elevator Goal: %.1f, ArmBar Goal = %.1f\n", state.toString(), (extended ? 1 : 0), elevatorLoop.getGoal(), armBarLoop.getGoal());
 	}
 	
 	
@@ -148,7 +157,7 @@ public class ElevatorArmBar extends Subsystem {
 //		System.out.println("_bottomOfCubeHeight: " + _bottomOfCubeHeight);
 //		System.out.println("_armBarAngleDeg: " + _armBarAngleDeg);
 //		System.out.println("-Lsin(theta): " + (-Constants.kArmBarLength * Math.sin(_armBarAngleDeg * Math.PI / 180.0)));
-//		System.out.println("+Lsinn(theta_down): " + (Constants.kArmBarLength * Math.sin(Constants.kArmBarDownAngleDeg * Math.PI / 180.0)));
+//		System.out.println("+Lsin(theta_down): " + (Constants.kArmBarLength * Math.sin(Constants.kArmBarDownAngleDeg * Math.PI / 180.0)));
 		
 		// adjust height of elevator based on change in angle of arm bar from intake angle to expected outtake angle
 		return _bottomOfCubeHeight - Constants.kArmBarLength * Math.sin(_armBarAngleDeg * Math.PI / 180.0) + 

@@ -1,9 +1,6 @@
 package org.usfirst.frc.team686.robot;
 
 import org.usfirst.frc.team686.robot.lib.util.ConstantsBase;
-import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar.ElevatorArmBarState;
-import org.usfirst.frc.team686.robot.lib.joystick.ArcadeDriveJoystick;
-import org.usfirst.frc.team686.robot.lib.joystick.JoystickControlsBase;
 
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.SPI;
@@ -152,11 +149,11 @@ public class Constants extends ConstantsBase
 	public static double kElevatorGearCircum = 4.538;				// ~0.72 inch radius gear
 	public static double kElevatorEncoderUnitsPerInch = kElevatorQuadEncoderUnitsPerRev / kElevatorGearCircum * kElevatorQuadEncoderGain; 
 
-    public static double kElevataorMaxEncoderPulsePer100ms = 4060;		// velocity at a max throttle (measured using NI web interface)
+    public static double kElevataorMaxEncoderPulsePer100ms = 3200;		// velocity at a max throttle (measured using NI web interface)
     public static double kElevatorMaxPercentOutput 		= 1.0;		// percent output of motor at above throttle (using NI web interface)
 
-    public static double kElevatorCruiseVelocity = 0.5 * kElevataorMaxEncoderPulsePer100ms;		// cruise below top speed
-    public static double kElevatorTimeToCruiseVelocity = 1.0;				// seconds to reach cruise velocity
+    public static double kElevatorCruiseVelocity = 0.90 * kElevataorMaxEncoderPulsePer100ms;		// cruise below top speed
+    public static double kElevatorTimeToCruiseVelocity = 0.25;				// seconds to reach cruise velocity
     public static double kElevatorAccel = kElevatorCruiseVelocity / kElevatorTimeToCruiseVelocity; 
     
 	public static double kElevatorKf = kElevatorMaxPercentOutput * 1023.0 / kElevataorMaxEncoderPulsePer100ms;
@@ -164,20 +161,23 @@ public class Constants extends ConstantsBase
 	public static double kElevatorKd = 0.0;	// to resolve any overshoot, start at 10*Kp 
 	public static double kElevatorKi = 0.0;
 	
-    public static double kMinElevatorVoltage = 2.0;
-    public static double kMaxElevatorVoltage = 12.0;
-    public static double kElevatorMotorStallCurrentThreshold = 10.0 / Constants.kMaxElevatorVoltage;	// current at which we will assume the limit switch didn't catch it and we are stalled
+	public static int    kElevatorAllowableError = (int)(1.0 * kElevatorEncoderUnitsPerInch);
+	
+    public static double kMinElevatorOutput = 0.2;
+    public static double kMaxElevatorOutput = 1.0;
+    public static double kElevatorManualOutput = 0.5;
+    public static double kElevatorMotorStallCurrentThreshold = 15.0;	// current at which we will assume the limit switch didn't catch it and we are stalled
     
     
     // ARM BAR
-    public static double kArmBarUpAngleDeg = 	 80.0;	// TODO: fix
-    public static double kArmBarFlatAngleDeg = 	  0.0;	// TODO: quick calculations show -34 is the right number
-    public static double kArmBarDownAngleDeg = 	-20.0;	// TODO: quick calculations show -34 is the right number
+    public static double kArmBarUpAngleDeg = 	 73.0;
+    public static double kArmBarFlatAngleDeg = 	  0.0;	
+    public static double kArmBarDownAngleDeg = 	-25.0;	
 
     public static double kArmBarLength = 14.0;
     
     public static double kArmBarZeroingVelocity = 	 30.0;	// in degrees per second
-    public static double kArmBarVelocity = 			150.0;	// in degrees per second
+    public static double kArmBarVelocity = 			200.0;	// in degrees per second
     
 	public static double kArmBarQuadEncoderGain = 81.0 * 2.0;			// two 9:1 gear stages plus a 24:12 tooth reduction 
 	public static double kArmBarQuadEncoderUnitsPerRev = 4096;
@@ -188,8 +188,8 @@ public class Constants extends ConstantsBase
 	public static double kArmBarKd = 0.0;
 	public static double kArmBarKi = 0.0;
    
-	public static double kMaxArmBarVoltage = 6.0;	// may be less than 12V battery voltage when testing	
-	public static double kArmBarMotorStallCurrentThreshold = 5.0 / Constants.kMaxArmBarVoltage;	// current at which we will assume the limit switch didn't catch it and we are stalled
+	public static double kMaxArmBarVoltage = 12.0;	// may be less than 12V battery voltage when testing	
+	public static double kArmBarMotorStallCurrentThreshold = 5.0;	// current at which we will assume the limit switch didn't catch it and we are stalled
 	
     // CUBE HEIGHT
     public static double kCubeGrabHeight = 8.5;		// inches above ground where cube is grabbed

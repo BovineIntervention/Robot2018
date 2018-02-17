@@ -13,7 +13,6 @@ import org.usfirst.frc.team686.robot.lib.joystick.ButtonBoard;
 import org.usfirst.frc.team686.robot.lib.joystick.JoystickControlsBase;
 import org.usfirst.frc.team686.robot.subsystems.Drive;
 import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar;
-import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar.ElevatorArmBarState;
 import org.usfirst.frc.team686.robot.util.DataLogController;
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
 import org.usfirst.frc.team686.robot.command_status.DriveCommand;
@@ -21,7 +20,6 @@ import org.usfirst.frc.team686.robot.command_status.DriveCommand;
 import java.util.Optional;
 import java.util.TimeZone;
 
-import org.usfirst.frc.team686.robot.Robot.OperationalMode;
 import org.usfirst.frc.team686.robot.lib.util.CrashTracker;
 import org.usfirst.frc.team686.robot.lib.util.Pose;
 import org.usfirst.frc.team686.robot.loops.ArmBarLoop;
@@ -42,7 +40,7 @@ public class Robot extends IterativeRobot {
 	PowerDistributionPanel pdp = new PowerDistributionPanel();
 	
 	JoystickControlsBase controls = ArcadeDriveJoystick.getInstance();
-//	ButtonBoard buttonBoard = ButtonBoard.getInstance();
+	ButtonBoard buttonBoard = ButtonBoard.getInstance();
 
 	RobotState robotState = RobotState.getInstance();
 	Drive drive = Drive.getInstance();
@@ -87,8 +85,8 @@ public class Robot extends IterativeRobot {
     		loopController = new LoopController();
     		loopController.register(drive.getVelocityPIDLoop());
     		loopController.register(DriveLoop.getInstance());
-       		//loopController.register(ArmBarLoop.getInstance());
-    		//loopController.register(ElevatorLoop.getInstance());
+       		loopController.register(ArmBarLoop.getInstance());
+    		loopController.register(ElevatorLoop.getInstance());
        		loopController.register(RobotStateLoop.getInstance());
     		
     		smartDashboardInteractions = new SmartDashboardInteractions();
@@ -173,13 +171,6 @@ public class Robot extends IterativeRobot {
 	{
 		try
 		{
-//			// verify button board mapping
-//			for (int k=1; k<7; k++)
-//			{
-//				if (buttonBoard.getButton(k))
-//					System.out.println("Button: " + k);
-//			}
-			
 			stopAll(); // stop all actuators
 
 			System.gc(); // runs garbage collector
@@ -276,35 +267,32 @@ public class Robot extends IterativeRobot {
 			throw t;
 		}
 	}
+	
+	
 	@Override
 	public void teleopPeriodic() 
 	{
 		try
 		{
-//			// elevator controls
-//			if (buttonBoard.getButton(Constants.kElevatorScaleHighButton))	{ elevatorArmBar.setHeight(ElevatorArmBarState.SCALE_HIGH); }
-//			if (buttonBoard.getButton(Constants.kElevatorScaleMedButton))	{ elevatorArmBar.setHeight(ElevatorArmBarState.SCALE_MED); }
-//			if (buttonBoard.getButton(Constants.kElevatorScaleLowButton))	{ elevatorArmBar.setHeight(ElevatorArmBarState.SCALE_LOW); }
-//			if (buttonBoard.getButton(Constants.kElevatorSwitchButton))		{ elevatorArmBar.setHeight(ElevatorArmBarState.SWITCH); }
-//			if (buttonBoard.getButton(Constants.kElevatorExchangeButton))	{ elevatorArmBar.setHeight(ElevatorArmBarState.EXCHANGE); }
-//			if (buttonBoard.getButton(Constants.kElevatorGroundButton))		{ elevatorArmBar.setHeight(ElevatorArmBarState.GROUND); }
-//
-//			// manual elevator controls (driver override)
-//			if (controls.getButton(Constants.kElevatorManualUpButton)) 		{ elevatorArmBar.manualUp(); }
-//			if (controls.getButton(Constants.kElevatorManualDownButton))	{ elevatorArmBar.manualDown(); }
-//
-//			// arm bar controls
-//			if (controls.getButton(Constants.kIntakeButton) || controls.getButton(Constants.kOuttakeButton)) {
-//				elevatorArmBar.extend(); }
-//			else {
-//				elevatorArmBar.retract();
-//			}
-//
+			// elevator & arm bar controls
+			elevatorArmBar.processInputs(
+					controls.getButton(Constants.kElevatorManualUpButton),
+					controls.getButton(Constants.kElevatorManualDownButton),
+					controls.getButton(Constants.kIntakeButton),
+					controls.getButton(Constants.kOuttakeButton),
+					buttonBoard.getButton(Constants.kElevatorGroundButton),
+					buttonBoard.getButton(Constants.kElevatorExchangeButton),
+					buttonBoard.getButton(Constants.kElevatorSwitchButton),
+					buttonBoard.getButton(Constants.kElevatorScaleLowButton),
+					buttonBoard.getButton(Constants.kElevatorScaleMedButton),
+					buttonBoard.getButton(Constants.kElevatorScaleHighButton));
+					
 //			// intake controls
 //		
 //			
 //			// turn-to-angle controls
 //			Optional<Double> buttonBoardDirection = buttonBoard.getDirection();
+//			autoModeExecuter = null;
 //			if (buttonBoardDirection.isPresent())
 //			{
 //				if (autoModeExecuter != null)
