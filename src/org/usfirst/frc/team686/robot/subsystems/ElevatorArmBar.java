@@ -15,13 +15,13 @@ public class ElevatorArmBar extends Subsystem {
 		// state		Bottom of Cube Height				Retracted Arm Angle				Extended Arm Angle
 		// -----		---------------------				-------------------				------------------
 		START_OF_MATCH(	Constants.kCubeGroundHeight, 		Constants.kArmBarUpAngleDeg, 	Constants.kArmBarUpAngleDeg),	// needed for elevator / armbar limit switch calibration
-		DRIVE(			Constants.kCubeDriveHeight, 		Constants.kArmBarDownAngleDeg, 	Constants.kArmBarFlatAngleDeg),
-		GROUND(			Constants.kCubeGroundHeight, 		Constants.kArmBarDownAngleDeg, 	Constants.kArmBarFlatAngleDeg),
+		DRIVE(			Constants.kCubeDriveHeight, 		Constants.kArmBarUpAngleDeg, 	Constants.kArmBarFlatAngleDeg),
+		GROUND(			Constants.kCubeGroundHeight, 		Constants.kArmBarUpAngleDeg, 	Constants.kArmBarFlatAngleDeg),
 		EXCHANGE(		Constants.kCubeExchangeHeight, 		Constants.kArmBarDownAngleDeg, 	Constants.kArmBarDownAngleDeg),
-		SWITCH(			Constants.kCubeSwitchHeight, 		Constants.kArmBarUpAngleDeg, 	Constants.kArmBarFlatAngleDeg),
-		SCALE_LOW(		Constants.kCubeScaleHeightLow, 		Constants.kArmBarUpAngleDeg, 	Constants.kArmBarFlatAngleDeg),
-		SCALE_MED(		Constants.kCubeScaleHeightMed, 		Constants.kArmBarUpAngleDeg, 	Constants.kArmBarFlatAngleDeg),
-		SCALE_HIGH(		Constants.kCubeScaleHeightHigh, 	Constants.kArmBarUpAngleDeg, 	Constants.kArmBarFlatAngleDeg);
+		SWITCH(			Constants.kCubeSwitchHeight, 		Constants.kArmBarUpAngleDeg, 	Constants.kArmBarUpAngleDeg),
+		SCALE_LOW(		Constants.kCubeScaleHeightLow, 		Constants.kArmBarUpAngleDeg, 	Constants.kArmBarUpAngleDeg),
+		SCALE_MED(		Constants.kCubeScaleHeightMed, 		Constants.kArmBarUpAngleDeg, 	Constants.kArmBarUpAngleDeg),
+		SCALE_HIGH(		Constants.kCubeScaleHeightHigh, 	Constants.kArmBarUpAngleDeg, 	Constants.kArmBarUpAngleDeg);
 		
 		public double bottomOfCubeHeight;	// in inches 
 		public double retractedArmAngle; 	// in degrees
