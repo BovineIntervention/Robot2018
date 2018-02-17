@@ -252,6 +252,7 @@ public class Constants extends ConstantsBase
 	public static int kOuttakeButton 			= kXboxButtonLB;
 	public static int kElevatorManualUpButton	= kXboxButtonY;
 	public static int kElevatorManualDownButton	= kXboxButtonA;
+	public static int kGrabberButton 			= kXboxButtonX;
 
 	
 	// Button Board Controls

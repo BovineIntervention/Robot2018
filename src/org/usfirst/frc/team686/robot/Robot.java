@@ -266,7 +266,9 @@ public class Robot extends IterativeRobot {
 			// Configure looper
 			loopController.start();
 
-			drive.setOpenLoop(DriveCommand.COAST());
+			double elevatorHeight = elevatorState.getPositionInches();
+			double driveReduction = (elevatorHeight/Constants.kElevatorMaxHeightLimit) * Constants.kDriveVelocityReductionMultiplier;
+			drive.setOpenLoop(DriveCommand.COAST(), driveReduction);
 			elevatorArmBar.enable();
 			intake.enable();
 		} 
@@ -296,9 +298,21 @@ public class Robot extends IterativeRobot {
 					buttonBoard.getButton(Constants.kElevatorScaleMedButton),
 					buttonBoard.getButton(Constants.kElevatorScaleHighButton));
 					
-//			// intake controls
-//		
-//			
+			
+			// intake controls
+			
+			boolean grabberButton = controls.getButton(Constants.kGrabberButton);
+			boolean intakeButton = controls.getButton(Constants.kIntakeButton);
+			boolean outtakeButton = controls.getButton(Constants.kOuttakeButton);
+			
+			if( grabberButton )
+				intake.setGrabber();
+			if( intakeButton )
+				intake.intake();
+			if( outtakeButton )
+				intake.outtake();
+			
+			
 //			// turn-to-angle controls
 //			Optional<Double> buttonBoardDirection = buttonBoard.getDirection();
 //			autoModeExecuter = null;

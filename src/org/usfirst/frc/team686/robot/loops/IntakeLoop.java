@@ -71,16 +71,17 @@ public class IntakeLoop implements Loop
 	
 	public void outtake(){ state = IntakeStateEnum.OUTTAKE; }
 	
-	public void closeGrabber(){ 
-		if( state != IntakeStateEnum.OUTTAKE )
-			solenoidValue = DoubleSolenoid.Value.kForward; 
+	public void setGrabber(){ 
+		if( state != IntakeStateEnum.OUTTAKE ){
+			Value newSolenoidValue = DoubleSolenoid.Value.kForward;
+			if( solenoidValue == DoubleSolenoid.Value.kForward ){}
+				solenoidValue = DoubleSolenoid.Value.kReverse;
+				
+		}
+			
 	}
 	
-	public void openGrabber(){ 
-		if( state != IntakeStateEnum.OUTTAKE )
-			solenoidValue = DoubleSolenoid.Value.kReverse; 
-	}
-	
+
 	public void stop(){ state = IntakeStateEnum.STOP; }
 	
 	@Override
