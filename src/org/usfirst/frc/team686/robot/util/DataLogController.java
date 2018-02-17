@@ -126,7 +126,7 @@ public class DataLogController
 	{
 		for (DataLogger logger : loggers)
 		{
-			//logger.log(); // collect values to log
+			logger.log(); // collect values to log
 		}
 		saveDataItems(); // write to file / SmartDashboard
 	}
