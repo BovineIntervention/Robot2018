@@ -110,7 +110,7 @@ public class ElevatorArmBar extends Subsystem {
 	}
 	
 	
-	private void set(ElevatorArmBarStateEnum _newState, boolean _extended)
+	public void set(ElevatorArmBarStateEnum _newState, boolean _extended)
 	{
 		if (state != _newState || extended != _extended)
 		{

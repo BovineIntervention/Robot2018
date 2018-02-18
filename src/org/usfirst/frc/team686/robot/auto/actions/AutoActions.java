@@ -2,6 +2,7 @@ package org.usfirst.frc.team686.robot.auto.actions;
 
 import java.util.Optional;
 
+import org.junit.Test;
 //import org.junit.Test;
 import org.usfirst.frc.team686.robot.Constants;
 import org.usfirst.frc.team686.robot.auto.modes.FieldDimensions;
@@ -20,7 +21,10 @@ public class AutoActions {
 	PathSegment.Options pathOptions   = new PathSegment.Options(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, Constants.kPathFollowingLookahead, false);
 	PathSegment.Options visionOptions = new PathSegment.Options(Constants.kVisionMaxVel,        Constants.kVisionMaxAccel,        Constants.kPathFollowingLookahead, true);
 
-	
+	@Test
+	public void test(){
+		SeriesAction test = CenterStartToLeftSwitchEdgeAction();
+	}
 
 	public static Pose getInitialPose() { return initialPose; }
 	
@@ -96,7 +100,8 @@ System.out.println("BACKUP POSITION: " + switchBackupPosition.toString());
 		actions.add( new PathFollowerWithVisionAction( path ) );
 		actions.add( new PathFollowerWithVisionAction( pathAlign ) );
 		actions.add( new PathFollowerWithVisionAction(pathToSwitch) );
-		actions.add( new WaitAction(5) );
+		actions.add( new ElevatorAction(true) );
+		actions.add( new OuttakeAction() );
 		actions.add( new PathFollowerWithVisionAction( pathBackup ) );
 		
 		return actions;
@@ -206,7 +211,8 @@ System.out.println("SWITCH BACKUP POSITION: " + switchBackupPosition.toString())
 		actions.add( new PathFollowerWithVisionAction( pathAlign ) );
 		actions.add( new PathFollowerWithVisionAction( pathToSwitch ) );
 		//actions.add( new PointTurnAction(90) );
-		actions.add( new WaitAction(5) );
+		actions.add( new ElevatorAction(true) );
+		actions.add( new OuttakeAction() );
 		actions.add( new PathFollowerWithVisionAction( pathBackup ) );
 		
 		return actions;
@@ -295,6 +301,15 @@ System.out.println("CROSS POSITION: " + crossPosition.toString());
 System.out.println("SWITCH TURN POSITION: " + switchTurnPosition.toString());
 		path.add(new Waypoint(switchStopPosition, 	pathOptions));
 		
+		pathAlign = new Path();
+		pathAlign.add(new Waypoint(switchStopPosition, pathOptions));
+		pathAlign.add(new Waypoint(switchBackupPosition, pathOptions));
+		pathAlign.setReverseDirection();
+		
+		pathToSwitch = new Path();
+		pathToSwitch.add(new Waypoint(switchBackupPosition, pathOptions));
+		pathToSwitch.add(new Waypoint(switchStopPosition, pathOptions));
+		
 		pathBackup = new Path();
 		pathBackup.add(new Waypoint(switchStopPosition, pathOptions));
 System.out.println("SWITCH STOP POSITION" + switchStopPosition.toString());
@@ -304,7 +319,10 @@ System.out.println("SWITCH BACKUP POSITION: " + switchBackupPosition.toString())
 		
 		SeriesAction actions = new SeriesAction();
 		actions.add( new PathFollowerWithVisionAction( path ) );
-		actions.add( new WaitAction(5) );
+		actions.add( new PathFollowerWithVisionAction(pathAlign) );
+		actions.add( new PathFollowerWithVisionAction(pathToSwitch) );
+		actions.add( new ElevatorAction(true) );
+		actions.add( new OuttakeAction() );
 		actions.add( new PathFollowerWithVisionAction( pathBackup ) );
 		
 		return actions;
@@ -386,7 +404,8 @@ System.out.println("BACKUP POSITION: " + switchBackupPosition.toString());
 		actions.add( new PathFollowerWithVisionAction( pathAlign ) );
 		actions.add( new PathFollowerWithVisionAction( pathToSwitch ) );
 		//actions.add( new PointTurnAction(90) );
-		actions.add( new WaitAction(5) );
+		actions.add( new ElevatorAction(true) );
+		actions.add( new OuttakeAction() );
 		actions.add( new PathFollowerWithVisionAction( pathBackup ) );
 		
 		return actions;
@@ -483,7 +502,8 @@ System.out.println("RUNNING: CenterStartToLeftSwitchEdgeAction");
 		actions.add( new PathFollowerWithVisionAction(pathAlign) );
 		actions.add( new PathFollowerWithVisionAction(pathToSwitch) );
 		//actions.add( new PointTurnAction(90) );
-		actions.add( new WaitAction(5) );
+		actions.add( new ElevatorAction(true) );
+		actions.add( new OuttakeAction() );
 		actions.add( new PathFollowerWithVisionAction( pathBackup ) );
 		
 		return actions;
@@ -577,7 +597,8 @@ System.out.println("RUNNING: CenterStartToLeftSwitchEdgeAction");
 		actions.add( new PathFollowerWithVisionAction( path ) );
 		actions.add(new PathFollowerWithVisionAction( pathAlign ));
 		actions.add(new PathFollowerWithVisionAction(pathToSwitch));
-		actions.add( new WaitAction(5) );
+		actions.add( new ElevatorAction(true) );
+		actions.add( new OuttakeAction() );
 		actions.add( new PathFollowerWithVisionAction( pathBackup ) );
 		
 		return actions;
@@ -673,7 +694,8 @@ System.out.println(scaleBackupPosition.toString());
 		actions.add( new PathFollowerWithVisionAction( path ) );
 		actions.add( new PathFollowerWithVisionAction(pathAlign) );
 		actions.add( new PathFollowerWithVisionAction(pathToScale) );
-		actions.add( new WaitAction(5) );
+		actions.add( new ElevatorAction(false));
+		actions.add( new OuttakeAction() );
 		actions.add( new PathFollowerWithVisionAction( pathBackup ) );
 		
 		return actions;
@@ -789,7 +811,8 @@ System.out.println("SWITCH BACKUP POSITION: " + scaleBackupPosition.toString());
 		actions.add( new PathFollowerWithVisionAction(pathAlign) );
 		actions.add( new PathFollowerWithVisionAction(pathToScale) );
 		//actions.add( new PointTurnAction(90) );
-		actions.add( new WaitAction(5) );
+		actions.add( new ElevatorAction(false));
+		actions.add( new OuttakeAction() );
 		actions.add( new PathFollowerWithVisionAction( pathBackup ) );
 		
 		return actions;
@@ -908,7 +931,8 @@ System.out.println("SWITCH BACKUP POSITION: " + scaleBackupPosition.toString());
 		actions.add( new PathFollowerWithVisionAction( path ) );
 		actions.add( new PathFollowerWithVisionAction( pathAlign ) );
 		actions.add( new PathFollowerWithVisionAction( pathToScale ) );
-		actions.add( new WaitAction(5) );
+		actions.add( new ElevatorAction(false));
+		actions.add( new OuttakeAction() );
 		actions.add( new PathFollowerWithVisionAction( pathBackup ) );
 		
 		return actions;
@@ -1003,7 +1027,8 @@ System.out.println(scaleBackupPosition.toString());
 		actions.add( new PathFollowerWithVisionAction( pathAlign ) );
 		actions.add( new PathFollowerWithVisionAction(pathToScale) );
 		//actions.add( new PointTurnAction(90) );
-		actions.add( new WaitAction(5) );
+		actions.add( new ElevatorAction(false));
+		actions.add( new OuttakeAction() );
 		actions.add( new PathFollowerWithVisionAction( pathBackup ) );
 		
 		return actions;
@@ -1096,7 +1121,8 @@ System.out.println(scaleBackupPosition.toString());
 		actions.add( new PathFollowerWithVisionAction( path ) );
 		actions.add( new PathFollowerWithVisionAction( pathAlign ) );
 		actions.add( new PathFollowerWithVisionAction( pathToScale ) );
-		actions.add( new WaitAction(5) );
+		actions.add( new ElevatorAction(false));
+		actions.add( new OuttakeAction() );
 		actions.add( new PathFollowerWithVisionAction( pathBackup ) );
 		
 		return actions;
@@ -1192,7 +1218,8 @@ System.out.println(scaleBackupPosition.toString());
 		actions.add( new PathFollowerWithVisionAction(pathAlign) );
 		actions.add( new PathFollowerWithVisionAction(pathToScale) );
 		//actions.add( new PointTurnAction(90) );
-		actions.add( new WaitAction(5) );
+		actions.add( new ElevatorAction(false));
+		actions.add( new OuttakeAction() );
 		actions.add( new PathFollowerWithVisionAction( pathBackup ) );
 		
 		return actions;

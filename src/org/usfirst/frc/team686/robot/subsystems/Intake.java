@@ -67,6 +67,9 @@ public class Intake extends Subsystem {
 	}
 	
 	
+	public void startOuttake(){ intakeLoop.startOuttake(); }
+	public void stopOuttake(){ intakeLoop.stopOuttake(); }
+	
 	@Override
 	public void stop() {
 		intakeLoop.stop();
