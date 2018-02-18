@@ -3,15 +3,6 @@ package org.usfirst.frc.team686.robot.loops;
 import org.usfirst.frc.team686.robot.Constants;
 import org.usfirst.frc.team686.robot.command_status.IntakeState;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
-import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.Spark;
@@ -23,122 +14,92 @@ public class IntakeLoop implements Loop
 
 	private IntakeState intakeState = IntakeState.getInstance();
 	
-	public enum IntakeStateEnum { STOP, INTAKE, OUTTAKE; }
-	public IntakeStateEnum state = IntakeStateEnum.STOP;
-	public IntakeStateEnum nextState = IntakeStateEnum.STOP;
-	
-	public boolean enabled = false;
-	
-	private static Spark leftSpark;
-	private static Spark rightSpark;
+	private static Spark lMotor;
+	private static Spark rMotor;
 	
 	private static DoubleSolenoid grabber;
 	
-	public double leftVelocity;
-	public double rightVelocity;
-	public Value solenoidValue;
+	public double lVelocity;
+	public double rVelocity;
+	public Value solenoidValue = DoubleSolenoid.Value.kOff;
+	
+	public boolean intakeFlag = false;
+	public boolean outtakeFlag = false;
+	public boolean grabberInFlag = false;
 	
 	public IntakeLoop()
 	{
-		System.out.println("ArmBarLoop constructor");
+		System.out.println("IntakeLoop constructor");
 		
-		// Configure Talon
-		leftSpark = new Spark(Constants.kLeftIntakeSparkChannel);
-		rightSpark = new Spark(Constants.kRightIntakeSparkChannel);
-
+		// Configure Motor Controllers
+		lMotor = new Spark(Constants.kLeftIntakePwmChannel);
+		rMotor = new Spark(Constants.kRightIntakePwmChannel);
+		lMotor.setInverted(Constants.kIntakeLeftMotorInverted);
+		rMotor.setInverted(Constants.kIntakeRightMotorInverted);
+		
+		solenoidValue = DoubleSolenoid.Value.kOff;
 		grabber = new DoubleSolenoid(0, Constants.kIntakeSolenoidForwardChannel, Constants.kIntakeSolenoidReverseChannel);
 		
-		disable();
+		stop();
 	}
 	
 	
+	public void startIntake() { intakeFlag = true; }
+	public void stopIntake() { intakeFlag = false; }
+	
+	public void startOuttake() { outtakeFlag = true; }
+	public void stopOuttake() { outtakeFlag = false; }
+	
+	public void grabberIn() { grabberInFlag = true;	}
+	public void grabberOut() { grabberInFlag = false; }
+	public void grabberToggle() { grabberInFlag = !grabberInFlag; }
 	
 
-	public void enable(){ enabled = true; }
-	
-	public void disable()
+	public void stop()
 	{
-		enabled = false; 
-		state = IntakeStateEnum.STOP; 
-		nextState = IntakeStateEnum.STOP;
-	}
-	
-
-	public IntakeStateEnum getState() { return state; }
-	
-	public void intake(){ state = IntakeStateEnum.INTAKE; }
-	
-	public void outtake(){ state = IntakeStateEnum.OUTTAKE; }
-	
-	public void setGrabber(){ 
-		if( state != IntakeStateEnum.OUTTAKE ){
-			Value newSolenoidValue = DoubleSolenoid.Value.kForward;
-			if( solenoidValue == DoubleSolenoid.Value.kForward ){}
-				solenoidValue = DoubleSolenoid.Value.kReverse;
-				
-		}
-			
-	}
-	
-
-	public void stop(){ state = IntakeStateEnum.STOP; }
+		lMotor.set(0);
+		rMotor.set(0);
+		grabber.set(DoubleSolenoid.Value.kOff);
+}
 	
 	@Override
-	public void onStart() {
-		state = IntakeStateEnum.STOP;
+	public void onStart() 
+	{
+		stopIntake();
+		stopOuttake();
+		grabberIn();
 	}
 
 	@Override
 	public void onLoop() 
 	{
-		
-		//leftVelocity = intakeState.getLeftVelocityInchesPerSec();
-		//rightVelocity = intakeState.getRightVelocityInchesPerSec();
-		//solenoidValue = intakeState.getSolenoidValue();
-		
-		if (!enabled)
+		if (intakeFlag)
 		{
-			state = IntakeStateEnum.STOP;
+			lVelocity = Constants.kIntakeSpeed;
+			rVelocity = Constants.kIntakeSpeed;
+		}
+		else if (outtakeFlag)
+		{
+			lVelocity = Constants.kOuttakeSpeed;
+			rVelocity = Constants.kOuttakeSpeed;
+		}
+		else
+		{
+			lVelocity = 0;
+			rVelocity = 0;
 		}
 		
-		switch (state)
-		{
-		case STOP:
 
-			if (enabled)
-			{
-				leftVelocity = 0.0;
-				rightVelocity = 0.0;
-				
-				solenoidValue = DoubleSolenoid.Value.kOff;
-			}
-			
-			break;
-			
-		case INTAKE:
-
-			leftVelocity = Constants.kIntakeSpeed;
-			rightVelocity = Constants.kIntakeSpeed;
-			
-			break;
-			
-		case OUTTAKE:
-
-			leftVelocity = Constants.kOuttakeSpeed;
-			rightVelocity = Constants.kOuttakeSpeed;
-			
+		
+		if (grabberInFlag)
+			solenoidValue = DoubleSolenoid.Value.kReverse;
+		else
 			solenoidValue = DoubleSolenoid.Value.kForward;
 			
-			break;
-			
-		default:
-			nextState = IntakeStateEnum.STOP;
-		}
 		
 		
-		leftSpark.set(leftVelocity);
-		rightSpark.set(rightVelocity);
-		
+		lMotor.set(lVelocity);
+		rMotor.set(rVelocity);
 		grabber.set(solenoidValue);
 		
 		System.out.println(toString());
@@ -146,25 +107,21 @@ public class IntakeLoop implements Loop
 
 	@Override
 	public void onStop() {
-		// TODO Auto-generated method stub
+		stop();
 	}	
 	
 	
-	public void getStatus(){
-		
-		intakeState.setLeftVelocityInchesPerSec(leftVelocity);
-		intakeState.setRightVelocityInchesPerSec(rightVelocity);
-		
-		//intakeState.setLeftMotorCurrent(leftSpark.); not sure how to get current from Sparks
+	public void getStatus()
+	{
+		intakeState.setLeftVelocity(lVelocity);
+		intakeState.setRightVelocity(rVelocity);
 		
 		intakeState.setSolenoidValue(solenoidValue);
-		
 	}
 	
 	
     public String toString() 
     {
-    	return null;
-    	//return String.format("%s, Enc: %d, Pos: %.1f, LimSwitch: %d, Goal: %.1f, FiltGoal = %.1f, e = %.1f, de = %.1f, ie = %.1f, voltage = %.1f", state.toString(), getEncoder(), getPosition(), getLimitSwitch() ? 1 : 0, goal, filteredGoal, error, dError, iError, voltage);
+    	return String.format("lMotor: %5.2f, rMotor: %5.2f, Grabber: %s", lMotor.get(), rMotor.get(), grabber.get().name());
     }
 }

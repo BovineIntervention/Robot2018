@@ -73,6 +73,12 @@ public class DriveCommand
     	setNeutralMode(_neutralMode);
     	resetEncoders = false;
     }
+
+    public void scale(double _factor)
+    {
+    	wheelSpeed.scale(_factor);
+    }
+    
     
     public synchronized void setDriveMode(DriveControlMode _driveMode) 
     {

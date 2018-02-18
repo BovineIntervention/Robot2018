@@ -9,11 +9,11 @@ public class IntakeState {
 	private static IntakeState instance = new IntakeState();
 	public static IntakeState getInstance() { return instance; }
 	
-	private double leftVelocityInchesPerSec;
-	private double rightVelocityInchesPerSec;
+	private double lVelocity;
+	private double rVelocity;
 	
-	private double leftMotorCurrent;
-	private double rightMotorCurrent;
+	private double lMotorCurrent;
+	private double rMotorCurrent;
 	
 	private Value solenoidValue;
 	
@@ -21,36 +21,36 @@ public class IntakeState {
 	public IntakeState() {}
 	
 
-	public synchronized double getLeftVelocityInchesPerSec(){
-		return leftVelocityInchesPerSec;
+	public synchronized double getLeftVelocity(){
+		return lVelocity;
 	}
 	
-	public synchronized void setLeftVelocityInchesPerSec (double leftVelocityInchesPerSec){
-		this.leftVelocityInchesPerSec = leftVelocityInchesPerSec;
+	public synchronized void setLeftVelocity (double leftVelocity){
+		this.lVelocity = leftVelocity;
 	}
 	
-	public synchronized double getRightVelocityInchesPerSec(){
-		return rightVelocityInchesPerSec;
+	public synchronized double getRightVelocity(){
+		return rVelocity;
 	}
 	
-	public synchronized void setRightVelocityInchesPerSec(double rightVelocityInchesPerSec){
-		this.rightVelocityInchesPerSec = rightVelocityInchesPerSec;
+	public synchronized void setRightVelocity(double rightVelocity){
+		this.rVelocity = rightVelocity;
 	}
 	
 	public synchronized double getLeftMotorCurrent() {
-		return leftMotorCurrent;
+		return lMotorCurrent;
 	}
 
 	public synchronized void setLeftMotorCurrent(double leftMotorCurrent) {
-		this.leftMotorCurrent = leftMotorCurrent;
+		this.lMotorCurrent = leftMotorCurrent;
 	}
 	
 	public synchronized double getRightMotorCurrent() {
-		return rightMotorCurrent;
+		return rMotorCurrent;
 	}
 	
 	public synchronized void setRightMotorCurrent(double rightMotorCurrent) {
-		this.rightMotorCurrent = rightMotorCurrent;
+		this.rMotorCurrent = rightMotorCurrent;
 	}
 	
 	public synchronized Value getSolenoidValue() {
@@ -69,10 +69,11 @@ public class IntakeState {
 		{
 			synchronized (IntakeState.this)
 			{
-				put("IntakeState/leftVelocityInchesPerSec", leftVelocityInchesPerSec);
-				put("IntakeState/rightVelocityInchesPerSec", rightVelocityInchesPerSec);
-				put("IntakeState/leftMotorCurrent", leftMotorCurrent);
-				put("IntakeState/rightMotorCurrent", rightMotorCurrent);
+				put("IntakeState/leftVelocity", lVelocity);
+				put("IntakeState/rightVelocity", rVelocity);
+				put("IntakeState/solenoidValue", solenoidValue.name());
+				//put("IntakeState/leftMotorCurrent", lMotorCurrent);
+				//put("IntakeState/rightMotorCurrent", rMotorCurrent);
 			}
 			
 		}

@@ -3,7 +3,6 @@ package org.usfirst.frc.team686.robot;
 import org.usfirst.frc.team686.robot.auto.AutoModeBase;
 import org.usfirst.frc.team686.robot.auto.AutoModeExecuter;
 import org.usfirst.frc.team686.robot.auto.actions.SeriesAction;
-import org.usfirst.frc.team686.robot.auto.modes.CollisionTestMode;
 import org.usfirst.frc.team686.robot.auto.modes.PointTurnMode;
 import org.usfirst.frc.team686.robot.auto.modes.RunSeriesActionMode;
 import org.usfirst.frc.team686.robot.command_status.DriveState;
@@ -19,7 +18,6 @@ import org.usfirst.frc.team686.robot.util.DataLogController;
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
 import org.usfirst.frc.team686.robot.command_status.DriveCommand;
 
-import java.awt.EventQueue;
 import java.util.Optional;
 import java.util.TimeZone;
 
@@ -62,7 +60,7 @@ public class Robot extends IterativeRobot {
 	SmartDashboardInteractions smartDashboardInteractions;
 	DataLogController robotLogger;
 
-	CameraServer cameraServer;
+	CameraServer cameraServer = CameraServer.getInstance();
 	UsbCamera camera = new UsbCamera("USB Camera 1", 1);
 
 	
@@ -95,9 +93,9 @@ public class Robot extends IterativeRobot {
     		loopController = new LoopController();
     		loopController.register(drive.getVelocityPIDLoop());
     		loopController.register(DriveLoop.getInstance());
-       		//loopController.register(ArmBarLoop.getInstance());
-    		//loopController.register(ElevatorLoop.getInstance());
-    		//loopController.register(IntakeLoop.getInstance());
+       		loopController.register(ArmBarLoop.getInstance());
+    		loopController.register(ElevatorLoop.getInstance());
+    		loopController.register(IntakeLoop.getInstance());
        		loopController.register(RobotStateLoop.getInstance());
     		
     		smartDashboardInteractions = new SmartDashboardInteractions();
@@ -115,9 +113,9 @@ public class Robot extends IterativeRobot {
     		
     		setInitialPose(new Pose());
 
-    		cameraServer.getInstance().startAutomaticCapture();
-    		cameraServer.getInstance().getVideo();
-    		CameraServer.getInstance().putVideo("cam", 640, 480);
+    		cameraServer.startAutomaticCapture();
+    		cameraServer.getVideo();
+    		cameraServer.putVideo("cam", 640, 480);
     		
     		MjpegServer mjpegServer = new MjpegServer("serve_Blur", "http://roborio-686-frc.local:1181/stream.mjpg", 1181);
     		mjpegServer.setSource(camera); 
@@ -177,7 +175,6 @@ public class Robot extends IterativeRobot {
 
 			stopAll(); // stop all actuators
 			loopController.start();
-			intake.disable();
 			elevatorArmBar.disable();
 		}
 		catch (Throwable t)
@@ -235,7 +232,6 @@ public class Robot extends IterativeRobot {
 			autoModeExecuter.start();
 			
 			elevatorArmBar.enable();
-			intake.enable();
     	}
     	catch(Throwable t)
     	{
@@ -279,12 +275,9 @@ public class Robot extends IterativeRobot {
 
 			// Configure looper
 			loopController.start();
-
-			double elevatorHeight = elevatorState.getPositionInches();
-			double driveReduction = (elevatorHeight/Constants.kElevatorMaxHeightLimit) * Constants.kDriveVelocityReductionMultiplier;
-			drive.setOpenLoop(DriveCommand.COAST(), driveReduction);
 			elevatorArmBar.enable();
-			intake.enable();
+
+			drive.setOpenLoop(DriveCommand.COAST());
 		} 
 		catch (Throwable t) 
 		{
@@ -314,17 +307,10 @@ public class Robot extends IterativeRobot {
 					
 			
 			// intake controls
-			
-			boolean grabberButton = controls.getButton(Constants.kGrabberButton);
-			boolean intakeButton = controls.getButton(Constants.kIntakeButton);
-			boolean outtakeButton = controls.getButton(Constants.kOuttakeButton);
-			
-			if( grabberButton )
-				intake.setGrabber();
-			if( intakeButton )
-				intake.intake();
-			if( outtakeButton )
-				intake.outtake();
+			intake.processInputs(
+					controls.getButton(Constants.kIntakeButton), 
+					controls.getButton(Constants.kOuttakeButton), 
+					controls.getButton(Constants.kGrabberButton));
 			
 			
 //			// turn-to-angle controls
@@ -343,8 +329,12 @@ public class Robot extends IterativeRobot {
 //			// drive controls
 //			if ((autoModeExecuter == null) || (!autoModeExecuter.getAutoMode().isActive()))	// ignore joystick when doing auto turns
 			double elevatorHeight = elevatorState.getPositionInches();
-			double driveReduction = (elevatorHeight/Constants.kElevatorMaxHeightLimit) * Constants.kDriveVelocityReductionMultiplier;
-			drive.setOpenLoop(controls.getDriveCommand(), driveReduction);
+			double normalizedHeight = (elevatorHeight/Constants.kElevatorMaxHeightLimit);
+			double slope = -(1.0 - Constants.kDriveScaleFactorAtMaxElevatorHeight);
+			double scaleFactor = slope*normalizedHeight + 1.0;
+			DriveCommand driveCmd = controls.getDriveCommand();
+			driveCmd.scale(scaleFactor);
+			drive.setOpenLoop(driveCmd);
 		
 		}
 		catch (Throwable t)

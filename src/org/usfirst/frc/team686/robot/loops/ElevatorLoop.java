@@ -21,7 +21,7 @@ public class ElevatorLoop implements Loop{
 
 	private ElevatorState elevatorState = ElevatorState.getInstance();
 	
-	public enum ElevatorStateEnum { UNINITIALIZED, ZEROING, RUNNING, ESTOPPED; }
+	public enum ElevatorStateEnum { UNINITIALIZED, ARM_BAR_DELAY, ZEROING, RUNNING, ESTOPPED; }
 	private ElevatorStateEnum state = ElevatorStateEnum.UNINITIALIZED;
 	private ElevatorStateEnum nextState = ElevatorStateEnum.UNINITIALIZED;
 	
@@ -37,6 +37,7 @@ public class ElevatorLoop implements Loop{
 	
 	private double startZeroingTime;
 	private int printCnt = 0;
+	private final double armBarDelay = 0.5;
 	
 	public ElevatorLoop()
 	{
@@ -191,14 +192,23 @@ public class ElevatorLoop implements Loop{
 			
 			if (enabled)
 			{
-				nextState = ElevatorStateEnum.ZEROING;	// when enabled, state ZEROING
 				talon.configReverseSoftLimitEnable(false, Constants.kTalonTimeoutMs);
 				talon.configForwardSoftLimitEnable(false, Constants.kTalonTimeoutMs);
 				talon.overrideLimitSwitchesEnable(false);	// disable soft limit switches during zeroing
 				
 				startZeroingTime = Timer.getFPGATimestamp();
+				nextState = ElevatorStateEnum.ARM_BAR_DELAY;
 			}
 			break;
+			
+		case ARM_BAR_DELAY:
+			double elapsedZeroingTime = Timer.getFPGATimestamp() - startZeroingTime;
+			if (elapsedZeroingTime > armBarDelay)
+			{
+				startZeroingTime = Timer.getFPGATimestamp();
+				nextState = ElevatorStateEnum.ZEROING;
+			}
+	
 			
 		case ZEROING:
 			// update goal to be slightly lowered, limited in velocity
@@ -246,12 +256,12 @@ public class ElevatorLoop implements Loop{
 			nextState = ElevatorStateEnum.UNINITIALIZED;
 		}
 		
-		printCnt++;
-		if (printCnt==5)
-		{
-			System.out.println(toString());
-			printCnt = 0;
-		}
+//		printCnt++;
+//		if (printCnt==5)
+//		{
+//			System.out.println(toString());
+//			printCnt = 0;
+//		}
 	}
 
 	public void getStatus()

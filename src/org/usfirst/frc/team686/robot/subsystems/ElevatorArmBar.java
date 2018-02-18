@@ -39,7 +39,7 @@ public class ElevatorArmBar extends Subsystem {
 			this.extendedArmAngle =   _extendedArmAngle;
 		}
 	}
-	ElevatorArmBarStateEnum state = ElevatorArmBarStateEnum.START_OF_MATCH;
+	public ElevatorArmBarStateEnum state = ElevatorArmBarStateEnum.START_OF_MATCH;
 	
 	public ElevatorLoop elevatorLoop = ElevatorLoop.getInstance();
 	public ArmBarLoop armBarLoop = ArmBarLoop.getInstance();
@@ -147,7 +147,7 @@ public class ElevatorArmBar extends Subsystem {
 			}
 			
 			//System.out.println(state.bottomOfCubeHeight + " " + state.retractedArmAngle + " " + state.extendedArmAngle);
-			//System.out.printf("ElevatorArmState = %s, Extend = %d, Elevator Target: %.1f, ArmBar Target = %.1f\n", state.toString(), (extended ? 1 : 0), elevatorLoop.getTarget(), armBarLoop.getTarget());
+			System.out.printf("ElevatorArmState = %s, Extend = %d, Elevator Target: %.1f, ArmBar Target = %.1f\n", state.toString(), (extended ? 1 : 0), elevatorLoop.getTarget(), armBarLoop.getTarget());
 		}
 	}
 	

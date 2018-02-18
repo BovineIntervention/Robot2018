@@ -169,6 +169,7 @@ public class Constants extends ConstantsBase
     public static double kElevatorManualOutput = 0.5;
     public static double kElevatorMotorStallCurrentThreshold = 15.0;	// current at which we will assume the limit switch didn't catch it and we are stalled
     
+    public static double kDriveScaleFactorAtMaxElevatorHeight = 0.25;    
     
     // ARM BAR
     public static double kArmBarUpAngleDeg = 	 73.0;
@@ -198,11 +199,14 @@ public class Constants extends ConstantsBase
     
     // INTAKE
     public static double kBagMotorRPM = 13180;
-    public static double kIntakeRPM = 800;
-    public static double kOuttakeRPM = kBagMotorRPM;
-    public static double kIntakeSpeed = kIntakeRPM/kBagMotorRPM;
-    public static double kOuttakeSpeed = -kOuttakeRPM/kBagMotorRPM;
+    public static double kIntakeMotorGain = 7.0;
+    public static double kIntakeMaxRPM = kBagMotorRPM / kIntakeMotorGain;
+    public static double kIntakeRPM = 1200;
+    public static double kIntakeSpeed = kIntakeRPM/kIntakeMaxRPM;
+    public static double kOuttakeSpeed = -1.0;	// full speed reverse
     
+    public static boolean kIntakeLeftMotorInverted = true;
+    public static boolean kIntakeRightMotorInverted = false;
     
     // Do not change anything after this line!
     
@@ -216,8 +220,8 @@ public class Constants extends ConstantsBase
 	public static int kLeftMotorSlave1TalonId;
 	public static int kLeftMotorSlave2TalonId;
 	public static int kArmBarTalonId;
-	public static int kLeftIntakeSparkChannel;
-	public static int kRightIntakeSparkChannel;
+	public static int kLeftIntakePwmChannel;
+	public static int kRightIntakePwmChannel;
 	
 	public static int kIntakeSolenoidForwardChannel;
 	public static int kIntakeSolenoidReverseChannel;
@@ -367,8 +371,8 @@ public class Constants extends ConstantsBase
     			kRightMotorSlave1TalonId 	= 5;
     			kArmBarTalonId 				= 6;
     			
-    			kLeftIntakeSparkChannel		= 0;
-    			kRightIntakeSparkChannel	= 1;
+    			kLeftIntakePwmChannel		= 0;
+    			kRightIntakePwmChannel	= 1;
     			kIntakeSolenoidForwardChannel = 0;
     			kIntakeSolenoidReverseChannel = 1;
 
