@@ -60,8 +60,8 @@ public class Robot extends IterativeRobot {
 	SmartDashboardInteractions smartDashboardInteractions;
 	DataLogController robotLogger;
 
-	CameraServer cameraServer = CameraServer.getInstance();
-	UsbCamera camera = new UsbCamera("USB Camera 1", 1);
+//	CameraServer cameraServer = CameraServer.getInstance();
+//	UsbCamera camera = new UsbCamera("USB Camera 1", 1);
 
 	
 	enum OperationalMode 
@@ -93,9 +93,9 @@ public class Robot extends IterativeRobot {
     		loopController = new LoopController();
     		loopController.register(drive.getVelocityPIDLoop());
     		loopController.register(DriveLoop.getInstance());
-       		loopController.register(ArmBarLoop.getInstance());
-    		loopController.register(ElevatorLoop.getInstance());
-    		loopController.register(IntakeLoop.getInstance());
+     		loopController.register(ElevatorLoop.getInstance());
+      		loopController.register(ArmBarLoop.getInstance());
+      		loopController.register(IntakeLoop.getInstance());
        		loopController.register(RobotStateLoop.getInstance());
     		
     		smartDashboardInteractions = new SmartDashboardInteractions();
@@ -109,18 +109,19 @@ public class Robot extends IterativeRobot {
     		robotLogger.register(drive.getCommand().getLogger());
     		robotLogger.register(DriveState.getInstance().getLogger());
     		robotLogger.register(ElevatorArmBar.getInstance().getLogger());
+    		robotLogger.register(Intake.getInstance().getLogger());
     		robotLogger.register(RobotState.getInstance().getLogger());
     		
     		setInitialPose(new Pose());
 
-    		cameraServer.startAutomaticCapture();
-    		cameraServer.getVideo();
-    		cameraServer.putVideo("cam", 640, 480);
-    		
-    		MjpegServer mjpegServer = new MjpegServer("serve_Blur", "http://roborio-686-frc.local:1181/stream.mjpg", 1181);
-    		mjpegServer.setSource(camera); 
-    		CvSink cvSink = new CvSink("USB Camera 1");
-    		cvSink.setSource(camera);
+//    		cameraServer.startAutomaticCapture();
+//    		cameraServer.getVideo();
+//    		cameraServer.putVideo("cam", 640, 480);
+//    		
+//    		MjpegServer mjpegServer = new MjpegServer("serve_Blur", "http://roborio-686-frc.local:1181/stream.mjpg", 1181);
+//    		mjpegServer.setSource(camera); 
+//    		CvSink cvSink = new CvSink("USB Camera 1");
+//    		cvSink.setSource(camera);
 
     		
     	}
@@ -328,13 +329,15 @@ public class Robot extends IterativeRobot {
 //				
 //			// drive controls
 //			if ((autoModeExecuter == null) || (!autoModeExecuter.getAutoMode().isActive()))	// ignore joystick when doing auto turns
-			double elevatorHeight = elevatorState.getPositionInches();
-			double normalizedHeight = (elevatorHeight/Constants.kElevatorMaxHeightLimit);
-			double slope = -(1.0 - Constants.kDriveScaleFactorAtMaxElevatorHeight);
-			double scaleFactor = slope*normalizedHeight + 1.0;
-			DriveCommand driveCmd = controls.getDriveCommand();
-			driveCmd.scale(scaleFactor);
-			drive.setOpenLoop(driveCmd);
+			{
+				double elevatorHeight = elevatorState.getPositionInches();
+				double normalizedHeight = (elevatorHeight/Constants.kElevatorMaxHeightLimit);
+				double slope = -(1.0 - Constants.kDriveScaleFactorAtMaxElevatorHeight);
+				double scaleFactor = slope*normalizedHeight + 1.0;
+				DriveCommand driveCmd = controls.getDriveCommand();
+				driveCmd.scale(scaleFactor);
+				drive.setOpenLoop(driveCmd);
+			}
 		
 		}
 		catch (Throwable t)

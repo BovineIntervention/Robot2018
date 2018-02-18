@@ -2,6 +2,7 @@ package org.usfirst.frc.team686.robot.loops;
 
 import org.usfirst.frc.team686.robot.Constants;
 import org.usfirst.frc.team686.robot.command_status.ArmBarState;
+import org.usfirst.frc.team686.robot.lib.joystick.ArcadeDriveJoystick;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -12,6 +13,7 @@ import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 
 public class ArmBarLoop implements Loop
@@ -59,11 +61,18 @@ public class ArmBarLoop implements Loop
 		talon.set(ControlMode.PercentOutput, 0.0);
 		talon.setNeutralMode(NeutralMode.Brake);
 				
+		// current limit to stop breaking motor mount
+//		talon.configPeakCurrentLimit(Constants.kArmBarPeakCurrentLimit, Constants.kTalonTimeoutMs);
+//		talon.configPeakCurrentDuration(Constants.kArmBarPeakCurrentDuration, Constants.kTalonTimeoutMs);
+//		talon.configContinuousCurrentLimit(Constants.kArmBarContinuousCurrentLimit, Constants.kTalonTimeoutMs);
+//		talon.enableCurrentLimit(true);
+		
+		
 		// Configure Encoder
 		talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kTalonPidIdx, Constants.kTalonTimeoutMs);	// configure for closed-loop PID
-		talon.setSensorPhase(true);
-		talon.setInverted(true);
-
+		talon.setSensorPhase(false);
+		talon.setInverted(false);
+		
 		// Configure Limit Switch
 		talon.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, Constants.kTalonTimeoutMs);
 		talon.overrideLimitSwitchesEnable(true); 	// enable limit switch
@@ -72,7 +81,7 @@ public class ArmBarLoop implements Loop
 	}
 	
 
-	public void enable(){ enable = true; }
+	public void enable(){ enable = true; System.out.println("ArmBarLoop enable");}
 	
 	public void disable()
 	{
@@ -108,18 +117,21 @@ public class ArmBarLoop implements Loop
 	}
 	
 	
+	double startTime;
 	
 	@Override
 	public void onStart() {
 		state = ArmBarStateEnum.UNINITIALIZED;
 		nextState = ArmBarStateEnum.UNINITIALIZED;
+		
+		startTime = Timer.getFPGATimestamp();
 	}
 
 	@Override
 	public void onLoop() 
 	{
 		getStatus();
-		
+
 		double voltage = calcVoltage(armBarState.getAngleDeg(), armBarState.isLimitSwitchTriggered(), enable);			// output in [-12, +12] volts	
 		double percentOutput = voltage / Constants.kNominalBatteryVoltage;			// normalize output to [-1,. +1]
 		talon.set(ControlMode.PercentOutput, percentOutput);				// send to motor control
@@ -129,7 +141,7 @@ public class ArmBarLoop implements Loop
 		armBarState.setFilteredTargetAngleDeg(filteredTarget);
 		armBarState.setPidError(voltage);
 				
-		//System.out.println(toString());
+//		System.out.println(toString());
 	}
 
 	@Override
