@@ -73,7 +73,7 @@ public class ElevatorLoop implements Loop{
 		talon.configMotionCruiseVelocity((int)Constants.kElevatorCruiseVelocity, Constants.kTalonTimeoutMs);
 		talon.configMotionAcceleration((int)Constants.kElevatorAccel, Constants.kTalonTimeoutMs);	
 
-		talon.configAllowableClosedloopError(kSlotIdx, Constants.kElevatorAllowableError, Constants.kTalonTimeoutMs);
+		//talon.configAllowableClosedloopError(kSlotIdx, Constants.kElevatorAllowableError, Constants.kTalonTimeoutMs);
   		
         // limit switch
 		limitSwitch = new DigitalInput(Constants.kElevatorLimitSwitchPwmId);

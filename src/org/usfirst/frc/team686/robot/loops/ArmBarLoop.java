@@ -254,24 +254,8 @@ public class ArmBarLoop implements Loop
 	
     public String toString() 
     {
-		StringBuilder sb = new StringBuilder();
-
-		sb.append(state.toString());
-		sb.append("\tTarget: ");
-		sb.append(armBarState.getTargetAngleDeg());
-		sb.append("\tFilteredTarget: ");
-		sb.append(armBarState.getFilteredTargetAngleDeg());
-		sb.append("\tAngle: ");
-		sb.append(armBarState.getAngleDeg());
-		sb.append("\tPIDError: ");
-		sb.append(armBarState.getPidError());
-		sb.append("\tMotorPercentOutput: ");
-		sb.append(armBarState.getMotorPercentOutput());
-		sb.append("\tMotorCurrent: ");
-		sb.append(armBarState.getMotorCurrent());
-		sb.append("\tLimitSwitch: ");
-		sb.append(armBarState.isLimitSwitchTriggered());
-		
-		return sb.toString();
+		return String.format("%s, Target: %4.1f, FilteredTarget %4.1f, Angle: %4.1f, PIDError: %7.1f, Motor%%Output: %6.3f, MotorCurrent: %5.1f, LimitSwitch: %d",
+				state.toString(), armBarState.getTargetAngleDeg(), armBarState.getFilteredTargetAngleDeg(), armBarState.getAngleDeg(),
+				armBarState.getPidError(), armBarState.getMotorPercentOutput(), armBarState.getMotorCurrent(), armBarState.isLimitSwitchTriggered() ? 1 : 0);
     }
 }
