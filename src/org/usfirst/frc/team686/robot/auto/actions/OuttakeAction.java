@@ -9,48 +9,21 @@ import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar.ElevatorArmBarSta
 import edu.wpi.first.wpilibj.Timer;
 
 public class OuttakeAction implements Action {
-	
-	
-	public enum ScoreCubeEnum {
-		
-		SWITCH(ElevatorArmBarStateEnum.SWITCH),
-		SCALE(ElevatorArmBarStateEnum.SCALE_MED),
-		GROUND(ElevatorArmBarStateEnum.GROUND);
-		
-		public ElevatorArmBarStateEnum target; //inches
-		
-		ScoreCubeEnum( ElevatorArmBarStateEnum _target )
-		{
-			this.target = _target;
-		}
-		
-	}
-	
-	public ScoreCubeEnum state = ScoreCubeEnum.GROUND;
+
 
 	private double mTimeToOuttake = 0.5;
 	private double mStartTime;
 	private boolean finished;
-	
-	ElevatorArmBar elevatorArmBar = ElevatorArmBar.getInstance();
+
 	Intake intake = Intake.getInstance();
 	
-	public OuttakeAction(boolean isSwitch) {
+	public OuttakeAction() {
 		
-		mStartTime = Timer.getFPGATimestamp();
 		finished = false;
 		
-		if(isSwitch){ state = ScoreCubeEnum.SWITCH; }
-		else { state = ScoreCubeEnum.SCALE; }
 	}
 	
-	public OuttakeAction(){
-		
-		finished = false;
-		state = ScoreCubeEnum.GROUND;
-		
-	}
-
+	
 	@Override
 	public boolean isFinished() {
 		return finished;
@@ -63,21 +36,20 @@ public class OuttakeAction implements Action {
 		
 		finished = (Timer.getFPGATimestamp() - mStartTime) >= mTimeToOuttake;
 		intake.startOuttake();
+		if(finished)
+			intake.stopOuttake();
 		
 	}
 
 	@Override
 	public void done() {
 		
-		intake.stopOuttake();
 		
 	}
 
 	@Override
 	public void start() {
-		
-		elevatorArmBar.set(state.target, false);
-		
+		mStartTime = Timer.getFPGATimestamp();
 	}
 
 	@Override

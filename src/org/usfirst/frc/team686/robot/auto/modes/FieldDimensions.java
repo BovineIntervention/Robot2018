@@ -69,27 +69,25 @@ public class FieldDimensions
 	
 	public static double kBackupDistY = 20;
 	
-	public static double kCollisionAvoidanceOffsetY = 1;
+	public static double kCollisionAvoidanceOffsetY = -2;
 	
 	// get poses
 	public static Pose getCenterStartPose() { return new Pose(Constants.kCenterToRearBumper, 0, 0); }
 	public static Pose getLeftStartPose() { return new Pose(Constants.kCenterToRearBumper, (kAllianceStationLengthY/2) - Constants.kCenterToSideBumper, 0); }
 	public static Pose getRightStartPose() { return new Pose(Constants.kCenterToRearBumper, -((kAllianceStationLengthY/2) - Constants.kCenterToSideBumper), 0); }
-	public static Pose getExchangeStartPose() { return new Pose(0, 0, 0); }	// temporary-- TODO: replace!
-	public static Pose getOtherStartPose() { return new Pose(0, 0, 0); }	// temporary-- TODO: replace!
-	
+
 	
 	public static Pose getLeftSwitchPose() { return new Pose(kLeftSwitchFromCenterStartDistX, kLeftSwitchFromCenterStartDistY, kLeftSwitchTurnAngle); }
 	public static Pose getRightSwitchPose() { return new Pose(kRightSwitchFromCenterStartDistX, kRightSwitchFromCenterStartDistY, kRightSwitchTurnAngle); }
 	
-	public static double getSwitchTurnPositionX() { return kSwitchCenterFromCenterStartDistX - kSwitchTurnPositionOffsetX; }
+	public static double getSwitchTurnOffsetX() { return kSwitchCenterFromCenterStartDistX - kSwitchTurnPositionOffsetX; }
 	public static double getSwitchTurnOffsetY() { return kTurnPositionOffsetY; }
 	
 
 	public static Pose getLeftScalePose() { return new Pose(kLeftScaleFromCenterStartDistX, kLeftScaleFromCenterStartDistY, kLeftScaleTurnAngle); }
 	public static Pose getRightScalePose() { return new Pose(kRightScaleFromCenterStartDistX, kRightScaleFromCenterStartDistY, kRightScaleTurnAngle); }
 	
-	public static double getScaleTurnPositionX() { return kSwitchCenterFromCenterStartDistX - kSwitchTurnPositionOffsetX; }
+	public static double getScaleTurnOffsetX() { return kSwitchCenterFromCenterStartDistX - kSwitchTurnPositionOffsetX; }
 	public static double getScaleTurnOffsetY() { return kTurnPositionOffsetY + kScaleFromSwitchOffsetY; }
 	
 	public static double getScaleTurnFromSwitchPositionX() { return ((kPlatFormLeftEndXFromSwitchCenterDistX/2) + Constants.kCenterToSideBumper) + kSwitchCenterFromCenterStartDistX; }
@@ -99,5 +97,8 @@ public class FieldDimensions
 	public static Vector2d getBackupPosition() { return new Vector2d(0, kBackupDistY); }
 	
 	public static double getCollisionAvoidanceOffsetY() { return kCollisionAvoidanceOffsetY; }
+	
+	public static double getCrossOffsetY(){ return Constants.kCenterToSideBumper; }
+	public static double getCrossOffsetX(){ return kSwitchCenterFromCenterStartDistX + (kSwitchLengthX/2); }
 	
 }

@@ -3,7 +3,10 @@ package org.usfirst.frc.team686.robot;
 import org.usfirst.frc.team686.robot.auto.AutoModeBase;
 import org.usfirst.frc.team686.robot.auto.actions.Action;
 import org.usfirst.frc.team686.robot.auto.actions.AutoActions;
+import org.usfirst.frc.team686.robot.auto.actions.AutoActions.InitialStateEnum;
+import org.usfirst.frc.team686.robot.auto.actions.AutoActions.TargetEnum;
 import org.usfirst.frc.team686.robot.auto.actions.SeriesAction;
+import org.usfirst.frc.team686.robot.auto.actions.WaitAction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -143,6 +146,9 @@ public class SmartDashboardInteractions
     	AutoActions autoActions = new AutoActions();
     	
     	String gameData = DriverStation.getInstance().getGameSpecificMessage();
+    	while(gameData.length() < 1){
+    		gameData = DriverStation.getInstance().getGameSpecificMessage(); 
+    	}
 System.out.printf("GameData: %s, switchPose = %c, scalePose = %c\n ", gameData, gameData.charAt(0), gameData.charAt(1));    	
     	
     	char switchPose = gameData.charAt(0);
@@ -152,15 +158,19 @@ System.out.printf("GameData: %s, switchPose = %c, scalePose = %c\n ", gameData, 
     	PriorityOption priority = (PriorityOption)priorityChooser.getSelected();
     	
     	List<Action> actionSequence = new ArrayList<Action>();
+
     	switch (priority)
     	{
     	case SWITCH_IF_SAME_SIDE: //go to switch first if same side
+
     		switch( startPose )
     		{
     		case LEFT_START:
+    			autoActions.setInitialState(InitialStateEnum.LEFT);
     			if( switchPose == 'L' )
     			{
-    				actionSequence.add( autoActions.LeftStartToLeftSwitchEdgeAction() );
+    	    		autoActions.setTarget(TargetEnum.SWITCH);
+    				autoActions.isRight(false);
     				// SCORE CUBE
     				//actionSequence.add( new LeftSwitchEdgeToLeftZoneCubeAction() );
     				//if (scalePose == 'L')
@@ -171,14 +181,15 @@ System.out.printf("GameData: %s, switchPose = %c, scalePose = %c\n ", gameData, 
     			else
     			{
     				if( scalePose == 'L' ){
-    					actionSequence.add( autoActions.LeftStartToLeftScaleEdgeAction() );
+    					autoActions.setTarget(TargetEnum.SCALE);
+    					autoActions.isRight(false);
     					// SCORE CUBE
     					//actionSequence.add( new LeftScaleEdgeToRightSwitchCubeAction() );
     					//actionSequence.add( new RightSwitchCubeToRightSwitchEdgeAction() );
     				}
     				else
     				{
-        				actionSequence.add( autoActions.LeftStartToRightScaleEdgeAction() );
+    					autoActions.isRight(true);
         				// SCORE CUBE
         				//actionSequence.add( new RightScaleEdgeToRightSwitchCubeAction(); )
         				//actionSequence.add( new RightSwitchCubeToRightSwitchEdgeAction() );
@@ -187,34 +198,39 @@ System.out.printf("GameData: %s, switchPose = %c, scalePose = %c\n ", gameData, 
     			break;
     		
     		case RIGHT_START:
+    			autoActions.setInitialState(InitialStateEnum.RIGHT);
     			if( switchPose == 'R' )
     			{
-    				actionSequence.add( autoActions.RightStartToRightSwitchEdgeAction() );
+    				autoActions.setTarget(TargetEnum.SWITCH);
+    				autoActions.isRight(true);
     				// SCORE CUBE
     			}
     			else
     			{
     				if( scalePose == 'L' ){
-    					actionSequence.add( autoActions.RightStartToLeftScaleEdgeAction() );
+    					autoActions.setTarget(TargetEnum.SCALE);
+    					autoActions.isRight(false);
     					// SCORE CUBE
     				}
     				else
     				{
-        				actionSequence.add( autoActions.RightStartToRightScaleEdgeAction() );
+    					autoActions.isRight(true);
         				// SCORE CUBE
     				}
     			}
     			break;
     		
     		case CENTER_START:
+    			autoActions.setInitialState(InitialStateEnum.CENTER);
+   				autoActions.setTarget(TargetEnum.SWITCH);
     			if( switchPose == 'L' )
     			{
-    				actionSequence.add( autoActions.CenterStartToLeftSwitchEdgeAction() );
+    				autoActions.isRight(false);
     				// SCORE CUBE
     			}
     			else
     			{
-    				actionSequence.add( autoActions.CenterStartToRightSwitchEdgeAction() );
+    				autoActions.isRight(true);
     			}
     			break;
     		}
@@ -224,9 +240,11 @@ System.out.printf("GameData: %s, switchPose = %c, scalePose = %c\n ", gameData, 
     		switch( startPose )
     		{
     		case LEFT_START:
+    			autoActions.setInitialState(InitialStateEnum.LEFT);
     			if( scalePose == 'L' )
     			{
-    				actionSequence.add( autoActions.LeftStartToLeftScaleEdgeAction() );
+    				autoActions.setTarget(TargetEnum.SCALE);
+    				autoActions.isRight(false);
     				// SCORE CUBE
     				//if (switchPose == 'L')
     				//{
@@ -242,14 +260,16 @@ System.out.printf("GameData: %s, switchPose = %c, scalePose = %c\n ", gameData, 
     			else
     			{
     				if( switchPose == 'L' ){
-    					actionSequence.add( autoActions.LeftStartToLeftSwitchEdgeAction() );
+    					autoActions.setTarget(TargetEnum.SWITCH);
+    					autoActions.isRight(false);
     					// SCORE CUBE
     					//actionSequence.add( new LeftSwitchEdgeToRightSwitchCubeAction() );
     					//actionSequence.add( new RightSwitchCubeToRightScaleEdgeAction() );
     				}
     				else
     				{
-        				actionSequence.add( autoActions.LeftStartToRightScaleEdgeAction() );
+        				autoActions.setTarget(TargetEnum.SCALE);
+        				autoActions.isRight(true);
         				// SCORE CUBE
         				//actionSequence.add( new RightScaleEdgeToRightSwitchCubeAction(); )
         				//actionSequence.add( new RightSwitchCubeToRightSwitchEdgeAction() );
@@ -258,34 +278,40 @@ System.out.printf("GameData: %s, switchPose = %c, scalePose = %c\n ", gameData, 
     			break;
     			
     		case RIGHT_START:
+    			autoActions.setInitialState(InitialStateEnum.RIGHT);
     			if( scalePose == 'R' )
     			{
-    				actionSequence.add( autoActions.RightStartToRightScaleEdgeAction() );
+    				autoActions.setTarget(TargetEnum.SCALE);
+    				autoActions.isRight(true);
     				// SCORE CUBE
     			}
     			else
     			{
     				if( switchPose == 'R' ){
-    					actionSequence.add( autoActions.RightStartToRightSwitchEdgeAction() );
+    					autoActions.setTarget(TargetEnum.SWITCH);
+    					autoActions.isRight(true);
     					// SCORE CUBE
     				}
     				else
     				{
-        				actionSequence.add( autoActions.RightStartToLeftScaleEdgeAction() );
+        				autoActions.setTarget(TargetEnum.SCALE);
+        				autoActions.isRight(false);
         				// SCORE CUBE
     				}
     			}
     			break;
     		
     		case CENTER_START:
+    			autoActions.setInitialState(InitialStateEnum.CENTER);
+    			autoActions.setTarget(TargetEnum.SCALE);
     			if( scalePose == 'L' )
     			{
-    				actionSequence.add( autoActions.CenterStartToLeftScaleEdgeAction() );
+    				autoActions.isRight(false);
     				// SCORE CUBE
     			}
     			else
     			{
-    				actionSequence.add( autoActions.CenterStartToRightScaleEdgeAction() );
+    				autoActions.isRight(true);
     			}
     			break;
     		
@@ -296,74 +322,59 @@ System.out.printf("GameData: %s, switchPose = %c, scalePose = %c\n ", gameData, 
     		break;	// case SCALE_IF_SAME_SIDE
     			
     	case SWITCH_ALWAYS:
+    		autoActions.setTarget(TargetEnum.SWITCH);
     		if( switchPose == 'L' )
     		{
-    			switch( startPose )
-    			{
-    			case LEFT_START:
-    				actionSequence.add( autoActions.LeftStartToLeftSwitchEdgeAction() );
-    				break;
-    			case RIGHT_START:
-    				actionSequence.add( autoActions.RightStartToLeftSwitchEdgeAction() );
-    				break;
-    			case CENTER_START:
-    				actionSequence.add( autoActions.CenterStartToLeftSwitchEdgeAction() );
-    				break;
-    			}
+    			autoActions.isRight(false);
     		}
     		else
     		{
-    			switch( startPose )
-    			{
-    			case LEFT_START:
-    				actionSequence.add( autoActions.LeftStartToRightSwitchEdgeAction() );
-    				break;
-    			case RIGHT_START:
-    				actionSequence.add( autoActions.RightStartToRightSwitchEdgeAction() );
-    				break;
-    			case CENTER_START:
-    				actionSequence.add( autoActions.CenterStartToRightSwitchEdgeAction() );
-    				break;
-    			}
+    			autoActions.isRight(true);
     		}
+    		
+			switch( startPose )
+			{
+			case LEFT_START:
+				autoActions.setInitialState(InitialStateEnum.LEFT);
+				break;
+			case RIGHT_START:
+				autoActions.setInitialState(InitialStateEnum.RIGHT);
+				break;
+			case CENTER_START:
+				autoActions.setInitialState(InitialStateEnum.CENTER);
+				break;
+			}
     		
     		break;
     		
     	case SCALE_ALWAYS:
     		
-    		if( scalePose == 'L' )
+    		autoActions.setTarget(TargetEnum.SCALE);
+    		if( switchPose == 'L' )
     		{
-    			switch( startPose )
-    			{
-    			case LEFT_START:
-    				actionSequence.add( autoActions.LeftStartToLeftScaleEdgeAction() );
-    				break;
-    			case RIGHT_START:
-    				actionSequence.add( autoActions.RightStartToLeftScaleEdgeAction() );
-    				break;
-    			case CENTER_START:
-    				actionSequence.add( autoActions.CenterStartToLeftScaleEdgeAction() );
-    				break;
-    			}
+    			autoActions.isRight(false);
     		}
     		else
     		{
-    			switch( startPose )
-    			{
-    			case LEFT_START:
-    				actionSequence.add( autoActions.LeftStartToRightScaleEdgeAction() );
-    				break;
-    			case RIGHT_START:
-    				actionSequence.add( autoActions.RightStartToRightScaleEdgeAction() );
-    				break;
-    			case CENTER_START:
-    				actionSequence.add( autoActions.CenterStartToRightScaleEdgeAction() );
-    				break;
-    			}
+    			autoActions.isRight(true);
     		}
+    		
+			switch( startPose )
+			{
+			case LEFT_START:
+				autoActions.setInitialState(InitialStateEnum.LEFT);
+				break;
+			case RIGHT_START:
+				autoActions.setInitialState(InitialStateEnum.RIGHT);
+				break;
+			case CENTER_START:
+				autoActions.setInitialState(InitialStateEnum.CENTER);
+				break;
+			}
     		break; // case: SCALE_ALWAYS
     	}
     	
+    	actionSequence.add(autoActions.getActions(true));
     	return new SeriesAction(actionSequence);
     }
     

@@ -140,8 +140,8 @@ public class Constants extends ConstantsBase
     
     // ELEVATOR    
     public static double kElevatorMinHeightLimit =  0.0;	// stop at min height
-	//public static double kElevatorMaxHeightLimit = 65.0;	// stop at max height	// TODO: figure out what this is
-	public static double kElevatorMaxHeightLimit = 65.0;	// protect the ceiling!  TODO: comment out for competition
+	public static double kElevatorMaxHeightLimit = 65.0;	// stop at max height	// TODO: figure out what this is
+	//public static double kElevatorMaxHeightLimit = 65.0;	// protect the ceiling!  TODO: comment out for competition
 
     public static double kElevatorZeroingVelocity = 4;		// inches per second
 
@@ -211,7 +211,7 @@ public class Constants extends ConstantsBase
     public static double kOuttakeSpeed = -1.0;	// full speed reverse
     
     public static boolean kIntakeLeftMotorInverted = true;
-    public static boolean kIntakeRightMotorInverted = false;
+    public static boolean kIntakeRightMotorInverted = true;
     
     // Do not change anything after this line!
     
@@ -312,7 +312,7 @@ public class Constants extends ConstantsBase
     
     public Constants()
     {
-        kRobotSelection = RobotSelectionEnum.COMPETITION_BOT;	// select which robot we are building code for (TODO: make this automatic?)
+        kRobotSelection = RobotSelectionEnum.PRACTICE_BOT;	// select which robot we are building code for (TODO: make this automatic?)
     	
     	// place robot-specific constants here
     	
@@ -421,14 +421,19 @@ public class Constants extends ConstantsBase
     		//  kFullThrottleRPM = 4500 * kQuadEncoderGain;	// high gear: measured max RPM using NI web interface
     		    double kFullThrottleRPM = 520;	// low gear: measured max RPM using NI web interface
     		    double kFullThrottleEncoderPulsePer100ms = kFullThrottleRPM / 60.0 * kQuadEncoderStatusFramePeriod * kQuadEncoderPulsesPerRev; 
-
-    		    kDriveVelocityKp = 1.0;
+    		    kNominalEncoderPulsePer100ms = 85;		// velocity at a nominal throttle (measured using NI web interface)
+    		    kNominalPercentOutput 		 = 0.4447;	// percent output of motor at above throttle (using NI web interface)
+    		    
+    		    
+    		    
+    		    kDriveVelocityKp = 20.0;
     		    kDriveVelocityKi = 0.001;
     		    kDriveVelocityKd = 6.0;
-    		    kDriveVelocityKf = 1023.0 / kFullThrottleEncoderPulsePer100ms;
+    		    kDriveVelocityKf = kNominalPercentOutput * 1023.0 / kNominalEncoderPulsePer100ms;
     		    kDriveVelocityIZone = 0;
     		    kDriveVelocityRampRate = 0.0;
     		    kDriveVelocityAllowableError = 0;
+    		    kDriveVelocityReductionMultiplier = 2;
 
     		    // PID gains for drive base lock loop
     		    // Units: error is 4*256 counts/rev. Max output is +/- 1023 units.
@@ -450,15 +455,30 @@ public class Constants extends ConstantsBase
     		    
     		    // Motor Controllers
     		    // (Note that if multiple Talons are dedicated to a mechanism, any sensors are attached to the master)
-    		    kLeftMotorMasterTalonId 	= 1;
+    		 
+    		    /*kLeftMotorMasterTalonId 	= 1;
     			kLeftMotorSlave1TalonId 	= 2;
-    			kLeftMotorSlave2TalonId 	= 3;
+    			//kLeftMotorSlave2TalonId 	= 3;
     			kElevatorTalonId 			= 99;
 
-    			kRightMotorMasterTalonId 	= 5;
-    			kRightMotorSlave1TalonId 	= 6;
-    			kRightMotorSlave2TalonId 	= 7;
-    			kArmBarTalonId 				= 99;
+    			kRightMotorMasterTalonId 	= 3;
+    			kRightMotorSlave1TalonId 	= 4;
+    			//kRightMotorSlave2TalonId 	= 7;
+    			kArmBarTalonId 				= 6;
+    			*/
+    		    
+    		    kLeftMotorMasterTalonId 	= 1;
+    			kLeftMotorSlave1TalonId 	= 2;
+    			//kElevatorTalonId 			= 3;
+    			kRightMotorMasterTalonId 	= 4;
+    			kRightMotorSlave1TalonId 	= 5;
+    			//kArmBarTalonId 				= 6;
+    			
+    			
+    			kLeftIntakePwmChannel		= 0;
+    			kRightIntakePwmChannel	= 1;
+    			kIntakeSolenoidForwardChannel = 0;
+    			kIntakeSolenoidReverseChannel = 1;
 
     		    // left motors are inverted
     		    kLeftMotorInverted  = true;
@@ -467,6 +487,8 @@ public class Constants extends ConstantsBase
     		    kRightMotorSensorPhase = true;
     			
     			kDriveTrainCurrentLimit = 25;
+    			
+    			kElevatorLimitSwitchPwmId = 0;
     		    
     		    break;
     	}
@@ -486,8 +508,8 @@ public class Constants extends ConstantsBase
 	    kPointTurnCompletionTolerance = 1.0 * (Math.PI/180.0); 
 	    
 	    // Path following constants
-	    kPathFollowingMaxVel    = 40.0; // inches/sec  		
-	    kPathFollowingMaxAccel  = 24.0; // inches/sec^2	
+	    kPathFollowingMaxVel    = 80.0; // inches/sec  		
+	    kPathFollowingMaxAccel  = 48.0; // inches/sec^2	
 	    kPathFollowingLookahead = 24.0; // inches
 	    kPathFollowingCompletionTolerance = 1.0; 
 	    

@@ -141,7 +141,7 @@ public class ArmBarLoop implements Loop
 		armBarState.setFilteredTargetAngleDeg(filteredTarget);
 		armBarState.setPidError(voltage);
 				
-//		System.out.println(toString());
+		System.out.println(toString());
 	}
 
 	@Override
@@ -259,7 +259,7 @@ public class ArmBarLoop implements Loop
 
 		armBarState.setLimitSwitchTriggered( talon.getSensorCollection().isFwdLimitSwitchClosed() );
 		
-//		System.out.println(talon.getSelectedSensorPosition(Constants.kTalonPidIdx) + ",  " + talon.getMotorOutputPercent()  + ",  " + talon.getOutputCurrent() + ",  " + talon.getSensorCollection().isFwdLimitSwitchClosed());;
+		//System.out.println(talon.getSelectedSensorPosition(Constants.kTalonPidIdx) + ",  " + talon.getMotorOutputPercent()  + ",  " + talon.getOutputCurrent() + ",  " + talon.getSensorCollection().isFwdLimitSwitchClosed());;
 		
 	}
 

@@ -30,6 +30,8 @@ public class ElevatorAction implements Action {
 	public ElevatorTarget state = ElevatorTarget.GROUND;
 
 	private double targetOffset = 1.0;
+	private double mStartTime;
+	private double mTargetTime = 5;
 	private double position;
 	private double target;
 	private boolean extended;
@@ -66,11 +68,11 @@ public class ElevatorAction implements Action {
 		
 		position = elevatorState.getPositionInches();
 		
-		finished = Math.abs(target - position) <= targetOffset;
+		finished = Math.abs(target - position) <= targetOffset;// || (Timer.getFPGATimestamp() - mStartTime) <= mTargetTime;
 				
 		if(finished){
 			state = ElevatorTarget.GROUND;
-			elevatorArmBar.set(state.target, extended);
+			elevatorArmBar.set(state.target, false);
 		}
 		
 	}
@@ -84,9 +86,10 @@ public class ElevatorAction implements Action {
 	@Override
 	public void start() {
 		
+		mStartTime = Timer.getFPGATimestamp();
 		elevatorArmBar.set(state.target, false);
 		position = elevatorState.getPositionInches();
-		target = state.target.bottomOfCubeHeight;
+		target = elevatorState.getTrajectoryTargetInches();
 		
 	}
 

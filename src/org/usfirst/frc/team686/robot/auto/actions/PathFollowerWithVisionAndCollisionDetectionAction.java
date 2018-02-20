@@ -18,17 +18,19 @@ public class PathFollowerWithVisionAndCollisionDetectionAction implements Action
 {
 	PathFollowerWithVisionDriveController driveCtrl;
 	public static NavX gyro;
-	double lastWorldLinearAccelerationX;
-	double lastWorldLinearAccelerationY;
-	double startTime; //seconds
+	private double lastWorldLinearAccelerationX;
+	private double lastWorldLinearAccelerationY;
+	private boolean collisionDetected;
 
     public PathFollowerWithVisionAndCollisionDetectionAction(Path _path) 
     {
+    	
     	driveCtrl = new PathFollowerWithVisionDriveController(_path, PathVisionState.PATH_FOLLOWING);
     	gyro = NavX.getInstance();
     	lastWorldLinearAccelerationX = gyro.getWorldLinearAccelerationX();
     	lastWorldLinearAccelerationY = gyro.getWorldLinearAccelerationY();
-    	startTime = Timer.getFPGATimestamp();
+    	collisionDetected = false;
+
     }
 
     public PathFollowerWithVisionDriveController getDriveController() { return driveCtrl; }
@@ -51,7 +53,6 @@ public class PathFollowerWithVisionAndCollisionDetectionAction implements Action
     @Override
     public boolean isFinished() 
     {
-        boolean collisionDetected = false;
         
         double currWorldLinearAccelerationX = gyro.getWorldLinearAccelerationX();
         double currentJerkX = currWorldLinearAccelerationX - lastWorldLinearAccelerationX;
