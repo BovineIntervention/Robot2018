@@ -20,10 +20,6 @@ public class CenterToSwitchMode extends AutoModeBase
 	boolean rightSwitch;
 	Path path;
 	
-	// TODO: do a little math to figure out these points, especially the final position using kCenterToFrontBumper
-	Vector2d waypoint1 = new Vector2d(115-12, 58.44);	// last foot will have collision detection
-	Vector2d waypoint2 = new Vector2d(115   , 58.44);
-	
     public CenterToSwitchMode(boolean _isRight) 
     {
     	rightSwitch = _isRight;
@@ -41,6 +37,10 @@ public class CenterToSwitchMode extends AutoModeBase
 
 		Vector2d initialPosition = FieldDimensions.getCenterStartPose().getPosition();
 
+		// TODO: do a little math to figure out these points, especially the final position using kCenterToFrontBumper
+		Vector2d waypoint1 = new Vector2d(115-12, 58.44);	// last foot will have collision detection
+		Vector2d waypoint2 = new Vector2d(115   , 58.44);	// shooting position 
+		
 		if (rightSwitch)
 		{
 			// negate Y coordinates if going right

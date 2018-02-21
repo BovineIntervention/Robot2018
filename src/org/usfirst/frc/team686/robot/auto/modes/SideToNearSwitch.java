@@ -20,12 +20,6 @@ public class SideToNearSwitch extends AutoModeBase
 	boolean rightSwitch;
 	Path path;
 	
-	// TODO: do a little math to figure out these points, especially the final position using kCenterToFrontBumper
-	Vector2d waypoint1 = new Vector2d(120, 132);	// crossing auto line
-	Vector2d waypoint2 = new Vector2d(168, 132);	// center of switch
-	Vector2d waypoint3 = new Vector2d(168, 101+12);	// last foot will have collision detection
-	Vector2d waypoint4 = new Vector2d(168, 101);	// shooting posistion
-	
     public SideToNearSwitch(boolean _isRight) 
     {
     	rightSwitch = _isRight;
@@ -43,6 +37,13 @@ public class SideToNearSwitch extends AutoModeBase
 
 		Vector2d initialPosition = FieldDimensions.getLeftStartPose().getPosition();
 
+		
+		// TODO: do a little math to figure out these points, especially the final position using kCenterToFrontBumper
+		Vector2d waypoint1 = new Vector2d(120, 132);	// crossing auto line
+		Vector2d waypoint2 = new Vector2d(168, 132);	// center of switch
+		Vector2d waypoint3 = new Vector2d(168, 101+12);	// last foot will have collision detection
+		Vector2d waypoint4 = new Vector2d(168, 101);	// shooting position
+		
 		if (rightSwitch)
 		{
 			initialPosition = FieldDimensions.getRightStartPose().getPosition();
