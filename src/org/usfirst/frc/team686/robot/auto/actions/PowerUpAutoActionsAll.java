@@ -12,9 +12,9 @@ import org.usfirst.frc.team686.robot.lib.util.Util;
 import org.usfirst.frc.team686.robot.lib.util.Vector2d;
 import org.usfirst.frc.team686.robot.lib.util.Path.Waypoint;
 
-public class AutoActionsAll {
+public class PowerUpAutoActionsAll {
 	
-	public AutoActionsAll(){}
+	public PowerUpAutoActionsAll(){}
 	
 	static Pose initialPose;
 	PathSegment.Options pathOptions   = new PathSegment.Options(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, Constants.kPathFollowingLookahead, false);

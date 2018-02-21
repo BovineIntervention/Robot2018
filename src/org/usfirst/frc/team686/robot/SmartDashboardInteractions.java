@@ -2,9 +2,9 @@ package org.usfirst.frc.team686.robot;
 
 import org.usfirst.frc.team686.robot.auto.AutoModeBase;
 import org.usfirst.frc.team686.robot.auto.actions.Action;
-import org.usfirst.frc.team686.robot.auto.actions.AutoActions;
-import org.usfirst.frc.team686.robot.auto.actions.AutoActions.InitialStateEnum;
-import org.usfirst.frc.team686.robot.auto.actions.AutoActions.TargetEnum;
+import org.usfirst.frc.team686.robot.auto.actions.PowerUpAutoActions;
+import org.usfirst.frc.team686.robot.auto.actions.PowerUpAutoActions.InitialStateEnum;
+import org.usfirst.frc.team686.robot.auto.actions.PowerUpAutoActions.TargetEnum;
 import org.usfirst.frc.team686.robot.auto.actions.SeriesAction;
 import org.usfirst.frc.team686.robot.auto.actions.WaitAction;
 
@@ -39,7 +39,7 @@ public class SmartDashboardInteractions
 
     static SendableChooser<StartOption> startChooser;
 
-    enum StartOption
+    public enum StartOption
     {
         LEFT_START("Left Start"),
         CENTER_START("Center Start"),
@@ -55,7 +55,7 @@ public class SmartDashboardInteractions
     
     static SendableChooser<PriorityOption> priorityChooser;
     
-    enum PriorityOption
+    public enum PriorityOption
     {
     	SWITCH_IF_SAME_SIDE("Switch If Same Side"),
     	SCALE_IF_SAME_SIDE("Scale If Same Side"),
@@ -67,17 +67,35 @@ public class SmartDashboardInteractions
     	PriorityOption(String name) {
     		this.name= name;
     	}
-    	
     }
     
     
-    SendableChooser startDelayChooser;
+    SendableChooser<StartDelayOption> startDelayChooser;
+    
+    public enum StartDelayOption
+    {
+    	DELAY_0_SEC("0 Sec", 0.0),
+    	DELAY_1_SEC("1 Sec", 1.0),
+    	DELAY_2_SEC("2 Sec", 2.0),
+    	DELAY_3_SEC("3 Sec", 3.0),
+    	DELAY_4_SEC("4 Sec", 4.0),
+    	DELAY_5_SEC("5 Sec", 5.0);
+    
+    	public final String name;
+    	public final double delaySec;
+    	
+    	StartDelayOption(String name, double delaySec) {
+    		this.name= name;
+    		this.delaySec = delaySec;
+    	}
+    }
    
     
     static SendableChooser<AutoModeOption> autoModeChooser;
     
     enum AutoModeOption
     {
+        POWER_UP("Power Up"),
         STAND_STILL("Stand Still"),
         DRIVE_STRAIGHT("Drive Straight");
     	
@@ -123,15 +141,18 @@ public class SmartDashboardInteractions
      
         SmartDashboard.putData("Priority Chooser", priorityChooser);
         
-        startDelayChooser = new SendableChooser();
-        startDelayChooser.addDefault(Integer.toString(1), 1);
-        startDelayChooser.addObject(Integer.toString(2), 2);
-        startDelayChooser.addObject(Integer.toString(3), 3);
-        startDelayChooser.addObject(Integer.toString(4), 4);
-        startDelayChooser.addObject(Integer.toString(5), 5);
+        startDelayChooser = new SendableChooser<StartDelayOption>();
+        startDelayChooser.addDefault(StartDelayOption.DELAY_0_SEC.toString(), StartDelayOption.DELAY_0_SEC);
+        startDelayChooser.addObject(StartDelayOption.DELAY_1_SEC.toString(), StartDelayOption.DELAY_0_SEC);
+        startDelayChooser.addObject(StartDelayOption.DELAY_2_SEC.toString(), StartDelayOption.DELAY_0_SEC);
+        startDelayChooser.addObject(StartDelayOption.DELAY_3_SEC.toString(), StartDelayOption.DELAY_0_SEC);
+        startDelayChooser.addObject(StartDelayOption.DELAY_4_SEC.toString(), StartDelayOption.DELAY_0_SEC);
+        startDelayChooser.addObject(StartDelayOption.DELAY_5_SEC.toString(), StartDelayOption.DELAY_0_SEC);
        
         autoModeChooser = new SendableChooser<AutoModeOption>();
-        autoModeChooser.addDefault(AutoModeOption.DRIVE_STRAIGHT.name, AutoModeOption.DRIVE_STRAIGHT);
+        autoModeChooser.addDefault(AutoModeOption.POWER_UP.name, AutoModeOption.POWER_UP);
+        autoModeChooser.addObject(AutoModeOption.STAND_STILL.name, AutoModeOption.STAND_STILL);
+        autoModeChooser.addObject(AutoModeOption.DRIVE_STRAIGHT.name, AutoModeOption.DRIVE_STRAIGHT);
         SmartDashboard.putData("Auto Mode Chooser", autoModeChooser);
     	
     	joystickModeChooser = new SendableChooser<JoystickOption>();
@@ -146,257 +167,39 @@ public class SmartDashboardInteractions
      }
     
     
-    public static SeriesAction autoSequenceBuilder(){
-    	
-    	AutoActions autoActions = new AutoActions();
-    	
-    	String gameData = DriverStation.getInstance().getGameSpecificMessage();
-    	while(gameData.length() < 1){
-    		gameData = DriverStation.getInstance().getGameSpecificMessage(); 
-    	}
-System.out.printf("GameData: %s, switchPose = %c, scalePose = %c\n ", gameData, gameData.charAt(0), gameData.charAt(1));    	
-    	
-    	char switchPose = gameData.charAt(0);
-    	char scalePose = gameData.charAt(1);
-    	StartOption startPose = (StartOption)startChooser.getSelected();
-    	
-    	PriorityOption priority = (PriorityOption)priorityChooser.getSelected();
-    	
-    	List<Action> actionSequence = new ArrayList<Action>();
-
-    	switch (priority)
-    	{
-    	case SWITCH_IF_SAME_SIDE: //go to switch first if same side
-
-    		switch( startPose )
-    		{
-    		case LEFT_START:
-    			autoActions.setInitialState(InitialStateEnum.LEFT);
-    			if( switchPose == 'L' )
-    			{
-    	    		autoActions.setTarget(TargetEnum.SWITCH);
-    				autoActions.isRight(false);
-    				// SCORE CUBE
-    				//actionSequence.add( new LeftSwitchEdgeToLeftZoneCubeAction() );
-    				//if (scalePose == 'L')
-    				//	actionSequence.add( new LeftZoneCubeToLeftScaleEdgeAction() );
-    				//else
-    				//	actionSequence.add( new LeftZoneCubeToRightScaleEdgeAction() );
-    			}
-    			else
-    			{
-    				if( scalePose == 'L' ){
-    					autoActions.setTarget(TargetEnum.SCALE);
-    					autoActions.isRight(false);
-    					// SCORE CUBE
-    					//actionSequence.add( new LeftScaleEdgeToRightSwitchCubeAction() );
-    					//actionSequence.add( new RightSwitchCubeToRightSwitchEdgeAction() );
-    				}
-    				else
-    				{
-    					autoActions.isRight(true);
-        				// SCORE CUBE
-        				//actionSequence.add( new RightScaleEdgeToRightSwitchCubeAction(); )
-        				//actionSequence.add( new RightSwitchCubeToRightSwitchEdgeAction() );
-    				}
-    			}
-    			break;
-    		
-    		case RIGHT_START:
-    			autoActions.setInitialState(InitialStateEnum.RIGHT);
-    			if( switchPose == 'R' )
-    			{
-    				autoActions.setTarget(TargetEnum.SWITCH);
-    				autoActions.isRight(true);
-    				// SCORE CUBE
-    			}
-    			else
-    			{
-    				if( scalePose == 'L' ){
-    					autoActions.setTarget(TargetEnum.SCALE);
-    					autoActions.isRight(false);
-    					// SCORE CUBE
-    				}
-    				else
-    				{
-    					autoActions.isRight(true);
-        				// SCORE CUBE
-    				}
-    			}
-    			break;
-    		
-    		case CENTER_START:
-    			autoActions.setInitialState(InitialStateEnum.CENTER);
-   				autoActions.setTarget(TargetEnum.SWITCH);
-    			if( switchPose == 'L' )
-    			{
-    				autoActions.isRight(false);
-    				// SCORE CUBE
-    			}
-    			else
-    			{
-    				autoActions.isRight(true);
-    			}
-    			break;
-    		}
-    		break;	// case SWITCH_IF_SAME_SIDE
-    			
-    	case SCALE_IF_SAME_SIDE:
-    		switch( startPose )
-    		{
-    		case LEFT_START:
-    			autoActions.setInitialState(InitialStateEnum.LEFT);
-    			if( scalePose == 'L' )
-    			{
-    				autoActions.setTarget(TargetEnum.SCALE);
-    				autoActions.isRight(false);
-    				// SCORE CUBE
-    				//if (switchPose == 'L')
-    				//{
-        			//	actionSequence.add( new LeftScaleEdgeToLeftSwitchCubeAction() );
-    				//	actionSequence.add( new LeftSwitchCubeToLeftSwitchEdgeAction() );
-    				//}
-    				//else
-    				//{
-    				//	actionSequence.add( new LeftScaleEdgeToRightSwitchCubeAction() );
-    				//	actionSequence.add( new RightSwitchCubeToRightSwitchEdgeAction() );
-    				//}
-    			}
-    			else
-    			{
-    				if( switchPose == 'L' ){
-    					autoActions.setTarget(TargetEnum.SWITCH);
-    					autoActions.isRight(false);
-    					// SCORE CUBE
-    					//actionSequence.add( new LeftSwitchEdgeToRightSwitchCubeAction() );
-    					//actionSequence.add( new RightSwitchCubeToRightScaleEdgeAction() );
-    				}
-    				else
-    				{
-        				autoActions.setTarget(TargetEnum.SCALE);
-        				autoActions.isRight(true);
-        				// SCORE CUBE
-        				//actionSequence.add( new RightScaleEdgeToRightSwitchCubeAction(); )
-        				//actionSequence.add( new RightSwitchCubeToRightSwitchEdgeAction() );
-    				}
-    			}
-    			break;
-    			
-    		case RIGHT_START:
-    			autoActions.setInitialState(InitialStateEnum.RIGHT);
-    			if( scalePose == 'R' )
-    			{
-    				autoActions.setTarget(TargetEnum.SCALE);
-    				autoActions.isRight(true);
-    				// SCORE CUBE
-    			}
-    			else
-    			{
-    				if( switchPose == 'R' ){
-    					autoActions.setTarget(TargetEnum.SWITCH);
-    					autoActions.isRight(true);
-    					// SCORE CUBE
-    				}
-    				else
-    				{
-        				autoActions.setTarget(TargetEnum.SCALE);
-        				autoActions.isRight(false);
-        				// SCORE CUBE
-    				}
-    			}
-    			break;
-    		
-    		case CENTER_START:
-    			autoActions.setInitialState(InitialStateEnum.CENTER);
-    			autoActions.setTarget(TargetEnum.SCALE);
-    			if( scalePose == 'L' )
-    			{
-    				autoActions.isRight(false);
-    				// SCORE CUBE
-    			}
-    			else
-    			{
-    				autoActions.isRight(true);
-    			}
-    			break;
-    		
-    		default:
-    			break;
-    		}
-    		
-    		break;	// case SCALE_IF_SAME_SIDE
-    			
-    	case SWITCH_ALWAYS:
-    		autoActions.setTarget(TargetEnum.SWITCH);
-    		if( switchPose == 'L' )
-    		{
-    			autoActions.isRight(false);
-    		}
-    		else
-    		{
-    			autoActions.isRight(true);
-    		}
-    		
-			switch( startPose )
-			{
-			case LEFT_START:
-				autoActions.setInitialState(InitialStateEnum.LEFT);
-				break;
-			case RIGHT_START:
-				autoActions.setInitialState(InitialStateEnum.RIGHT);
-				break;
-			case CENTER_START:
-				autoActions.setInitialState(InitialStateEnum.CENTER);
-				break;
-			}
-    		
-    		break;
-    		
-    	case SCALE_ALWAYS:
-    		
-    		autoActions.setTarget(TargetEnum.SCALE);
-    		if( switchPose == 'L' )
-    		{
-    			autoActions.isRight(false);
-    		}
-    		else
-    		{
-    			autoActions.isRight(true);
-    		}
-    		
-			switch( startPose )
-			{
-			case LEFT_START:
-				autoActions.setInitialState(InitialStateEnum.LEFT);
-				break;
-			case RIGHT_START:
-				autoActions.setInitialState(InitialStateEnum.RIGHT);
-				break;
-			case CENTER_START:
-				autoActions.setInitialState(InitialStateEnum.CENTER);
-				break;
-			}
-    		break; // case: SCALE_ALWAYS
-    	}
-    	
-    	actionSequence.add(autoActions.getActions(true));
-    	return new SeriesAction(actionSequence);
-    }
     
     public AutoModeBase getAutoModeSelection()
     {
     	AutoModeOption autoMode = (AutoModeOption)autoModeChooser.getSelected();
+
+    	String gameData = DriverStation.getInstance().getGameSpecificMessage();
+    	while(gameData.length() < 1){
+    		gameData = DriverStation.getInstance().getGameSpecificMessage(); 
+    	}
+    	
+    	StartDelayOption startDelay = startDelayChooser.getSelected();
+    	StartOption startPose = (StartOption)startChooser.getSelected();
+    	PriorityOption priority = (PriorityOption)priorityChooser.getSelected();
+    	
     	
     	switch(autoMode)
     	{
+    	case POWER_UP:
+    		return new PowerUpAutoMode(gameData, startDelay, startPose, priority);
+    		
     	case DRIVE_STRAIGHT:
-    		return new DriveStraightMode(24, true);
+    		return new DriveStraightMode(24, false);
+    		
+    	case STAND_STILL:
+			return new StandStillMode();
+			
     	default:
-    		return new DriveStraightMode(24, true);
+            System.out.println("ERROR: unexpected auto mode: " + autoMode);
+			return new StandStillMode();
     	}
-    	
     }
 
+   
 
     public JoystickControlsBase getJoystickControlsMode() 
     {
