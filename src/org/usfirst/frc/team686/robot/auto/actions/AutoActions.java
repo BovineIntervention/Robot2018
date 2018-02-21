@@ -199,7 +199,7 @@ System.out.println("STOP POSITION" + targetPosition.toString());
 		actions.add( new PathFollowerWithVisionAction( pathAlign ) );
 		actions.add( new PathFollowerWithVisionAction( pathToTarget ) );
 		//actions.add( new PointTurnAction(90) );
-		//actions.add( new ElevatorAction(true) );
+		//actions.add( new ElevatorAction(ElevatorArmBarStateEnum.SWITCH) );
 		actions.add( new OuttakeAction() );
 		actions.add( new PathFollowerWithVisionAction( pathBackup ) );
 		

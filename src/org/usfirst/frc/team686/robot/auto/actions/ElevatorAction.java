@@ -1,10 +1,8 @@
 package org.usfirst.frc.team686.robot.auto.actions;
 
-import org.usfirst.frc.team686.robot.Constants;
 import org.usfirst.frc.team686.robot.command_status.ElevatorState;
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
 import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar;
-import org.usfirst.frc.team686.robot.subsystems.Intake;
 import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar.ElevatorArmBarStateEnum;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -12,85 +10,55 @@ import edu.wpi.first.wpilibj.Timer;
 public class ElevatorAction implements Action {
 	
 	
-	public enum ElevatorTarget {
-		
-		SWITCH(ElevatorArmBarStateEnum.SWITCH),
-		SCALE(ElevatorArmBarStateEnum.SCALE_MED),
-		GROUND(ElevatorArmBarStateEnum.GROUND);
-		
-		public ElevatorArmBarStateEnum target; //inches
-		
-		ElevatorTarget( ElevatorArmBarStateEnum _target )
-		{
-			this.target = _target;
-		}
-		
-	}
-	
-	public ElevatorTarget state = ElevatorTarget.GROUND;
+	public ElevatorArmBarStateEnum targetState = ElevatorArmBarStateEnum.GROUND;
 
 	private double targetOffset = 1.0;
 	private double mStartTime;
 	private double mTargetTime = 5;
-	private double position;
-	private double target;
-	private boolean extended;
-	private boolean finished;
+	private double actualPosition;
+	private double targetPosition;
+	private boolean extended = false;
 	
 	ElevatorArmBar elevatorArmBar = ElevatorArmBar.getInstance();
 	ElevatorState elevatorState = ElevatorState.getInstance();
 	
-	public ElevatorAction(boolean isSwitch) {
+	public ElevatorAction(ElevatorArmBarStateEnum _targetState) {
 		
-		position = elevatorState.getPositionInches();
-		finished = false;
-		
-		if(isSwitch){ state = ElevatorTarget.SWITCH; }
-		else { state = ElevatorTarget.SCALE; }
+		actualPosition = elevatorState.getPositionInches();
+		targetState = _targetState;
 	}
 	
 	public ElevatorAction(){
-		
-		finished = false;
-		state = ElevatorTarget.GROUND;
-		
-	}
-
-	@Override
-	public boolean isFinished() {
-		return finished;
-	}
-
-	@Override
-	public void update() {
-		
-		System.out.println("scoring power cube");
-		
-		position = elevatorState.getPositionInches();
-		
-		finished = Math.abs(target - position) <= targetOffset;// || (Timer.getFPGATimestamp() - mStartTime) <= mTargetTime;
-				
-		if(finished){
-			state = ElevatorTarget.GROUND;
-			elevatorArmBar.set(state.target, false);
-		}
-		
-	}
-
-	@Override
-	public void done() {
-		
-		
+		targetState = ElevatorArmBarStateEnum.GROUND;
 	}
 
 	@Override
 	public void start() {
 		
 		mStartTime = Timer.getFPGATimestamp();
-		elevatorArmBar.set(state.target, false);
-		position = elevatorState.getPositionInches();
-		target = elevatorState.getTrajectoryTargetInches();
+		elevatorArmBar.set(targetState, extended);
+		targetPosition = elevatorState.getTrajectoryTargetInches();
+		actualPosition = elevatorState.getPositionInches();
+	}
+	
+	@Override
+	public void update() {
+		// do nothing -- just waiting for elevator to reach target
+	}
+
+	@Override
+	public boolean isFinished() {
+		actualPosition = elevatorState.getPositionInches();
 		
+		boolean finished = Math.abs(targetPosition - actualPosition) <= targetOffset;// || (Timer.getFPGATimestamp() - mStartTime) <= mTargetTime;
+		
+		return finished;
+	}
+
+
+	@Override
+	public void done() {
+		elevatorArmBar.set(ElevatorArmBarStateEnum.GROUND, extended);
 	}
 
 	@Override

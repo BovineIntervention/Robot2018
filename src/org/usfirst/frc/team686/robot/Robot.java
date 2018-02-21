@@ -16,6 +16,7 @@ import org.usfirst.frc.team686.robot.lib.joystick.ButtonBoard;
 import org.usfirst.frc.team686.robot.lib.joystick.JoystickControlsBase;
 import org.usfirst.frc.team686.robot.subsystems.Drive;
 import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar;
+import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar.ElevatorArmBarStateEnum;
 import org.usfirst.frc.team686.robot.subsystems.Intake;
 import org.usfirst.frc.team686.robot.util.DataLogController;
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
@@ -283,6 +284,9 @@ public class Robot extends IterativeRobot {
 			elevatorArmBar.enable();
 
 			drive.setOpenLoop(DriveCommand.COAST());
+			
+			elevatorArmBar.set(ElevatorArmBarStateEnum.GROUND, false);	// prepare to intake during teleop
+			
 		} 
 		catch (Throwable t) 
 		{
