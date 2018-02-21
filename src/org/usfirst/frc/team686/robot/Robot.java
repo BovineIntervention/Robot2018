@@ -2,7 +2,9 @@ package org.usfirst.frc.team686.robot;
 
 import org.usfirst.frc.team686.robot.auto.AutoModeBase;
 import org.usfirst.frc.team686.robot.auto.AutoModeExecuter;
+import org.usfirst.frc.team686.robot.auto.actions.DriveStraightAction;
 import org.usfirst.frc.team686.robot.auto.actions.SeriesAction;
+import org.usfirst.frc.team686.robot.auto.modes.DriveStraightMode;
 import org.usfirst.frc.team686.robot.auto.modes.PointTurnMode;
 import org.usfirst.frc.team686.robot.auto.modes.RunSeriesActionMode;
 import org.usfirst.frc.team686.robot.command_status.DriveState;
@@ -93,8 +95,8 @@ public class Robot extends IterativeRobot {
     		loopController = new LoopController();
     		loopController.register(drive.getVelocityPIDLoop());
     		loopController.register(DriveLoop.getInstance());
-     		loopController.register(ElevatorLoop.getInstance());
-      		loopController.register(ArmBarLoop.getInstance());
+     		//loopController.register(ElevatorLoop.getInstance());
+      		//loopController.register(ArmBarLoop.getInstance());
       		loopController.register(IntakeLoop.getInstance());
        		loopController.register(RobotStateLoop.getInstance());
     		
@@ -226,7 +228,7 @@ public class Robot extends IterativeRobot {
 			autoSequence = SmartDashboardInteractions.autoSequenceBuilder();
 			
 			autoModeExecuter = new AutoModeExecuter();
-			autoModeExecuter.setAutoMode( new RunSeriesActionMode( autoSequence ) );
+			autoModeExecuter.setAutoMode( new DriveStraightMode(24, true) );//autoModeExecuter.getAutoMode() );//new RunSeriesActionMode( autoSequence ) );
 
 			setInitialPose( autoModeExecuter.getAutoMode().getInitialPose() );
 

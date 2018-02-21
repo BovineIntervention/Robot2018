@@ -160,14 +160,15 @@ System.out.println("INITIAL POSITION: " + initialPosition.toString());
 System.out.println("INITIAL FORWARD POSITION: " + initialForwardPosition.toString());
 		if(cross){
 			path.add(new Waypoint(crossPosition1, pathOptions));
-			System.out.println("CROSS POSITION 1: " + crossPosition.toString());
+	System.out.println("CROSS POSITION 1: " + crossPosition.toString());
 			path.add(new Waypoint(crossPosition2, pathOptions));
-			System.out.println("CROSS POSITION 2: " + crossPosition.toString());
+	System.out.println("CROSS POSITION 2: " + crossPosition.toString());
 		}
 		path.add(new Waypoint(turnPosition,     pathOptions));
 System.out.println("TURN POSITION: " + turnPosition.toString());
 		path.add(new Waypoint(targetPosition, 	pathOptions));
-		
+System.out.println("TARGET POSITION: " + turnPosition.toString());	
+
 		pathAlign = new Path();
 		pathAlign.add(new Waypoint(targetPosition, pathOptions));
 		if(_backup)
@@ -189,13 +190,13 @@ System.out.println("STOP POSITION" + targetPosition.toString());
 		pathBackup.setReverseDirection();	
 		
 		SeriesAction actions = new SeriesAction();
-		actions.add( new PathFollowerWithVisionAndCollisionDetectionAction( path ) );
-		actions.add( new PathFollowerWithVisionAndCollisionDetectionAction( pathAlign ) );
-		actions.add( new PathFollowerWithVisionAndCollisionDetectionAction( pathToTarget ) );
+		actions.add( new PathFollowerWithVisionAction( path ) );
+		actions.add( new PathFollowerWithVisionAction( pathAlign ) );
+		actions.add( new PathFollowerWithVisionAction( pathToTarget ) );
 		//actions.add( new PointTurnAction(90) );
 		//actions.add( new ElevatorAction(true) );
 		actions.add( new OuttakeAction() );
-		actions.add( new PathFollowerWithVisionAndCollisionDetectionAction( pathBackup ) );
+		actions.add( new PathFollowerWithVisionAction( pathBackup ) );
 		
 		return actions;
 	}

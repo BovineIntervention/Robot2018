@@ -141,7 +141,7 @@ public class ArmBarLoop implements Loop
 		armBarState.setFilteredTargetAngleDeg(filteredTarget);
 		armBarState.setPidError(voltage);
 				
-		System.out.println(toString());
+		//System.out.println(toString());
 	}
 
 	@Override

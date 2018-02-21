@@ -74,6 +74,7 @@ public class SmartDashboardInteractions
     SendableChooser startDelayChooser;
    
     
+    static SendableChooser<AutoModeOption> autoModeChooser;
     
     enum AutoModeOption
     {
@@ -119,6 +120,7 @@ public class SmartDashboardInteractions
         priorityChooser.addObject(PriorityOption.SCALE_IF_SAME_SIDE.toString(), PriorityOption.SCALE_IF_SAME_SIDE);
         priorityChooser.addObject(PriorityOption.SWITCH_ALWAYS.toString(), PriorityOption.SWITCH_ALWAYS);
         priorityChooser.addObject(PriorityOption.SCALE_ALWAYS.toString(), PriorityOption.SCALE_ALWAYS);
+     
         SmartDashboard.putData("Priority Chooser", priorityChooser);
         
         startDelayChooser = new SendableChooser();
@@ -128,6 +130,9 @@ public class SmartDashboardInteractions
         startDelayChooser.addObject(Integer.toString(4), 4);
         startDelayChooser.addObject(Integer.toString(5), 5);
        
+        autoModeChooser = new SendableChooser<AutoModeOption>();
+        autoModeChooser.addDefault(AutoModeOption.DRIVE_STRAIGHT.name, AutoModeOption.DRIVE_STRAIGHT);
+        SmartDashboard.putData("Auto Mode Chooser", autoModeChooser);
     	
     	joystickModeChooser = new SendableChooser<JoystickOption>();
     	joystickModeChooser.addDefault(JoystickOption.ARCADE_DRIVE.name,        JoystickOption.ARCADE_DRIVE);
@@ -378,106 +383,18 @@ System.out.printf("GameData: %s, switchPose = %c, scalePose = %c\n ", gameData, 
     	return new SeriesAction(actionSequence);
     }
     
-    public List<AutoModeBase> getAutoModeSelection()
+    public AutoModeBase getAutoModeSelection()
     {
-    	return null;
-    	/*
-        DriverStation.Alliance alliance = DriverStation.getInstance().getAlliance();
-        boolean isBlue = (alliance == DriverStation.Alliance.Blue);
-        
-        FieldDimensions fieldDimensions = new FieldDimensionsRed();
-
-        /*
-        System.out.print("Alliance detected as: ");
-        if (alliance == DriverStation.Alliance.Red) {
-            System.out.println("Red");
-        } else if (alliance == DriverStation.Alliance.Blue) {
-                System.out.println("Blue");
-        } else {
-            System.out.println("INVALID");
-        }
-        */
-    	/*
-    	StartOption start = (StartOption)startChooser.getSelected();
-    	SwitchOption switchOption = (SwitchOption)switchChooser.getSelected();
-    	ScaleOption scale = (ScaleOption)scaleChooser.getSelected();
-        
-    	List<AutoModeBase> actions = new ArrayList<AutoModeBase>();
-    	switch (start)
-    	{
+    	AutoModeOption autoMode = (AutoModeOption)autoModeChooser.getSelected();
     	
-    	case Other_START:
-    		if( switchOption == SwitchOption.LEFT_SWITCH ){
-    			actions.add(new OtherStartToLeftSwitchMode());
-    			if( scale == ScaleOption.LEFT_SCALE ){
-    				actions.add(new LeftSwitchToLeftScaleMode());
-    			}else if( scale == ScaleOption.RIGHT_SCALE ){
-    				actions.add(new LeftSwitchToRightScaleMode());
-    			}
-    		}else if( switchOption == SwitchOption.RIGHT_SWITCH ){
-    			actions.add(new OtherStartToRightSwitchMode());
-    			if( scale == ScaleOption.RIGHT_SCALE ){
-    				actions.add(new RightSwitchToLeftScaleMode());
-    			}else if( scale == ScaleOption.RIGHT_SCALE ){
-    				actions.add(new RightSwitchToRightScaleMode());
-    			}
-    		}else if( scale == ScaleOption.LEFT_SCALE ){
-    			actions.add(new OtherStartToLeftScaleMode());
-    		}else if( scale == ScaleOption.RIGHT_SCALE ){
-    			actions.add(new OtherStartToRightScaleMode());
-    		}
-			return actions;
-
-    	case EXCHANGE_START:
-    		if( switchOption == SwitchOption.LEFT_SWITCH ){
-    			actions.add(new ExchangeStartToLeftSwitchMode());
-    			if( scale == ScaleOption.LEFT_SCALE ){
-    				actions.add(new LeftSwitchToLeftScaleMode());
-    			}else if( scale == ScaleOption.RIGHT_SCALE ){
-    				actions.add(new LeftSwitchToRightScaleMode());
-    			}
-    		}else if( switchOption == SwitchOption.RIGHT_SWITCH ){
-    			actions.add(new ExchangeStartToRightSwitchMode());
-    			if( scale == ScaleOption.RIGHT_SCALE ){
-    				actions.add(new RightSwitchToLeftScaleMode());
-    			}else if( scale == ScaleOption.RIGHT_SCALE ){
-    				actions.add(new RightSwitchToRightScaleMode());
-    			}
-    		}else if( scale == ScaleOption.LEFT_SCALE ){
-    			actions.add(new ExchangeStartToLeftScaleMode());
-    		}else if( scale == ScaleOption.RIGHT_SCALE ){
-    			actions.add(new ExchangeStartToRightScaleMode());
-    		}
-			return actions;
-			
-    	case OTHER_START:
-    		if( switchOption == SwitchOption.LEFT_SWITCH ){
-    			actions.add(new OtherStartToLeftSwitchMode());
-    			if( scale == ScaleOption.LEFT_SCALE ){
-    				actions.add(new LeftSwitchToLeftScaleMode());
-    			}else if( scale == ScaleOption.RIGHT_SCALE ){
-    				actions.add(new LeftSwitchToRightScaleMode());
-    			}
-    		}else if( switchOption == SwitchOption.RIGHT_SWITCH ){
-    			actions.add(new OtherStartToRightSwitchMode());
-    			if( scale == ScaleOption.RIGHT_SCALE ){
-    				actions.add(new RightSwitchToLeftScaleMode());
-    			}else if( scale == ScaleOption.RIGHT_SCALE ){
-    				actions.add(new RightSwitchToRightScaleMode());
-    			}
-    		}else if( scale == ScaleOption.LEFT_SCALE ){
-    			actions.add(new OtherStartToLeftScaleMode());
-    		}else if( scale == ScaleOption.RIGHT_SCALE ){
-    			actions.add(new OtherStartToRightScaleMode());
-    		}
-			return actions;
-			
-		default:
-            System.out.println("ERROR: unexpected start: " + start);
-            actions.add(new StandStillMode());
-			return actions;
-	    }
-	    */
+    	switch(autoMode)
+    	{
+    	case DRIVE_STRAIGHT:
+    		return new DriveStraightMode(24, true);
+    	default:
+    		return new DriveStraightMode(24, true);
+    	}
+    	
     }
 
 

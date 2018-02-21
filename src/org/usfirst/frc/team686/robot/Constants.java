@@ -401,7 +401,8 @@ public class Constants extends ConstantsBase
     			
     			
     		case PRACTICE_BOT:
-    			GyroSelection = GyroSelectionEnum.BNO055;
+//    			GyroSelection = GyroSelectionEnum.BNO055;
+    			GyroSelection = GyroSelectionEnum.NAVX;
     			
        		    kCenterToFrontBumper = 19.0;	// position of front bumper with respect to robot center of rotation
     		    kCenterToRearBumper = 19.5;	// position of rear bumper with respect to robot center of rotation
@@ -418,10 +419,7 @@ public class Constants extends ConstantsBase
     		    kQuadEncoderCodesPerRev = 64;
     		    
     		    // CONTROL LOOP GAINS
-    		//  kFullThrottleRPM = 4500 * kQuadEncoderGain;	// high gear: measured max RPM using NI web interface
-    		    double kFullThrottleRPM = 520;	// low gear: measured max RPM using NI web interface
-    		    double kFullThrottleEncoderPulsePer100ms = kFullThrottleRPM / 60.0 * kQuadEncoderStatusFramePeriod * kQuadEncoderPulsesPerRev; 
-    		    kNominalEncoderPulsePer100ms = 85;		// velocity at a nominal throttle (measured using NI web interface)
+    		    kNominalEncoderPulsePer100ms = 898;		// velocity at a nominal throttle (measured using NI web interface)
     		    kNominalPercentOutput 		 = 0.4447;	// percent output of motor at above throttle (using NI web interface)
     		    
     		    
@@ -455,24 +453,14 @@ public class Constants extends ConstantsBase
     		    
     		    // Motor Controllers
     		    // (Note that if multiple Talons are dedicated to a mechanism, any sensors are attached to the master)
-    		 
-    		    /*kLeftMotorMasterTalonId 	= 1;
-    			kLeftMotorSlave1TalonId 	= 2;
-    			//kLeftMotorSlave2TalonId 	= 3;
-    			kElevatorTalonId 			= 99;
-
-    			kRightMotorMasterTalonId 	= 3;
-    			kRightMotorSlave1TalonId 	= 4;
-    			//kRightMotorSlave2TalonId 	= 7;
-    			kArmBarTalonId 				= 6;
-    			*/
+  
     		    
     		    kLeftMotorMasterTalonId 	= 1;
     			kLeftMotorSlave1TalonId 	= 2;
-    			//kElevatorTalonId 			= 3;
-    			kRightMotorMasterTalonId 	= 4;
-    			kRightMotorSlave1TalonId 	= 5;
-    			//kArmBarTalonId 				= 6;
+    			kElevatorTalonId 			= 99;
+    			kRightMotorMasterTalonId 	= 5;
+    			kRightMotorSlave1TalonId 	= 3;
+    			//kArmBarTalonId 			= 6;
     			
     			
     			kLeftIntakePwmChannel		= 0;
@@ -508,8 +496,8 @@ public class Constants extends ConstantsBase
 	    kPointTurnCompletionTolerance = 1.0 * (Math.PI/180.0); 
 	    
 	    // Path following constants
-	    kPathFollowingMaxVel    = 80.0; // inches/sec  		
-	    kPathFollowingMaxAccel  = 48.0; // inches/sec^2	
+	    kPathFollowingMaxVel    = 20.0; // inches/sec  		
+	    kPathFollowingMaxAccel  = 12.0; // inches/sec^2	
 	    kPathFollowingLookahead = 24.0; // inches
 	    kPathFollowingCompletionTolerance = 1.0; 
 	    
@@ -518,8 +506,8 @@ public class Constants extends ConstantsBase
 	    kCameraPoseY     =     0;	// camera location with respect to robot center of rotation, +Y axis is positive to the left
 	    kCameraPoseTheta =     0;	// camera angle with respect to robot heading
 	    
-	    kVisionMaxVel    = 60.0; // inches/sec  		
-	    kVisionMaxAccel  = 48.0; // inches/sec^2		
+	    kVisionMaxVel    = 20.0; // inches/sec  		
+	    kVisionMaxAccel  = 20.0; // inches/sec^2		
 	    kTargetWidthInches = 10.25;
 	    kPegTargetDistanceThresholdFromBumperInches = 18;		// inches to stop from target, measured from front bumper
 	    kPegTargetDistanceThresholdFromCameraInches = kCenterToFrontBumper - kCameraPoseX + kPegTargetDistanceThresholdFromBumperInches;

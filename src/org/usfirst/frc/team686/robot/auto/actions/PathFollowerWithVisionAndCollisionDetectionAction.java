@@ -75,7 +75,7 @@ public class PathFollowerWithVisionAndCollisionDetectionAction implements Action
     @Override
     public void done() 
     {
-		System.out.println("Finished PathFollowerWithVisionAction");
+		System.out.println("Finished PathFollowerWithVisionAndCollisionsDetectionAction");
 		// cleanup code, if any
 		driveCtrl.done();
     }
