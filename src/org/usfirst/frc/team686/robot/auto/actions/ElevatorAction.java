@@ -1,5 +1,7 @@
 package org.usfirst.frc.team686.robot.auto.actions;
 
+import org.usfirst.frc.team686.robot.Constants;
+import org.usfirst.frc.team686.robot.Constants.RobotSelectionEnum;
 import org.usfirst.frc.team686.robot.command_status.ElevatorState;
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
 import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar;
@@ -14,7 +16,7 @@ public class ElevatorAction implements Action {
 
 	private double targetOffset = 1.0;
 	private double mStartTime;
-	private double mTargetTime = 5;
+	private double mTargetTime = 1.0;
 	private double actualPosition;
 	private double targetPosition;
 	private boolean extended = false;
@@ -48,9 +50,19 @@ public class ElevatorAction implements Action {
 
 	@Override
 	public boolean isFinished() {
-		actualPosition = elevatorState.getPositionInches();
+		boolean finished = false;
 		
-		boolean finished = Math.abs(targetPosition - actualPosition) <= targetOffset;// || (Timer.getFPGATimestamp() - mStartTime) <= mTargetTime;
+		if (Constants.kRobotSelection == RobotSelectionEnum.COMPETITION_BOT)
+		{
+			actualPosition = elevatorState.getPositionInches();
+			finished = Math.abs(targetPosition - actualPosition) <= targetOffset;
+		}
+		else
+		{
+			// delay to simulate elevator movement
+			if ((Timer.getFPGATimestamp() - mStartTime) <= mTargetTime)
+				finished = true;
+		}
 		
 		return finished;
 	}
@@ -61,10 +73,15 @@ public class ElevatorAction implements Action {
 		elevatorArmBar.set(ElevatorArmBarStateEnum.GROUND, extended);
 	}
 
+	private final DataLogger logger = new DataLogger()
+    {
+        @Override
+        public void log()
+        {
+	    }
+    };
+	
 	@Override
-	public DataLogger getLogger() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public DataLogger getLogger() { return logger; }
 
 }

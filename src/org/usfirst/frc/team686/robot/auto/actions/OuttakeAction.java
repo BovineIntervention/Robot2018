@@ -52,10 +52,15 @@ public class OuttakeAction implements Action {
 		mStartTime = Timer.getFPGATimestamp();
 	}
 
+	private final DataLogger logger = new DataLogger()
+    {
+        @Override
+        public void log()
+        {
+	    }
+    };
+	
 	@Override
-	public DataLogger getLogger() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public DataLogger getLogger() { return logger; }
 
 }

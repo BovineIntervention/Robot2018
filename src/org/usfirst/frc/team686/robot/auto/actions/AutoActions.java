@@ -5,6 +5,7 @@ import java.util.Optional;
 //import org.junit.Test;
 import org.usfirst.frc.team686.robot.Constants;
 import org.usfirst.frc.team686.robot.auto.modes.FieldDimensions;
+import org.usfirst.frc.team686.robot.lib.util.DataLogger;
 import org.usfirst.frc.team686.robot.lib.util.Path;
 import org.usfirst.frc.team686.robot.lib.util.PathSegment;
 import org.usfirst.frc.team686.robot.lib.util.Pose;
@@ -206,5 +207,5 @@ System.out.println("STOP POSITION" + targetPosition.toString());
 		return actions;
 	}
 	
-	
+
 }

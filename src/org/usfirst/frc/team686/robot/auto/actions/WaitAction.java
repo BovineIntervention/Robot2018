@@ -18,14 +18,20 @@ public class WaitAction implements Action {
         mTimeToWait = timeToWait;
     }
 
+
     @Override
-    public boolean isFinished() {
-        return Timer.getFPGATimestamp() - mStartTime >= mTimeToWait;
+    public void start() {
+        mStartTime = Timer.getFPGATimestamp();
     }
 
     @Override
     public void update() {
 
+    }
+    
+    @Override
+    public boolean isFinished() {
+        return Timer.getFPGATimestamp() - mStartTime >= mTimeToWait;
     }
 
     @Override
@@ -33,11 +39,8 @@ public class WaitAction implements Action {
 
     }
 
-    @Override
-    public void start() {
-        mStartTime = Timer.getFPGATimestamp();
-    }
-
+    
+    
     
 	private final DataLogger logger = new DataLogger()
     {
