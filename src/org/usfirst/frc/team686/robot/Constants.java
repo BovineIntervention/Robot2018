@@ -92,8 +92,11 @@ public class Constants extends ConstantsBase
     public static double kPathFollowingMaxVel; // inches/sec  		
     public static double kPathFollowingMaxAccel; // inches/sec^2	
     public static double kPathFollowingLookahead ; // inches
-    public static double kPathFollowingCompletionTolerance; 
-    public static double kCollisionThreshold = 0.3;		// maximum JerkY was 0.9 for a 24 inch/sec collision into wall (<0.1 when driving normal)
+    public static double kPathFollowingCompletionTolerance;
+    
+    public static double kCollisionVel 			= 24;
+    public static double kCollisionAccel 		= 24;
+    public static double kCollisionThreshold 	= 0.3;		// maximum JerkY was 0.9 for a 24 inch/sec collision into wall (<0.1 when driving normal)
     
     // Vision constants
     public static double kCameraPoseX ;	// camera location with respect to robot center of rotation, +X axis is in direction of travel
