@@ -72,7 +72,7 @@ public class FieldDimensions
 	public static double kCollisionAvoidanceOffsetY = -2;
 	
 	// get poses
-	public static Pose getCenterStartPose() { return new Pose(Constants.kCenterToRearBumper, 0, 0); }
+	public static Pose getCenterStartPose() { return new Pose(Constants.kCenterToRearBumper, 12.0-Constants.kCenterToSideBumper, 0); }	// side of robot aligned with exchange zone tape 
 	public static Pose getLeftStartPose() { return new Pose(Constants.kCenterToRearBumper, (kAllianceStationLengthY/2) - Constants.kCenterToSideBumper, 0); }
 	public static Pose getRightStartPose() { return new Pose(Constants.kCenterToRearBumper, -((kAllianceStationLengthY/2) - Constants.kCenterToSideBumper), 0); }
 

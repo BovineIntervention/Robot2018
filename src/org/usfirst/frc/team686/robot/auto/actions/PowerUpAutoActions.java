@@ -13,9 +13,9 @@ import org.usfirst.frc.team686.robot.lib.util.Util;
 import org.usfirst.frc.team686.robot.lib.util.Vector2d;
 import org.usfirst.frc.team686.robot.lib.util.Path.Waypoint;
 
-public class AutoActions {
+public class PowerUpAutoActions {
 	
-	public AutoActions(){}
+	public PowerUpAutoActions(){}
 	
 	PathSegment.Options pathOptions   = new PathSegment.Options(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, Constants.kPathFollowingLookahead, false);
 	PathSegment.Options visionOptions = new PathSegment.Options(Constants.kVisionMaxVel,        Constants.kVisionMaxAccel,        Constants.kPathFollowingLookahead, true);
@@ -57,25 +57,25 @@ public class AutoActions {
 	}
 	
 
-	private static boolean isRight;
+	private boolean isRight;
 	
-	private static TargetEnum target;
-	private static InitialStateEnum initialState;
-	private static Pose initialPose;
+	private TargetEnum target;
+	private InitialStateEnum initialState;
+	private Pose initialPose;
 	
-	private static SeriesAction actions;
+	private SeriesAction actions;
 	
 
-	public static Pose getInitialPose() { return initialPose; }
+	public Pose getInitialPose() { return initialPose; }
 	
-	public static void setInitialState(InitialStateEnum _initialState){
+	public void setInitialState(InitialStateEnum _initialState){
 		initialState = _initialState;
 		initialPose = _initialState.pose;
 	}
 	
-	public static void setTarget(TargetEnum _target){ target = _target; }
+	public void setTarget(TargetEnum _target){ target = _target; }
 	
-	public static void isRight(boolean _isRight){ isRight = _isRight; }
+	public void isRight(boolean _isRight){ isRight = _isRight; }
 	
 	
 	public SeriesAction getActions(boolean _backup){
