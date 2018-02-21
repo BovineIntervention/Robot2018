@@ -119,11 +119,11 @@ public class DriveLoop implements Loop
 		switch (Constants.kRobotSelection)
 		{
 		case PRACTICE_BOT:
-			System.out.println("Practice Bot: 2 TalonSRX slaves per side");
+			System.out.println("Practice Bot: 1 TalonSRX slaves per side");
             lMotorSlaves.add(new TalonSRX(Constants.kLeftMotorSlave1TalonId));
-	        lMotorSlaves.add(new TalonSRX(Constants.kLeftMotorSlave2TalonId));
+//	        lMotorSlaves.add(new TalonSRX(Constants.kLeftMotorSlave2TalonId));
 	        rMotorSlaves.add(new TalonSRX(Constants.kRightMotorSlave1TalonId));
-	        rMotorSlaves.add(new TalonSRX(Constants.kRightMotorSlave2TalonId));
+//	        rMotorSlaves.add(new TalonSRX(Constants.kRightMotorSlave2TalonId));
 	        break;
 			
 		case COMPETITION_BOT:
@@ -210,11 +210,11 @@ public class DriveLoop implements Loop
 			driveState.setNeutralMode( DriveCommand.getNeutralMode() );
 			
 			// get encoder values from hardware, set in Drive
-			driveState.setLeftDistanceInches(  encoderEdgesToInches( lMotorMaster.getSelectedSensorPosition( Constants.kTalonPidIdx ) ));
-			driveState.setRightDistanceInches( encoderEdgesToInches( rMotorMaster.getSelectedSensorPosition( Constants.kTalonPidIdx ) ));
+			driveState.setLeftDistanceInches(  encoderUnitsToInches( lMotorMaster.getSelectedSensorPosition( Constants.kTalonPidIdx ) ));
+			driveState.setRightDistanceInches( encoderUnitsToInches( rMotorMaster.getSelectedSensorPosition( Constants.kTalonPidIdx ) ));
 	
-			driveState.setLeftSpeedInchesPerSec(  encoderEdgesPerFrameToInchesPerSecond( lMotorMaster.getSelectedSensorVelocity(  Constants.kTalonPidIdx  ) ));
-			driveState.setRightSpeedInchesPerSec( encoderEdgesPerFrameToInchesPerSecond( rMotorMaster.getSelectedSensorVelocity(  Constants.kTalonPidIdx  ) ));
+			driveState.setLeftSpeedInchesPerSec(  encoderUnitsPerFrameToInchesPerSecond( lMotorMaster.getSelectedSensorVelocity(  Constants.kTalonPidIdx  ) ));
+			driveState.setRightSpeedInchesPerSec( encoderUnitsPerFrameToInchesPerSecond( rMotorMaster.getSelectedSensorVelocity(  Constants.kTalonPidIdx  ) ));
 				
 			/*
 			 * measured angle decreases with clockwise rotation
@@ -347,9 +347,9 @@ public class DriveLoop implements Loop
         	case Velocity:
         		// DriveCommand given in inches/sec
         		// Talon SRX needs RPM in closed-loop mode.
-        		// convert inches/sec to RPM
-           		lMotorMaster.set(ControlMode.Velocity, inchesPerSecondToEncoderEdgesPerFrame(lMotorCtrl)); 
-        		rMotorMaster.set(ControlMode.Velocity, inchesPerSecondToEncoderEdgesPerFrame(rMotorCtrl));
+        		// convert inches/sec to encoder edges per 100ms
+           		lMotorMaster.set(ControlMode.Velocity, inchesPerSecondToEncoderUnitsPerFrame(lMotorCtrl)); 
+        		rMotorMaster.set(ControlMode.Velocity, inchesPerSecondToEncoderUnitsPerFrame(rMotorCtrl));
         		break;
         		
         	case Disabled:
@@ -361,12 +361,12 @@ public class DriveLoop implements Loop
 	}
 
 	// Talon SRX reports position in rotations while in closed-loop Position mode
-	private static double encoderEdgesToInches(int _encoderPosition) {	return (double)_encoderPosition / (double)Constants.kQuadEncoderPulsesPerRev  * Constants.kDriveWheelCircumInches; }
-	private static int inchesToEncoderEdges(double _inches) { return (int)(_inches / Constants.kDriveWheelCircumInches * Constants.kQuadEncoderPulsesPerRev); }
+	private static double encoderUnitsToInches(int _encoderPosition) {	return (double)_encoderPosition / (double)Constants.kQuadEncoderUnitsPerRev  * Constants.kDriveWheelCircumInches; }
+	private static int inchesToEncoderUnits(double _inches) { return (int)(_inches / Constants.kDriveWheelCircumInches * Constants.kQuadEncoderUnitsPerRev); }
 
 	// Talon SRX reports speed in RPM while in closed-loop Speed mode
-	private static double encoderEdgesPerFrameToInchesPerSecond(int _encoderEdgesPerFrame) { return encoderEdgesToInches(_encoderEdgesPerFrame) / Constants.kQuadEncoderStatusFramePeriod; }
-	private static int inchesPerSecondToEncoderEdgesPerFrame(double _inchesPerSecond) { return (int)(inchesToEncoderEdges(_inchesPerSecond) * Constants.kQuadEncoderStatusFramePeriod); }
+	private static double encoderUnitsPerFrameToInchesPerSecond(int _encoderEdgesPerFrame) { return encoderUnitsToInches(_encoderEdgesPerFrame) / Constants.kQuadEncoderStatusFramePeriod; }
+	private static int inchesPerSecondToEncoderUnitsPerFrame(double _inchesPerSecond) { return (int)(inchesToEncoderUnits(_inchesPerSecond) * Constants.kQuadEncoderStatusFramePeriod); }
 
 	
 	

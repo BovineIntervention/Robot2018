@@ -48,7 +48,7 @@ public class Constants extends ConstantsBase
     public static double kQuadEncoderGain ;	// number of drive shaft rotations per encoder shaft rotation
     
     public static int    kQuadEncoderCodesPerRev;
-    public static int    kQuadEncoderPulsesPerRev;
+    public static int    kQuadEncoderUnitsPerRev;
     public static double kQuadEncoderStatusFramePeriod = 0.100;	// 100 ms
     
     // CONTROL LOOP GAINS
@@ -64,7 +64,6 @@ public class Constants extends ConstantsBase
     public static int    kDriveVelocityIZone;
     public static double kDriveVelocityRampRate;
     public static int    kDriveVelocityAllowableError;
-    public static double kDriveVelocityReductionMultiplier; // how much to reduce the drive velocity when the 
 
     // PID gains for drive base lock loop
     // Units: error is 4*256 counts/rev. Max output is +/- 1023 units.
@@ -347,8 +346,7 @@ public class Constants extends ConstantsBase
     		    kDriveVelocityIZone = 0;
     		    kDriveVelocityRampRate = 0.375;
     		    kDriveVelocityAllowableError = 0;
-    		    kDriveVelocityReductionMultiplier = 2;
-
+ 
     		    // PID gains for drive base lock loop
     		    // Units: error is 4*256 counts/rev. Max output is +/- 1023 units.
     		    kDriveBaseLockKp = 0.5;
@@ -415,23 +413,22 @@ public class Constants extends ConstantsBase
 
     		    // Wheel Encoder
     		    kQuadEncoderGain = ( 30.0 / 54.0 ) * ( 12.0 / 36.0 );	// number of drive shaft rotations per encoder shaft rotation
-    																						// 54:30 drive shaft --> 3rd stage, 36:12 3rd stage --> encoder shaft     
+    																	// 54:30 drive shaft --> 3rd stage, 36:12 3rd stage --> encoder shaft     
     		    kQuadEncoderCodesPerRev = 64;
     		    
     		    // CONTROL LOOP GAINS
-    		    kNominalEncoderPulsePer100ms = 898;		// velocity at a nominal throttle (measured using NI web interface)
-    		    kNominalPercentOutput 		 = 0.4447;	// percent output of motor at above throttle (using NI web interface)
+    		    kNominalEncoderPulsePer100ms = 290;		// velocity at a nominal throttle (measured using NI web interface)
+    		    kNominalPercentOutput 		 = 0.4995;	// percent output of motor at above throttle (using NI web interface)
     		    
     		    
     		    
-    		    kDriveVelocityKp = 20.0;
+    		    kDriveVelocityKp = 2.0;
     		    kDriveVelocityKi = 0.001;
-    		    kDriveVelocityKd = 6.0;
+    		    kDriveVelocityKd = 100.0;
     		    kDriveVelocityKf = kNominalPercentOutput * 1023.0 / kNominalEncoderPulsePer100ms;
     		    kDriveVelocityIZone = 0;
     		    kDriveVelocityRampRate = 0.0;
     		    kDriveVelocityAllowableError = 0;
-    		    kDriveVelocityReductionMultiplier = 2;
 
     		    // PID gains for drive base lock loop
     		    // Units: error is 4*256 counts/rev. Max output is +/- 1023 units.
@@ -446,9 +443,9 @@ public class Constants extends ConstantsBase
     		    // PID gains for constant heading velocity control
     		    // Units: Error is degrees. Output is inches/second difference to
     		    // left/right.
-    		    kDriveHeadingVelocityKp = 4.0;
+    		    kDriveHeadingVelocityKp = 0.4;
     		    kDriveHeadingVelocityKi = 0.0;
-    		    kDriveHeadingVelocityKd = 50.0;
+    		    kDriveHeadingVelocityKd = 5.0;
     		    
     		    
     		    // Motor Controllers
@@ -457,10 +454,10 @@ public class Constants extends ConstantsBase
     		    
     		    kLeftMotorMasterTalonId 	= 1;
     			kLeftMotorSlave1TalonId 	= 2;
-    			kElevatorTalonId 			= 99;
+    			kElevatorTalonId 			= 4;
     			kRightMotorMasterTalonId 	= 5;
     			kRightMotorSlave1TalonId 	= 3;
-    			//kArmBarTalonId 			= 6;
+    			kArmBarTalonId 				= 6;
     			
     			
     			kLeftIntakePwmChannel		= 0;
@@ -487,7 +484,7 @@ public class Constants extends ConstantsBase
 	    kDriveWheelDiameterInches = kDriveWheelCircumInches / Math.PI;
 	    kTrackEffectiveDiameter = (kTrackWidthInches * kTrackWidthInches + kTrackLengthInches * kTrackLengthInches) / kTrackWidthInches;
 
-	    kQuadEncoderPulsesPerRev = (int)(4*kQuadEncoderCodesPerRev / kQuadEncoderGain);    
+	    kQuadEncoderUnitsPerRev = (int)(4*kQuadEncoderCodesPerRev / kQuadEncoderGain);    
 	    
 	    // Point Turn constants
 	    kPointTurnMaxVel    = 80.0; // inches/sec  		

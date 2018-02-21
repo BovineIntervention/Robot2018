@@ -84,6 +84,11 @@ public class AutoActions {
 		Path pathToTarget;
 		Path pathBackup;
 		
+		if (initialPose == null)
+			System.out.println("DIDN'T SET initialPose BEFORE CALLING AutoActions.getActions()\n");
+		if (target == null)
+			System.out.println("DIDN'T SET target BEFORE CALLING AutoActions.getActions()\n");
+		
 		
 		// get initial position
 		Vector2d initialPosition = initialPose.getPosition();

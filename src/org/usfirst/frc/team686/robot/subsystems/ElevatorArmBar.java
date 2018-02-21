@@ -1,6 +1,7 @@
 package org.usfirst.frc.team686.robot.subsystems;
 
 import org.usfirst.frc.team686.robot.Constants;
+import org.usfirst.frc.team686.robot.Constants.RobotSelectionEnum;
 import org.usfirst.frc.team686.robot.command_status.ArmBarState;
 import org.usfirst.frc.team686.robot.command_status.ElevatorState;
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
@@ -41,15 +42,19 @@ public class ElevatorArmBar extends Subsystem {
 	}
 	public ElevatorArmBarStateEnum state = ElevatorArmBarStateEnum.START_OF_MATCH;
 	
-	public ElevatorLoop elevatorLoop = ElevatorLoop.getInstance();
-	public ArmBarLoop armBarLoop = ArmBarLoop.getInstance();
+	public ElevatorLoop elevatorLoop;
+	public ArmBarLoop armBarLoop;
 
 	boolean extended = false;
-	double armBarAngle = 0;
-	double elevatorHeight = 0;
+	double armBarAngle = 0.0;
+	double elevatorHeight = 0.0;
 	
 	private ElevatorArmBar()
 	{
+		if (Constants.kRobotSelection == RobotSelectionEnum.COMPETITION_BOT)		 	
+			elevatorLoop = ElevatorLoop.getInstance();
+		armBarLoop = ArmBarLoop.getInstance();
+
 		disable();
 		state = ElevatorArmBarStateEnum.START_OF_MATCH;
 		set(state, false);
@@ -57,13 +62,15 @@ public class ElevatorArmBar extends Subsystem {
 	
 	public void disable()
 	{
-		elevatorLoop.disable();
+		if (Constants.kRobotSelection == RobotSelectionEnum.COMPETITION_BOT)		 	
+			elevatorLoop.disable();
 		armBarLoop.disable();
 	}
 	
 	public void enable()
 	{
-		elevatorLoop.enable();
+		if (Constants.kRobotSelection == RobotSelectionEnum.COMPETITION_BOT)		 	
+			elevatorLoop.enable();
 		armBarLoop.enable();
 	}
 
@@ -83,12 +90,15 @@ public class ElevatorArmBar extends Subsystem {
 		
 		if (manualAutoState == ManualAutoStateEnum.MANUAL)
 		{
-			if (_manualUpButton)
-				elevatorLoop.manualUp();
-			else if (_manualDownButton)
-				elevatorLoop.manualDown();
-			else
-				elevatorLoop.manualStop();
+			if (Constants.kRobotSelection == RobotSelectionEnum.COMPETITION_BOT)		 	
+			{
+				if (_manualUpButton)
+					elevatorLoop.manualUp();
+				else if (_manualDownButton)
+					elevatorLoop.manualDown();
+				else
+					elevatorLoop.manualStop();
+			}
 		}
 		
 		if (manualAutoState == ManualAutoStateEnum.AUTO)
@@ -121,33 +131,28 @@ public class ElevatorArmBar extends Subsystem {
 			{
 				// special case where we need to force elevator and arm bar to correct positions for limit switch calibration
 				armBarAngle = state.retractedArmAngle;
-				armBarLoop.setTarget(armBarAngle);
-				
 				elevatorHeight = state.bottomOfCubeHeight;
-				elevatorLoop.setTarget(elevatorHeight);
 			}
 			else if (state == ElevatorArmBarStateEnum.GROUND)
 			{
 				// special case where we need to force elevator and arm bar to correct positions for limit switch calibration
 				armBarAngle = (extended ? state.extendedArmAngle : state.retractedArmAngle);
-				armBarLoop.setTarget(armBarAngle);
-				
 				elevatorHeight = 0;
-				elevatorLoop.setTarget(elevatorHeight);
 			}
 			else
 			{
 				// first, set arm bar angle based on current elevator state
 				armBarAngle = (extended ? state.extendedArmAngle : state.retractedArmAngle);
-				armBarLoop.setTarget(armBarAngle);
-	
 				// next, command elevator to correct height
 				elevatorHeight = calcElevatorHeight(state.bottomOfCubeHeight, armBarAngle);
-				elevatorLoop.setTarget(elevatorHeight);
 			}
+
+			armBarLoop.setTarget(armBarAngle);
+			if (Constants.kRobotSelection == RobotSelectionEnum.COMPETITION_BOT)		 	
+				elevatorLoop.setTarget(elevatorHeight);
 			
 			//System.out.println(state.bottomOfCubeHeight + " " + state.retractedArmAngle + " " + state.extendedArmAngle);
-			System.out.printf("ElevatorArmState = %s, Extend = %d, Elevator Target: %.1f, ArmBar Target = %.1f\n", state.toString(), (extended ? 1 : 0), elevatorLoop.getTarget(), armBarLoop.getTarget());
+			//System.out.printf("ElevatorArmState = %s, Extend = %d, Elevator Target: %.1f, ArmBar Target = %.1f\n", state.toString(), (extended ? 1 : 0), elevatorLoop.getTarget(), armBarLoop.getTarget());
 		}
 	}
 	
@@ -168,7 +173,8 @@ public class ElevatorArmBar extends Subsystem {
 	public void stop()
 	{
 		armBarLoop.stop();
-		elevatorLoop.stop();
+		if (Constants.kRobotSelection == RobotSelectionEnum.COMPETITION_BOT)		 	
+			elevatorLoop.stop();
 	}
 
 	@Override
@@ -186,7 +192,8 @@ public class ElevatorArmBar extends Subsystem {
 			put("ElevatorArmBar/elevatorHeight", elevatorHeight );
 			
 			ArmBarState.getInstance().getLogger().log();
-			ElevatorState.getInstance().getLogger().log();
+			if (Constants.kRobotSelection == RobotSelectionEnum.COMPETITION_BOT)		 	
+				ElevatorState.getInstance().getLogger().log();
         }
         
     };

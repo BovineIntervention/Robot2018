@@ -1,5 +1,6 @@
 package org.usfirst.frc.team686.robot;
 
+import org.usfirst.frc.team686.robot.Constants.RobotSelectionEnum;
 import org.usfirst.frc.team686.robot.auto.AutoModeBase;
 import org.usfirst.frc.team686.robot.auto.AutoModeExecuter;
 import org.usfirst.frc.team686.robot.auto.actions.DriveStraightAction;
@@ -62,7 +63,7 @@ public class Robot extends IterativeRobot {
 	SmartDashboardInteractions smartDashboardInteractions;
 	DataLogController robotLogger;
 
-//	CameraServer cameraServer = CameraServer.getInstance();
+	CameraServer cameraServer = CameraServer.getInstance();
 //	UsbCamera camera = new UsbCamera("USB Camera 1", 1);
 
 	
@@ -95,7 +96,8 @@ public class Robot extends IterativeRobot {
     		loopController = new LoopController();
     		loopController.register(drive.getVelocityPIDLoop());
     		loopController.register(DriveLoop.getInstance());
-     		//loopController.register(ElevatorLoop.getInstance());
+    		if (Constants.kRobotSelection == RobotSelectionEnum.COMPETITION_BOT)
+    			loopController.register(ElevatorLoop.getInstance());
       		//loopController.register(ArmBarLoop.getInstance());
       		loopController.register(IntakeLoop.getInstance());
        		loopController.register(RobotStateLoop.getInstance());
@@ -116,7 +118,7 @@ public class Robot extends IterativeRobot {
     		
     		setInitialPose(new Pose());
 
-//    		cameraServer.startAutomaticCapture();
+    		cameraServer.startAutomaticCapture();
 //    		cameraServer.getVideo();
 //    		cameraServer.putVideo("cam", 640, 480);
 //    		
@@ -225,7 +227,7 @@ public class Robot extends IterativeRobot {
     		autoModeExecuter = null;
     		
 			SeriesAction autoSequence;
-			autoSequence = SmartDashboardInteractions.autoSequenceBuilder();
+			//autoSequence = SmartDashboardInteractions.autoSequenceBuilder();
 			
 			autoModeExecuter = new AutoModeExecuter();
 			autoModeExecuter.setAutoMode( new DriveStraightMode(24, true) );//autoModeExecuter.getAutoMode() );//new RunSeriesActionMode( autoSequence ) );

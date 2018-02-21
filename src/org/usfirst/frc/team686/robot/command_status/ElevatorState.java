@@ -13,18 +13,18 @@ public class ElevatorState
 	// all member variables should be private to force other object to use the set/get access methods
 	// which are synchronized to allow multi-thread synchronization
 
-	private double positionInches;
-	private double velocityInchesPerSec;
+	private double positionInches = 0.0;
+	private double velocityInchesPerSec = 0.0;
 
-	private double trajectoryTargetInches;
-	private double trajectoryPositionInches;
-	private double trajectoryVelocityInchesPerSec;
+	private double trajectoryTargetInches = 0.0;
+	private double trajectoryPositionInches = 0.0;
+	private double trajectoryVelocityInchesPerSec = 0.0;
 
-	private double pidError;
-	private double motorPercentOutput;
-	private double motorCurrent;
+	private double pidError = 0.0;
+	private double motorPercentOutput = 0.0;
+	private double motorCurrent = 0.0;
 
-	private boolean limitSwitchTriggered;
+	private boolean limitSwitchTriggered = false;
 	
 	
 	public ElevatorState() {}
