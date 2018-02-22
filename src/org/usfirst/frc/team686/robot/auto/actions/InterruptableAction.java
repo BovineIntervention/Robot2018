@@ -26,17 +26,24 @@ public class InterruptableAction implements Action
     }
 
     @Override
-    public boolean isFinished() 
+    public void start() 
     {
-    	boolean finished = (mInterruptingAction.isFinished()) || (mAction.isFinished()); 
-        return finished;
+    	mInterruptingAction.start();
+    	mAction.start();
     }
-
+    
     @Override
     public void update() 
     {
     	mInterruptingAction.update();
     	mAction.update();
+    }
+
+    @Override
+    public boolean isFinished() 
+    {
+    	boolean finished = (mInterruptingAction.isFinished()) || (mAction.isFinished()); 
+        return finished;
     }
 
     @Override
@@ -46,13 +53,6 @@ public class InterruptableAction implements Action
     	mAction.done();
     }
 
-    @Override
-    public void start() 
-    {
-    	mInterruptingAction.start();
-    	mAction.start();
-    }
-    
 	private final DataLogger logger = new DataLogger()
     {
         @Override

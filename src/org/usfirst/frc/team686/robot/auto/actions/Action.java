@@ -11,6 +11,16 @@ import org.usfirst.frc.team686.robot.lib.util.DataLogger;
  */
 public interface Action 
 {
+    /**
+     * Run code once when the action is started, for set up
+     */
+    public abstract void start();
+
+    /**
+     * Called by runAction in AutoModeBase iteratively until isFinished returns
+     * true. Iterative logic lives in this method
+     */
+    public abstract void update();
 
     /**
      * Returns whether or not the code has finished execution. When implementing
@@ -22,20 +32,9 @@ public interface Action
     public abstract boolean isFinished();
 
     /**
-     * Called by runAction in AutoModeBase iteratively until isFinished returns
-     * true. Iterative logic lives in this method
-     */
-    public abstract void update();
-
-    /**
      * Run code once when the action finishes, usually for clean up
      */
     public abstract void done();
-
-    /**
-     * Run code once when the action is started, for set up
-     */
-    public abstract void start();
 
     /**
      * Returns reference to data logger for this action
