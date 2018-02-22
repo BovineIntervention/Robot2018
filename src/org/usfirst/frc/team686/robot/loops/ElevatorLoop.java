@@ -2,6 +2,7 @@ package org.usfirst.frc.team686.robot.loops;
 
 import org.usfirst.frc.team686.robot.Constants;
 import org.usfirst.frc.team686.robot.command_status.ElevatorState;
+import org.usfirst.frc.team686.robot.lib.util.MyTimer;
 import org.usfirst.frc.team686.robot.lib.util.Util;
 import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar.ManualAutoStateEnum;
 
@@ -138,7 +139,7 @@ public class ElevatorLoop implements Loop{
 	
 	public boolean getLimitSwitchDuringZeroing()
 	{
-		double elapsedZeroingTime = Timer.getFPGATimestamp() - startZeroingTime;
+		double elapsedZeroingTime = MyTimer.getTimestamp() - startZeroingTime;
 		double maxZeroingTime = Constants.kElevatorMaxHeightLimit / Constants.kElevatorZeroingVelocity + 2.0;
 		
 		//System.out.printf("limSwitch: %d, elevCurrent = %.1f, elapsedTime = %.1f\n",  elevatorState.isLimitSwitchTriggered() ? 1 : 0, elevatorState.getMotorCurrent(), elapsedZeroingTime);
@@ -196,16 +197,16 @@ public class ElevatorLoop implements Loop{
 				talon.configForwardSoftLimitEnable(false, Constants.kTalonTimeoutMs);
 				talon.overrideLimitSwitchesEnable(false);	// disable soft limit switches during zeroing
 				
-				startZeroingTime = Timer.getFPGATimestamp();
+				startZeroingTime = MyTimer.getTimestamp();
 				nextState = ElevatorStateEnum.ARM_BAR_DELAY;
 			}
 			break;
 			
 		case ARM_BAR_DELAY:
-			double elapsedZeroingTime = Timer.getFPGATimestamp() - startZeroingTime;
+			double elapsedZeroingTime = MyTimer.getTimestamp() - startZeroingTime;
 			if (elapsedZeroingTime > armBarDelay)
 			{
-				startZeroingTime = Timer.getFPGATimestamp();
+				startZeroingTime = MyTimer.getTimestamp();
 				nextState = ElevatorStateEnum.ZEROING;
 			}
 	

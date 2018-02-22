@@ -2,8 +2,7 @@ package org.usfirst.frc.team686.robot.auto.actions;
 
 
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
-
-import edu.wpi.first.wpilibj.Timer;
+import org.usfirst.frc.team686.robot.lib.util.MyTimer;
 
 /**
  * Action to wait for a given amount of time To use this Action, call
@@ -21,7 +20,7 @@ public class WaitAction implements Action {
 
     @Override
     public void start() {
-        mStartTime = Timer.getFPGATimestamp();
+        mStartTime = MyTimer.getTimestamp();
     }
 
     @Override
@@ -31,7 +30,7 @@ public class WaitAction implements Action {
     
     @Override
     public boolean isFinished() {
-        return Timer.getFPGATimestamp() - mStartTime >= mTimeToWait;
+        return MyTimer.getTimestamp() - mStartTime >= mTimeToWait;
     }
 
     @Override

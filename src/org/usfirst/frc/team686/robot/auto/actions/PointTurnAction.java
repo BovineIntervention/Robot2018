@@ -3,6 +3,7 @@ package org.usfirst.frc.team686.robot.auto.actions;
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
 import org.usfirst.frc.team686.robot.lib.util.Vector2d;
 import org.usfirst.frc.team686.robot.lib.util.Kinematics.WheelSpeed;
+import org.usfirst.frc.team686.robot.lib.util.MyTimer;
 import org.usfirst.frc.team686.robot.Constants;
 import org.usfirst.frc.team686.robot.command_status.RobotState;
 import org.usfirst.frc.team686.robot.subsystems.Drive;
@@ -37,7 +38,7 @@ public class PointTurnAction implements Action
     public void start() 
     {
     	prevSpeed = 0.0;
-    	prevTime = Timer.getFPGATimestamp();
+    	prevTime = MyTimer.getTimestamp();
     }
 
     
@@ -50,7 +51,7 @@ public class PointTurnAction implements Action
     	distanceRemaining = Math.abs(turnRadius * thetaRemaining);
     	
     	// calculate speed for left/right wheels, considering max velocity & acceleration
-    	double currentTime = Timer.getFPGATimestamp();
+    	double currentTime = MyTimer.getTimestamp();
     	speedControl(currentTime, distanceRemaining, Constants.kPointTurnMaxVel, Constants.kPointTurnMaxAccel);
     	speed *= Math.signum(thetaRemaining);	// positive: right turn, negative: left turn
    		wheelSpeed = new WheelSpeed(-speed, +speed);

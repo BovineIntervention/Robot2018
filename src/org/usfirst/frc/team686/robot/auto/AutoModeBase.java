@@ -3,6 +3,7 @@ package org.usfirst.frc.team686.robot.auto;
 
 
 import org.usfirst.frc.team686.robot.auto.actions.Action;
+import org.usfirst.frc.team686.robot.lib.util.MyTimer;
 import org.usfirst.frc.team686.robot.lib.util.Pose;
 import org.usfirst.frc.team686.robot.util.DataLogController;
 
@@ -71,13 +72,13 @@ public abstract class AutoModeBase
         action.start();
         while (isActiveWithThrow() && !action.isFinished()) 
         {
-        	double currTime = Timer.getFPGATimestamp();
-        	double nextTime = Timer.getFPGATimestamp() + updatePeriod;
+        	double currTime = MyTimer.getTimestamp();
+        	double nextTime = MyTimer.getTimestamp() + updatePeriod;
         	
             action.update();
             autoLogger.log();
 
-        	currTime = Timer.getFPGATimestamp();
+        	currTime = MyTimer.getTimestamp();
             long waitTime = (long) ((nextTime-currTime) * 1000.0);	// attempt to run thread every updatePeriod seconds
             waitTime = Math.max(waitTime, 0);						// avoid negative waits
             try

@@ -3,6 +3,7 @@ package org.usfirst.frc.team686.robot.loops;
 import org.usfirst.frc.team686.robot.Constants;
 import org.usfirst.frc.team686.robot.command_status.ArmBarState;
 import org.usfirst.frc.team686.robot.lib.joystick.ArcadeDriveJoystick;
+import org.usfirst.frc.team686.robot.lib.util.MyTimer;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -108,7 +109,7 @@ public class ArmBarLoop implements Loop
 	
 	public boolean getLimitSwitchDuringZeroing()
 	{
-		double elapsedZeroingTime = Timer.getFPGATimestamp() - startZeroingTime;
+		double elapsedZeroingTime = MyTimer.getTimestamp() - startZeroingTime;
 		double maxZeroingTime = Constants.kElevatorMaxHeightLimit / Constants.kElevatorZeroingVelocity + 2.0;
 		
 		return (armBarState.isLimitSwitchTriggered() || 
@@ -124,7 +125,7 @@ public class ArmBarLoop implements Loop
 		state = ArmBarStateEnum.UNINITIALIZED;
 		nextState = ArmBarStateEnum.UNINITIALIZED;
 		
-		startTime = Timer.getFPGATimestamp();
+		startTime = MyTimer.getTimestamp();
 	}
 
 	@Override

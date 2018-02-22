@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.usfirst.frc.team686.robot.lib.util.CrashTrackingRunnable;
+import org.usfirst.frc.team686.robot.lib.util.MyTimer;
 import org.usfirst.frc.team686.robot.Constants;
 
 import edu.wpi.first.wpilibj.Notifier;
@@ -39,7 +40,7 @@ public class LoopController
             {
                 if (running_) 
                 {
-                    double curr_time = Timer.getFPGATimestamp();
+                    double curr_time = MyTimer.getTimestamp();
                     for (Loop loop : loops_) 
                     {
                         loop.onLoop();
@@ -76,7 +77,7 @@ public class LoopController
         	// lock during access to loop_ to avoid corruption from multiple threads
             synchronized (taskRunningLock_) 
             {
-                prev_time_ = Timer.getFPGATimestamp();
+                prev_time_ = MyTimer.getTimestamp();
                 for (Loop loop : loops_) 
                 {
 //                    System.out.println("Starting " + loop);

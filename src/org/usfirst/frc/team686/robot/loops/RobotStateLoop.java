@@ -3,6 +3,7 @@ package org.usfirst.frc.team686.robot.loops;
 
 import org.usfirst.frc.team686.robot.command_status.DriveState;
 import org.usfirst.frc.team686.robot.command_status.RobotState;
+import org.usfirst.frc.team686.robot.lib.util.MyTimer;
 
 import edu.wpi.first.wpilibj.Timer;
 
@@ -17,12 +18,12 @@ public class RobotStateLoop implements Loop
     public static RobotStateLoop getInstance() { return instance; }
 
     RobotState robotState;
-    DriveState DriveState;
+    DriveState driveState;
     
     RobotStateLoop() 
     {
         robotState = RobotState.getInstance();
-        DriveState = DriveState.getInstance();
+        driveState = DriveState.getInstance();
     }
     
 
@@ -30,7 +31,7 @@ public class RobotStateLoop implements Loop
     @Override
     public void onStart() 
     {
-    	robotState.setPrevEncoderDistance(DriveState.getLeftDistanceInches(), DriveState.getRightDistanceInches());
+    	robotState.setPrevEncoderDistance(driveState.getLeftDistanceInches(), driveState.getRightDistanceInches());
     }
 
     @Override
@@ -39,12 +40,12 @@ public class RobotStateLoop implements Loop
     	// the following DriveState elements are set during DriveLoop, called just previous to RobotStateLoop,
     	// and in the same LoopController thread
     	
-        double time      = Timer.getFPGATimestamp();
-        double lDistance = DriveState.getLeftDistanceInches();
-        double rDistance = DriveState.getRightDistanceInches();
-        double lSpeed    = DriveState.getLeftSpeedInchesPerSec();
-        double rSpeed    = DriveState.getRightSpeedInchesPerSec(); 
-        double gyroAngle = DriveState.getHeading();
+        double time      = MyTimer.getTimestamp();
+        double lDistance = driveState.getLeftDistanceInches();
+        double rDistance = driveState.getRightDistanceInches();
+        double lSpeed    = driveState.getLeftSpeedInchesPerSec();
+        double rSpeed    = driveState.getRightSpeedInchesPerSec(); 
+        double gyroAngle = driveState.getHeading();
 
         robotState.generateOdometryFromSensors(time, lDistance, rDistance, lSpeed, rSpeed, gyroAngle);
     }

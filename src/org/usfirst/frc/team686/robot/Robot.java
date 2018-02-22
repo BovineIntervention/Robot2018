@@ -15,6 +15,7 @@ import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar.ElevatorArmBarSta
 import org.usfirst.frc.team686.robot.subsystems.Intake;
 import org.usfirst.frc.team686.robot.util.DataLogController;
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
+import org.usfirst.frc.team686.robot.lib.util.MyTimer;
 import org.usfirst.frc.team686.robot.command_status.DriveCommand;
 
 import java.util.Optional;
@@ -57,7 +58,7 @@ public class Robot extends IterativeRobot {
 	LoopController loopController;
 	
 	SmartDashboardInteractions smartDashboardInteractions;
-	DataLogController robotLogger;
+	DataLogController robotLogger; 	// logger for Robot thread (autonomous thread has it's own logger)
 
 	CameraServer cameraServer = CameraServer.getInstance();
 //	UsbCamera camera = new UsbCamera("USB Camera 1", 1);
@@ -133,7 +134,7 @@ public class Robot extends IterativeRobot {
 	}
 	
 	public void setInitialPose (Pose _initialPose){
-    	robotState.reset(Timer.getFPGATimestamp(), DriveState.getInstance().getLeftDistanceInches(), DriveState.getInstance().getRightDistanceInches(), _initialPose);
+    	robotState.reset(MyTimer.getTimestamp(), DriveState.getInstance().getLeftDistanceInches(), DriveState.getInstance().getRightDistanceInches(), _initialPose);
     	System.out.println("InitialPose: " + _initialPose);
     }
     

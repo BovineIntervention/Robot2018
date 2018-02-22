@@ -4,10 +4,9 @@ import org.usfirst.frc.team686.robot.Constants;
 import org.usfirst.frc.team686.robot.Constants.RobotSelectionEnum;
 import org.usfirst.frc.team686.robot.command_status.ElevatorState;
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
+import org.usfirst.frc.team686.robot.lib.util.MyTimer;
 import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar;
 import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar.ElevatorArmBarStateEnum;
-
-import edu.wpi.first.wpilibj.Timer;
 
 public class ElevatorAction implements Action {
 	
@@ -37,7 +36,7 @@ public class ElevatorAction implements Action {
 	@Override
 	public void start() {
 		
-		mStartTime = Timer.getFPGATimestamp();
+		mStartTime = MyTimer.getTimestamp();
 		elevatorArmBar.set(targetState, extended);
 		targetPosition = elevatorState.getTrajectoryTargetInches();
 		actualPosition = elevatorState.getPositionInches();
@@ -60,7 +59,7 @@ public class ElevatorAction implements Action {
 		else
 		{
 			// delay to simulate elevator movement
-			if ((Timer.getFPGATimestamp() - mStartTime) <= mTargetTime)
+			if ((MyTimer.getTimestamp() - mStartTime) <= mTargetTime)
 				finished = true;
 		}
 		

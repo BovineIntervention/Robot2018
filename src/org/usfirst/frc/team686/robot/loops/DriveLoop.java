@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.Timer;
 import org.usfirst.frc.team686.robot.lib.sensors.GyroBase;
 import org.usfirst.frc.team686.robot.lib.sensors.BNO055;
 import org.usfirst.frc.team686.robot.lib.sensors.NavX;
+import org.usfirst.frc.team686.robot.lib.util.MyTimer;
 import org.usfirst.frc.team686.robot.Constants;
 import org.usfirst.frc.team686.robot.command_status.DriveCommand;
 import org.usfirst.frc.team686.robot.command_status.DriveState;
@@ -254,7 +255,7 @@ public class DriveLoop implements Loop
 		DriveCommand newCmd = drive.getCommand();
 		
 		// Watchdog timer  
-		double currentTime = Timer.getFPGATimestamp();
+		double currentTime = MyTimer.getTimestamp();
 		if (currentTime - newCmd.getCommandTime() > Constants.kDriveWatchdogTimerThreshold)
 		{
 			// Halt robot if new command hasn't been sent in a while
@@ -361,12 +362,12 @@ public class DriveLoop implements Loop
 	}
 
 	// Talon SRX reports position in rotations while in closed-loop Position mode
-	private static double encoderUnitsToInches(int _encoderPosition) {	return (double)_encoderPosition / (double)Constants.kQuadEncoderUnitsPerRev  * Constants.kDriveWheelCircumInches; }
-	private static int inchesToEncoderUnits(double _inches) { return (int)(_inches / Constants.kDriveWheelCircumInches * Constants.kQuadEncoderUnitsPerRev); }
+	public static double encoderUnitsToInches(int _encoderPosition) {	return (double)_encoderPosition / (double)Constants.kQuadEncoderUnitsPerRev  * Constants.kDriveWheelCircumInches; }
+	public static int inchesToEncoderUnits(double _inches) { return (int)(_inches / Constants.kDriveWheelCircumInches * Constants.kQuadEncoderUnitsPerRev); }
 
 	// Talon SRX reports speed in RPM while in closed-loop Speed mode
-	private static double encoderUnitsPerFrameToInchesPerSecond(int _encoderEdgesPerFrame) { return encoderUnitsToInches(_encoderEdgesPerFrame) / Constants.kQuadEncoderStatusFramePeriod; }
-	private static int inchesPerSecondToEncoderUnitsPerFrame(double _inchesPerSecond) { return (int)(inchesToEncoderUnits(_inchesPerSecond) * Constants.kQuadEncoderStatusFramePeriod); }
+	public static double encoderUnitsPerFrameToInchesPerSecond(int _encoderEdgesPerFrame) { return encoderUnitsToInches(_encoderEdgesPerFrame) / Constants.kQuadEncoderStatusFramePeriod; }
+	public static int inchesPerSecondToEncoderUnitsPerFrame(double _inchesPerSecond) { return (int)(inchesToEncoderUnits(_inchesPerSecond) * Constants.kQuadEncoderStatusFramePeriod); }
 
 	
 	

@@ -4,6 +4,7 @@ package org.usfirst.frc.team686.robot.command_status;
 
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
 import org.usfirst.frc.team686.robot.lib.util.Kinematics.WheelSpeed;
+import org.usfirst.frc.team686.robot.lib.util.MyTimer;
 
 import com.ctre.phoenix.motorcontrol.*;
 
@@ -122,7 +123,7 @@ public class DriveCommand
     	return rv; 
     }	
     
-    public synchronized void   setCommandTime() { commandTime = Timer.getFPGATimestamp(); }
+    public synchronized void   setCommandTime() { commandTime = MyTimer.getTimestamp(); }
     public synchronized double getCommandTime() { return commandTime; } 
     
     

@@ -27,7 +27,7 @@ public class Drive extends Subsystem
 	private DriveCommand driveCmd;
 
 	// drive status
-	public DriveState DriveState;
+	public DriveState driveState;
 	
 	// velocity heading
 	private VelocityHeadingSetpoint velocityHeadingSetpoint = new VelocityHeadingSetpoint();
@@ -39,7 +39,7 @@ public class Drive extends Subsystem
 	private Drive() 
 	{
 		driveCmd = DriveCommand.COAST();	
-		DriveState = DriveState.getInstance();
+		driveState = DriveState.getInstance();
 	}
 
 	
@@ -179,7 +179,7 @@ public class Drive extends Subsystem
 	private void updateVelocityHeading() 
 	{
 		// get change in left/right motor speeds based on error in heading
-		double diffSpeed = velocityHeadingSetpoint.velocityHeadingPID.calculate( DriveState.getHeadingDeg() );
+		double diffSpeed = velocityHeadingSetpoint.velocityHeadingPID.calculate( driveState.getHeadingDeg() );
 		
 		// speed up   left side when robot turns left (actual heading > heading setpoint --> diffSpeed < 0) 
 		// slow down right side when robot turns left (actual heading > heading setpoint --> diffSpeed < 0) 

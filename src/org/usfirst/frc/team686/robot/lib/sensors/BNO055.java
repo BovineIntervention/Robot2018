@@ -3,6 +3,7 @@ package org.usfirst.frc.team686.robot.lib.sensors;
 import java.util.TimerTask;
 
 import org.usfirst.frc.team686.robot.Constants;
+import org.usfirst.frc.team686.robot.lib.util.MyTimer;
 
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Timer;
@@ -449,7 +450,7 @@ public class BNO055 extends GyroBase {
 	 */
 	private void update() 
 	{
-		currentTime = Timer.getFPGATimestamp(); //seconds
+		currentTime = MyTimer.getTimestamp(); //seconds
 		if(!initialized) 
 		{
 			//System.out.println("State: " + state + ".  curr: " + currentTime + ", next: " + nextTime);
@@ -472,14 +473,14 @@ public class BNO055 extends GyroBase {
 					//Sensor present, go to next state
 					sensorPresent = true;
 					state++;
-					nextTime = Timer.getFPGATimestamp() + 0.050;
+					nextTime = MyTimer.getTimestamp() + 0.050;
 				}
 				break;
 			case 1:
 				if(currentTime >= nextTime) 
 				{
 					//Switch to config mode (just in case since this is the default)
-					nextTime = Timer.getFPGATimestamp() + 0.050;	// grabbing time before setMode, since setMode has it's own delay
+					nextTime = MyTimer.getTimestamp() + 0.050;	// grabbing time before setMode, since setMode has it's own delay
 					setMode(opmode_t.OPERATION_MODE_CONFIG.getVal());
 					state++;
 				}
@@ -499,7 +500,7 @@ public class BNO055 extends GyroBase {
 					//Sensor present, go to next state
 					state++;
 					//Log current time
-					nextTime = Timer.getFPGATimestamp() + 0.050;
+					nextTime = MyTimer.getTimestamp() + 0.050;
 				}
 				break;
 			case 4:
@@ -508,7 +509,7 @@ public class BNO055 extends GyroBase {
 				{
 					//Switch to config mode (just in case since this is the default)
 					setMode(opmode_t.OPERATION_MODE_CONFIG.getVal());
-					nextTime = Timer.getFPGATimestamp() + 0.050;
+					nextTime = MyTimer.getTimestamp() + 0.050;
 					state++;
 				}
 				break;
@@ -518,7 +519,7 @@ public class BNO055 extends GyroBase {
 				//Write accelerometer calibration values
 				if(currentTime >= nextTime) 
 				{
-					nextTime = Timer.getFPGATimestamp() + 0.050;	// grabbing time before setCalibrationOffsets, since setCalibrationOffsets has it's own delay
+					nextTime = MyTimer.getTimestamp() + 0.050;	// grabbing time before setCalibrationOffsets, since setCalibrationOffsets has it's own delay
 					setCalibrationOffsets();
 					state++;
 				}
@@ -529,7 +530,7 @@ public class BNO055 extends GyroBase {
 				{
 					/* Set to normal power mode */
 					write8(reg_t.BNO055_PWR_MODE_ADDR, (byte) powermode_t.POWER_MODE_NORMAL.getVal());
-					nextTime = Timer.getFPGATimestamp() + 0.050;
+					nextTime = MyTimer.getTimestamp() + 0.050;
 					state++;
 				}
 				break;
@@ -538,7 +539,7 @@ public class BNO055 extends GyroBase {
 				if(currentTime >= nextTime) 
 				{
 					write8(reg_t.BNO055_PAGE_ID_ADDR, (byte) 0x00);
-					nextTime = Timer.getFPGATimestamp() + 0.050;
+					nextTime = MyTimer.getTimestamp() + 0.050;
 					state++;
 				}
 				break;
@@ -546,7 +547,7 @@ public class BNO055 extends GyroBase {
 				if(currentTime >= nextTime) 
 				{
 					write8(reg_t.BNO055_SYS_TRIGGER_ADDR, (byte) 0x80);	// CLK_SEL = 1: selects external oscillator
-					nextTime = Timer.getFPGATimestamp() + 0.500;
+					nextTime = MyTimer.getTimestamp() + 0.500;
 					state++;
 				}
 				break;
@@ -554,7 +555,7 @@ public class BNO055 extends GyroBase {
 				//Set operating mode to mode requested at instantiation
 				if(currentTime >= nextTime) 
 				{
-					nextTime = Timer.getFPGATimestamp() + 1.050;	// grabbing time before setMode, since setMode has it's own delay
+					nextTime = MyTimer.getTimestamp() + 1.050;	// grabbing time before setMode, since setMode has it's own delay
 					setMode(requestedMode);
 					state++;
 				}
@@ -589,11 +590,11 @@ public class BNO055 extends GyroBase {
 		double headingDiff = 0.0;
 		
 		// Read vector data (6 bytes)
-		double startTime = Timer.getFPGATimestamp();
+		double startTime = MyTimer.getTimestamp();
 		readLen(requestedVectorType.getVal(), positionVector);
 		
 		// Diagnostics for checking how long read operation took
-		double endTime = Timer.getFPGATimestamp();
+		double endTime = MyTimer.getTimestamp();
 		readDurationLast = (endTime - startTime);
 		if (readDurationLast > READ_TOO_LONG_THRESHOLD) {
 			readDurationOver++;
@@ -672,10 +673,10 @@ public class BNO055 extends GyroBase {
 			
 			// Allow 19ms to switch into CONFIG mode, 7ms to switch out of it.
 			// Just use 50ms for now, since we won't be switching much
-			nextTime = Timer.getFPGATimestamp() + 0.050;
-			currentTime = Timer.getFPGATimestamp();
+			nextTime = MyTimer.getTimestamp() + 0.050;
+			currentTime = MyTimer.getTimestamp();
 			while (currentTime < nextTime) {
-				currentTime = Timer.getFPGATimestamp();
+				currentTime = MyTimer.getTimestamp();
 			}
 		}
 	}

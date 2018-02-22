@@ -95,7 +95,7 @@ public class PathFollowerWithVisionDriveController
 		double normalizedTargetWidth = visionStatus.getNormalizedTargetWidth();
 
 		currentPose = robotState.getLatestFieldToVehicle();		
-		currentTime = Timer.getFPGATimestamp();
+		currentTime = MyTimer.getTimestamp();
 
 //FIXME: add timestamp synchronization to timestamps.  Using adjusted current timestamp for now			
 imageTimestamp = currentTime - Constants.kCameraLatencySeconds;		// remove camera latency
@@ -118,7 +118,7 @@ imageTimestamp = currentTime - Constants.kCameraLatencySeconds;		// remove camer
 	public WheelSpeed pathVisionDrive(double _currentTime, Pose _currentPose, Pose _previousPose, double _imageTimestamp, double _normalizedTargetX, double _normalizedTargetWidth)
 	{
 		if (prevTime < 0)				// initial setting of prevTime is important to limit initial acceleration
-			prevTime = _currentTime;	// avoid calling Timer.getFPGATimestamp() in this function to allow off-robot testing
+			prevTime = _currentTime;	// avoid calling MyTimer.getTimestamp() in this function to allow off-robot testing
 		
 		System.out.println("At " + _currentPose + "  Driving to " + path.getSegmentEnd());
 		
