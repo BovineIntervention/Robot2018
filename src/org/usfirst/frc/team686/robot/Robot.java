@@ -94,7 +94,7 @@ public class Robot extends IterativeRobot {
     		loopController.register(DriveLoop.getInstance());
     		if (Constants.kRobotSelection == RobotSelectionEnum.COMPETITION_BOT)
     			loopController.register(ElevatorLoop.getInstance());
-      		//loopController.register(ArmBarLoop.getInstance());
+      		loopController.register(ArmBarLoop.getInstance());
       		loopController.register(IntakeLoop.getInstance());
        		loopController.register(RobotStateLoop.getInstance());
     		

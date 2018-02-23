@@ -176,14 +176,14 @@ public class Constants extends ConstantsBase
     // ARM BAR
     public static double kArmBarUpAngleDeg = 	 73.0;
     public static double kArmBarFlatAngleDeg = 	  0.0;	
-    public static double kArmBarDownAngleDeg = 	-15.0;	//-20.0  
+    public static double kArmBarDownAngleDeg = 	45;//-15.0;	//-20.0  
 
     public static double kArmBarLength = 14.0;
     
     public static double kArmBarZeroingVelocity =	30.0;	// in degrees per second
-    public static double kArmBarVelocity = 			75.0;	// in degrees per second
+    public static double kArmBarVelocity = 			30.0;//75.0;	// in degrees per second
     
-	public static double kArmBarQuadEncoderGain = 81.0 * 2.0;			// two 9:1 gear stages plus a 24:12 tooth reduction 
+	public static double kArmBarQuadEncoderGain = 81.0 * 2.0;			// two 9:1 gear stages plus a 24:12 tooth reduction after the encoder 
 	public static double kArmBarQuadEncoderUnitsPerRev = 4096;
 	public static double kArmBarEncoderUnitsPerDeg = kArmBarQuadEncoderUnitsPerRev / 360.0 * kArmBarQuadEncoderGain; 
 	
@@ -192,12 +192,12 @@ public class Constants extends ConstantsBase
 	public static double kArmBarKd = 0.0;
 	public static double kArmBarKi = 0.0;
    
-	public static double kMaxArmBarVoltage = 8.0;	// may be less than 12V battery voltage when testing	
+	public static double kMaxArmBarVoltage = 6.0;	// may be less than 12V battery voltage when testing	
 	public static double kArmBarMotorStallCurrentThreshold = 1.0;	// current at which we will assume the limit switch didn't catch it and we are stalled
 
-	public static int kArmBarPeakCurrentLimit = 5;	// current at which current limit is activated
+	public static int kArmBarPeakCurrentLimit = 10;	// current at which current limit is activated
 	public static int kArmBarPeakCurrentDuration = 200;	// duration at which current limit is activated
-	public static int kArmBarContinuousCurrentLimit = 4;	// limit to this value when current limit is activated
+	public static int kArmBarContinuousCurrentLimit = 5;	// limit to this value when current limit is activated
 	
     // CUBE HEIGHT
     public static double kCubeGrabHeight = 8.5;		// inches above ground where cube is grabbed
@@ -208,7 +208,6 @@ public class Constants extends ConstantsBase
     public static double kIntakeMotorGain = 7.0;
     public static double kIntakeMaxRPM = kBagMotorRPM / kIntakeMotorGain;
     public static double kIntakeRPM = 1200;
-//    public static double kIntakeSpeed = kIntakeRPM/kIntakeMaxRPM;
     public static double kIntakeSpeed = 0.8;
     public static double kOuttakeSpeed = -1.0;	// full speed reverse
     

@@ -62,16 +62,16 @@ public class ArmBarLoop implements Loop
 		talon.setNeutralMode(NeutralMode.Brake);
 				
 		// current limit to stop breaking motor mount
-//		talon.configPeakCurrentLimit(Constants.kArmBarPeakCurrentLimit, Constants.kTalonTimeoutMs);
-//		talon.configPeakCurrentDuration(Constants.kArmBarPeakCurrentDuration, Constants.kTalonTimeoutMs);
-//		talon.configContinuousCurrentLimit(Constants.kArmBarContinuousCurrentLimit, Constants.kTalonTimeoutMs);
-//		talon.enableCurrentLimit(true);
+		talon.configPeakCurrentLimit(Constants.kArmBarPeakCurrentLimit, Constants.kTalonTimeoutMs);
+		talon.configPeakCurrentDuration(Constants.kArmBarPeakCurrentDuration, Constants.kTalonTimeoutMs);
+		talon.configContinuousCurrentLimit(Constants.kArmBarContinuousCurrentLimit, Constants.kTalonTimeoutMs);
+		talon.enableCurrentLimit(true);
 		
 		
 		// Configure Encoder
 		talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kTalonPidIdx, Constants.kTalonTimeoutMs);	// configure for closed-loop PID
 		talon.setSensorPhase(false);
-		talon.setInverted(false);
+		talon.setInverted(true);
 		
 		// Configure Limit Switch
 		talon.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, Constants.kTalonTimeoutMs);
@@ -140,8 +140,9 @@ public class ArmBarLoop implements Loop
 		armBarState.setTargetAngleDeg(target);		
 		armBarState.setFilteredTargetAngleDeg(filteredTarget);
 		armBarState.setPidError(voltage);
-				
-		//System.out.println(toString());
+			
+if (state == ArmBarStateEnum.CALIBRATING)		
+		System.out.println(toString());
 	}
 
 	@Override
@@ -179,6 +180,7 @@ public class ArmBarLoop implements Loop
 			
 		case CALIBRATING:
 			// slowly move up towards limit switch
+			System.out.printf("fTarget: %.1f, V: %.1f, dt: %.1f\n", filteredTarget, Constants.kArmBarZeroingVelocity, Constants.kLoopDt);
 			filteredTarget += (Constants.kArmBarZeroingVelocity * Constants.kLoopDt);
 			
 			if (limitSwitchTriggered)
@@ -258,9 +260,6 @@ public class ArmBarLoop implements Loop
 		armBarState.setMotorCurrent( talon.getOutputCurrent() );
 
 		armBarState.setLimitSwitchTriggered( talon.getSensorCollection().isFwdLimitSwitchClosed() );
-		
-		//System.out.println(talon.getSelectedSensorPosition(Constants.kTalonPidIdx) + ",  " + talon.getMotorOutputPercent()  + ",  " + talon.getOutputCurrent() + ",  " + talon.getSensorCollection().isFwdLimitSwitchClosed());;
-		
 	}
 
 	
