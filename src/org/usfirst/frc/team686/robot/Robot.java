@@ -13,7 +13,6 @@ import org.usfirst.frc.team686.robot.subsystems.Drive;
 import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar;
 import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar.ElevatorArmBarStateEnum;
 import org.usfirst.frc.team686.robot.subsystems.Intake;
-import org.usfirst.frc.team686.robot.util.DataLogController;
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
 import org.usfirst.frc.team686.robot.command_status.DriveCommand;
 
@@ -21,6 +20,7 @@ import java.util.Optional;
 import java.util.TimeZone;
 
 import org.usfirst.frc.team686.robot.lib.util.CrashTracker;
+import org.usfirst.frc.team686.robot.lib.util.DataLogController;
 import org.usfirst.frc.team686.robot.lib.util.Pose;
 import org.usfirst.frc.team686.robot.loops.ArmBarLoop;
 import org.usfirst.frc.team686.robot.loops.DriveLoop;

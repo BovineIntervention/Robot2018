@@ -21,6 +21,7 @@ public class Path
 {
     protected static final double kSegmentCompletePercentage = .99;
 
+    protected double finalSpeed;
     protected boolean reverseDirection;
     protected List<Waypoint> waypoints;
     protected List<PathSegment> segments;
@@ -52,6 +53,12 @@ public class Path
     // constructor for empty path
     public Path() 
     {
+    	this(0);
+    }
+
+    public Path(double _finalSpeed) 	// extra constructor parameter if not stopping at the end of this path.  use carefully.
+    {
+    	finalSpeed = _finalSpeed;
     	reverseDirection = false;		// call setReverseDirection() to drive backwards
         waypoints = new ArrayList<Waypoint>();
         segments  = new ArrayList<PathSegment>();
@@ -109,6 +116,14 @@ public class Path
     		return new Vector2d();
     	else
     		return new Vector2d(segments.get(0).getEnd());
+    }
+    
+    public double getSegmentFinalSpeed() 
+    {
+    	if (segments.size() <= 1)
+    		return finalSpeed;									// final speed at the end of the last segment on this path
+    	else
+    		return segments.get(1).getOptions().getMaxSpeed();	// final speed of this segment is the next segments max speed
     }
     
     public double getSegmentMaxSpeed() 

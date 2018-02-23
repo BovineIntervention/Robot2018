@@ -3,8 +3,8 @@ package org.usfirst.frc.team686.robot.auto;
 
 
 import org.usfirst.frc.team686.robot.auto.actions.Action;
+import org.usfirst.frc.team686.robot.lib.util.DataLogController;
 import org.usfirst.frc.team686.robot.lib.util.Pose;
-import org.usfirst.frc.team686.robot.util.DataLogController;
 
 import edu.wpi.first.wpilibj.Timer;
 

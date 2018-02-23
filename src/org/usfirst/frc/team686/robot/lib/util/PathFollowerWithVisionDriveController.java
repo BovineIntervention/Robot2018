@@ -123,6 +123,7 @@ imageTimestamp = currentTime - Constants.kCameraLatencySeconds;		// remove camer
 		System.out.println("At " + _currentPose + "  Driving to " + path.getSegmentEnd());
 		
 		remainingDistance = Double.MAX_VALUE;
+		double finalSpeed = 0;
 		double maxSpeed = 0;
 		double maxAccel = 0;
 		
@@ -136,17 +137,19 @@ imageTimestamp = currentTime - Constants.kCameraLatencySeconds;		// remove camer
 		if (state == PathVisionState.PATH_FOLLOWING)	 
 		{
 			remainingDistance = path.getRemainingLength();		// TODO: address stopping when past final segment
+			finalSpeed = path.getSegmentFinalSpeed();
 			maxSpeed = path.getSegmentMaxSpeed();
 			maxAccel = path.getSegmentMaxAccel();
 		}
 		else
 		{
 			remainingDistance = distanceToTargetInches - Constants.kPegTargetDistanceThresholdFromCameraInches;
+			finalSpeed = path.getSegmentFinalSpeed();
 			maxSpeed = Constants.kVisionMaxVel;
 			maxAccel = Constants.kVisionMaxAccel;
 		}
 		
-		speedControl(_currentTime, remainingDistance, maxSpeed, maxAccel);
+		speedControl(_currentTime, remainingDistance, finalSpeed, maxSpeed, maxAccel);
 
 		if (reversed)
 		{
@@ -244,7 +247,7 @@ imageTimestamp = currentTime - Constants.kCameraLatencySeconds;		// remove camer
 	}
 	
 	// keep speed within acceleration limits
-	public void speedControl(double _currentTime, double _remainingDistance, double _maxSpeed, double _maxAccel)
+	public void speedControl(double _currentTime, double _remainingDistance, double _finalSpeed, double _maxSpeed, double _maxAccel)
 	{
 		//---------------------------------------------------
 		// Apply speed control
@@ -261,9 +264,9 @@ imageTimestamp = currentTime - Constants.kCameraLatencySeconds;		// remove camer
 			speed = prevSpeed - _maxAccel * dt;
 
 		// apply braking distance limits
-		// vf^2 = v^2 + 2*a*d   Solve for v, given vf=0, configured a, and measured d
+		// vf^2 = v^2 + 2*a*d   Solve for v, configured vf, a, and measured d
 		double stoppingDistance = _remainingDistance;
-		double maxBrakingSpeed = Math.sqrt(2.0 * _maxAccel * stoppingDistance);
+		double maxBrakingSpeed = Math.sqrt(_finalSpeed * _finalSpeed + 2.0 * _maxAccel * stoppingDistance);
 		if (Math.abs(speed) > maxBrakingSpeed)
 			speed = Math.signum(speed) * maxBrakingSpeed;
 
@@ -328,6 +331,7 @@ imageTimestamp = currentTime - Constants.kCameraLatencySeconds;		// remove camer
 			put("PathVision/segmentStartY", path.getSegmentStart().getY());
 			put("PathVision/segmentEndX", path.getSegmentEnd().getX());
 			put("PathVision/segmentEndY", path.getSegmentEnd().getY());
+			put("PathVision/segmentFinalSpeed", path.getSegmentFinalSpeed());
 			put("PathVision/segmentMaxSpeed", path.getSegmentMaxSpeed());
 			put("PathVision/segmentVisionEnable", path.getSegmentVisionEnable());
 			

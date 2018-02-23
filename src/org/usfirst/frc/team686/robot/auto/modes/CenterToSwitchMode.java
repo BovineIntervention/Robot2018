@@ -50,9 +50,9 @@ public class CenterToSwitchMode extends AutoModeBase
 		
 		
 		// drive almost all the way to the shooting position
-		Path mainPath = new Path();
-		mainPath.add(new Waypoint(initialPosition, pathOptions));
-		mainPath.add(new Waypoint(waypoint1,  	pathOptions));
+		Path mainPath = new Path(Constants.kCollisionVel);
+		mainPath.add(new Waypoint(initialPosition, 	pathOptions));
+		mainPath.add(new Waypoint(waypoint1,  		pathOptions));
 
 		// TODO: add ability to finish PathFollower at a speed higher than 0
 

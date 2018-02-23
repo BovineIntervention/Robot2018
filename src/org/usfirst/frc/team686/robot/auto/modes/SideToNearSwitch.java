@@ -56,7 +56,7 @@ public class SideToNearSwitch extends AutoModeBase
 		
 		
 		// drive almost all the way to the shooting position
-		Path mainPath = new Path();
+		Path mainPath = new Path(Constants.kCollisionVel);
 		mainPath.add(new Waypoint(initialPosition, pathOptions));
 		mainPath.add(new Waypoint(waypoint1,  	pathOptions));
 		mainPath.add(new Waypoint(waypoint2,  	pathOptions));

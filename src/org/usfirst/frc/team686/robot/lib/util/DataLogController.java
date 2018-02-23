@@ -1,4 +1,4 @@
-package org.usfirst.frc.team686.robot.util;
+package org.usfirst.frc.team686.robot.lib.util;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import org.usfirst.frc.team686.robot.lib.util.DataLogger;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
