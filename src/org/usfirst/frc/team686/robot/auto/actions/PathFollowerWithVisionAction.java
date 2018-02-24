@@ -13,10 +13,13 @@ import org.usfirst.frc.team686.robot.lib.util.PathFollowerWithVisionDriveControl
 public class PathFollowerWithVisionAction implements Action 
 {
 	PathFollowerWithVisionDriveController driveCtrl;
+	Path path;
 
     public PathFollowerWithVisionAction(Path _path) 
     {
     	driveCtrl = new PathFollowerWithVisionDriveController(_path, PathVisionState.PATH_FOLLOWING);
+    	
+    	path = _path;
     }
 
     public PathFollowerWithVisionDriveController getDriveController() { return driveCtrl; }
@@ -39,6 +42,7 @@ public class PathFollowerWithVisionAction implements Action
     @Override
     public boolean isFinished() 
     {
+    	
     	return driveCtrl.isFinished();
     }
 

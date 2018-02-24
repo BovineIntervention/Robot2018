@@ -15,12 +15,12 @@ import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar.ElevatorArmBarSta
 
 
 
-public class SideToNearSwitch extends AutoModeBase 
+public class SideStartToNearSwitch extends AutoModeBase 
 {
 	boolean rightSwitch;
 	Path path;
 	
-    public SideToNearSwitch(boolean _isRight) 
+    public SideStartToNearSwitch(boolean _isRight) 
     {
     	rightSwitch = _isRight;
     }

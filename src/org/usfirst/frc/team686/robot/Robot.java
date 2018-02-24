@@ -95,7 +95,7 @@ public class Robot extends IterativeRobot {
     		if (Constants.kRobotSelection == RobotSelectionEnum.COMPETITION_BOT)
     			loopController.register(ElevatorLoop.getInstance());
       		//loopController.register(ArmBarLoop.getInstance());
-      		loopController.register(IntakeLoop.getInstance());
+      		//loopController.register(IntakeLoop.getInstance());
        		loopController.register(RobotStateLoop.getInstance());
     		
     		smartDashboardInteractions = new SmartDashboardInteractions();
@@ -108,8 +108,8 @@ public class Robot extends IterativeRobot {
     		robotLogger.register(Drive.getInstance().getLogger());
     		robotLogger.register(drive.getCommand().getLogger());
     		robotLogger.register(DriveState.getInstance().getLogger());
-    		robotLogger.register(ElevatorArmBar.getInstance().getLogger());
-    		robotLogger.register(Intake.getInstance().getLogger());
+    		//robotLogger.register(ElevatorArmBar.getInstance().getLogger());
+    		//robotLogger.register(Intake.getInstance().getLogger());
     		robotLogger.register(RobotState.getInstance().getLogger());
     		
     		setInitialPose(new Pose());
@@ -133,7 +133,7 @@ public class Robot extends IterativeRobot {
 	}
 	
 	public void setInitialPose (Pose _initialPose){
-    	robotState.reset(Timer.getFPGATimestamp(), DriveState.getInstance().getLeftDistanceInches(), DriveState.getInstance().getRightDistanceInches(), _initialPose);
+		robotState.reset(Timer.getFPGATimestamp(), DriveState.getInstance().getLeftDistanceInches(), DriveState.getInstance().getRightDistanceInches(), _initialPose);
     	System.out.println("InitialPose: " + _initialPose);
     }
     
@@ -219,7 +219,8 @@ public class Robot extends IterativeRobot {
 			elevatorArmBar.enable();
 
 			CrashTracker.logAutoInit();
-    		if(autoModeExecuter != null){
+
+			if(autoModeExecuter != null){
     			autoModeExecuter.stop();
     		}
     		autoModeExecuter = null;
@@ -274,6 +275,11 @@ public class Robot extends IterativeRobot {
 			// Configure looper
 			loopController.start();
 			elevatorArmBar.enable();
+			
+			if(autoModeExecuter != null){
+    			autoModeExecuter.stop();
+    		}
+    		autoModeExecuter = null;
 
 			drive.setOpenLoop(DriveCommand.COAST());
 			

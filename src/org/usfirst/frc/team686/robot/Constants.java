@@ -96,7 +96,7 @@ public class Constants extends ConstantsBase
     
     public static double kCollisionVel 			= 24;
     public static double kCollisionAccel 		= 24;
-    public static double kCollisionThreshold 	= 0.3;		// maximum JerkY was 0.9 for a 24 inch/sec collision into wall (<0.1 when driving normal)
+    public static double kCollisionThreshold 	= 0.5;		// maximum JerkY was 0.9 for a 24 inch/sec collision into wall (<0.1 when driving normal)
     
     // Vision constants
     public static double kCameraPoseX ;	// camera location with respect to robot center of rotation, +X axis is in direction of travel
@@ -420,7 +420,7 @@ public class Constants extends ConstantsBase
     		    kQuadEncoderCodesPerRev = 64;
     		    
     		    // CONTROL LOOP GAINS
-    		    kNominalEncoderPulsePer100ms = 290;		// velocity at a nominal throttle (measured using NI web interface)
+    		    kNominalEncoderPulsePer100ms = 900; //290;		// velocity at a nominal throttle (measured using NI web interface)
     		    kNominalPercentOutput 		 = 0.4995;	// percent output of motor at above throttle (using NI web interface)
     		    
     		    
@@ -496,8 +496,8 @@ public class Constants extends ConstantsBase
 	    kPointTurnCompletionTolerance = 1.0 * (Math.PI/180.0); 
 	    
 	    // Path following constants
-	    kPathFollowingMaxVel    = 20.0; // inches/sec  		
-	    kPathFollowingMaxAccel  = 12.0; // inches/sec^2	
+	    kPathFollowingMaxVel    = 72.0; // inches/sec  		
+	    kPathFollowingMaxAccel  = 144.0; // inches/sec^2	
 	    kPathFollowingLookahead = 24.0; // inches
 	    kPathFollowingCompletionTolerance = 1.0; 
 	    
