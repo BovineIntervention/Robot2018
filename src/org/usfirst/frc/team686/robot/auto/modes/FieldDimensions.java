@@ -32,8 +32,8 @@ public class FieldDimensions
 	// field distances with Center Start as origin
 	public static double kAutoLineFromCenterStartDistX = 120;
 	
-	public static double kSwitchCenterFromCenterStartDistX = 140;
-	public static double kLeftSwitchFromCenterStartDistX = kSwitchCenterFromCenterStartDistX + (kSwitchLengthX/2); // to center of switch
+	public static double kSwitchFromCenterStartDistX = 140;
+	public static double kLeftSwitchFromCenterStartDistX = kSwitchFromCenterStartDistX + (kSwitchLengthX/2); // to center of switch
 	public static double kLeftSwitchFromCenterStartDistY = kSwitchLengthY/2; // to y end of switch
 	public static double kRightSwitchFromCenterStartDistX = kLeftSwitchFromCenterStartDistX;
 	public static double kRightSwitchFromCenterStartDistY = -kLeftSwitchFromCenterStartDistY;
@@ -48,7 +48,8 @@ public class FieldDimensions
 	
 	public static double kScaleLeftEndXFromCenterStartDistX = 299.65;
 	public static double kSwitchRightEndXFromCenterStartDistX = 196;
-	public static double kPlatFormLeftEndXFromSwitchCenterDistX = (kFieldLengthX/2) - kSwitchCenterFromCenterStartDistX - (kScalePlatformLengthX/2);
+	public static double kPlatFormLeftEndXFromSwitchCenterDistX = (kFieldLengthX/2) - kSwitchFromCenterStartDistX - (kScalePlatformLengthX/2);
+	public static double kScalePlatformFromCenterStartDistX = 261.47;
 	public static double kScaleFromSwitchOffsetY = (kScaleLengthY/2) - (kSwitchLengthY/2);
 	
 	public static double kPowerCubeZoneFromCenterStartDistX = 98;
@@ -77,28 +78,32 @@ public class FieldDimensions
 	public static Pose getRightStartPose() { return new Pose(Constants.kCenterToRearBumper, -((kAllianceStationLengthY/2) - Constants.kCenterToSideBumper), 0); }
 
 	
-	public static Pose getLeftSwitchPose() { return new Pose(kLeftSwitchFromCenterStartDistX, kLeftSwitchFromCenterStartDistY, kLeftSwitchTurnAngle); }
+
+	//public static Pose getLeftSwitchPose() { return new Pose(kLeftSwitchFromCenterStartDistX, kLeftSwitchFromCenterStartDistY, kLeftSwitchTurnAngle); }
+	public static Pose getLeftSwitchPose() { return new Pose(kSwitchFromCenterStartDistX - Constants.kCenterToFrontBumper, (kSwitchLengthY/2) - Constants.kCenterToSideBumper); }
 	public static Pose getRightSwitchPose() { return new Pose(kRightSwitchFromCenterStartDistX, kRightSwitchFromCenterStartDistY, kRightSwitchTurnAngle); }
 	
-	public static double getSwitchTurnOffsetX() { return kSwitchCenterFromCenterStartDistX - kSwitchTurnPositionOffsetX; }
+	public static double getSwitchTurnOffsetX() { return kSwitchFromCenterStartDistX - kSwitchTurnPositionOffsetX; }
 	public static double getSwitchTurnOffsetY() { return kTurnPositionOffsetY; }
 	
 
 	public static Pose getLeftScalePose() { return new Pose(kLeftScaleFromCenterStartDistX, kLeftScaleFromCenterStartDistY, kLeftScaleTurnAngle); }
 	public static Pose getRightScalePose() { return new Pose(kRightScaleFromCenterStartDistX, kRightScaleFromCenterStartDistY, kRightScaleTurnAngle); }
 	
-	public static double getScaleTurnOffsetX() { return kSwitchCenterFromCenterStartDistX - kSwitchTurnPositionOffsetX; }
+	public static double getScaleTurnOffsetX() { return kSwitchFromCenterStartDistX - kSwitchTurnPositionOffsetX; }
 	public static double getScaleTurnOffsetY() { return kTurnPositionOffsetY + kScaleFromSwitchOffsetY; }
 	
-	public static double getScaleTurnFromSwitchPositionX() { return ((kPlatFormLeftEndXFromSwitchCenterDistX/2) + Constants.kCenterToSideBumper) + kSwitchCenterFromCenterStartDistX; }
+	public static double getScaleTurnFromSwitchPositionX() { return ((kPlatFormLeftEndXFromSwitchCenterDistX/2) + Constants.kCenterToSideBumper) + kSwitchFromCenterStartDistX; }
 	
 	public static double getPowerCubeZoneFromCenterStartDistX() { return kPowerCubeZoneFromCenterStartDistX; }
+	
+	public static double getScalePlatformFromCenterStartDistX() { return kScalePlatformFromCenterStartDistX; }
 	
 	public static Vector2d getBackupPosition() { return new Vector2d(0, kBackupDistY); }
 	
 	public static double getCollisionAvoidanceOffsetY() { return kCollisionAvoidanceOffsetY; }
 	
 	public static double getCrossOffsetY(){ return Constants.kCenterToSideBumper; }
-	public static double getCrossOffsetX(){ return kSwitchCenterFromCenterStartDistX + (kSwitchLengthX/2); }
+	public static double getCrossOffsetX(){ return kSwitchFromCenterStartDistX + (kSwitchLengthX/2); }
 	
 }

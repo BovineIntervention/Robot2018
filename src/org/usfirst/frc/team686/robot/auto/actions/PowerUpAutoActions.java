@@ -13,6 +13,7 @@ import org.usfirst.frc.team686.robot.lib.util.Util;
 import org.usfirst.frc.team686.robot.lib.util.Vector2d;
 import org.usfirst.frc.team686.robot.lib.util.Path.Waypoint;
 
+
 public class PowerUpAutoActions {
 	
 	public PowerUpAutoActions(){}
@@ -57,7 +58,7 @@ public class PowerUpAutoActions {
 	}
 	
 
-	private boolean isRight;
+	private boolean toRight;
 	
 	private TargetEnum target;
 	private InitialStateEnum initialState;
@@ -68,22 +69,19 @@ public class PowerUpAutoActions {
 
 	public Pose getInitialPose() { return initialPose; }
 	
-	public void setInitialState(InitialStateEnum _initialState){
-		initialState = _initialState;
-		initialPose = _initialState.pose;
-	}
 	
-	public void setTarget(TargetEnum _target){ target = _target; }
-	
-	public void isRight(boolean _isRight){ isRight = _isRight; }
-	
-	
-	public SeriesAction getActions(boolean _backup){
+	public SeriesAction getActions(InitialStateEnum _initialState, TargetEnum _target, boolean _toRight, boolean _backup){
 		
 		Path path;
 		Path pathAlign;
 		Path pathToTarget;
 		Path pathBackup;
+		
+		initialState = _initialState;
+		initialPose = _initialState.pose;
+		target = _target;
+		toRight = _toRight;
+	
 		
 		if (initialPose == null)
 			System.out.println("DIDN'T SET initialPose BEFORE CALLING AutoActions.getActions()\n");
@@ -102,20 +100,20 @@ public class PowerUpAutoActions {
 		
 		// get target position
 		Pose targetPose = target.leftPose;
-		if(isRight)
+		if(toRight)
 			targetPose = target.rightPose;
 		Vector2d targetPosition = targetPose.getPosition();
 		double targetHeading = targetPose.getHeading();
 		
 		boolean cross = false;
-		if((initialState == InitialStateEnum.LEFT && isRight) || ((initialState == InitialStateEnum.RIGHT && !isRight)))
+		if((initialState == InitialStateEnum.LEFT && toRight) || ((initialState == InitialStateEnum.RIGHT && !toRight)))
 			cross = true;
 		
 		
 		// get transition pose for crossing from left to right side
 		
 		Pose crossPose = new Pose(initialPosition.getX(), initialPose.getY(), Math.toRadians(-65));
-		if(isRight)
+		if(toRight)
 			crossPose = new Pose(initialPosition.getX(), initialPose.getY(), Math.toRadians(65));
 		Pose centerPose = FieldDimensions.getCenterStartPose();
 		
@@ -128,7 +126,7 @@ public class PowerUpAutoActions {
 	
 		
 		Vector2d crossPosition1 = new Vector2d(initialPosition.getX() + FieldDimensions.getCrossOffsetX(), initialPosition.getY() + FieldDimensions.getCrossOffsetY());
-		if(isRight)
+		if(toRight)
 			crossPosition1 = new Vector2d(initialPosition.getX() + FieldDimensions.getCrossOffsetX(), initialPosition.getY() - FieldDimensions.getCrossOffsetY());
 		Vector2d crossPosition2 = new Vector2d(crossPosition1.getX(), -crossPosition.getY());
 
@@ -136,12 +134,12 @@ public class PowerUpAutoActions {
 		// get turn position
 		double turnOffsetX = target.turnOffsetX;
 		Pose turnPoseX = new Pose(turnOffsetX, 0, Math.toRadians(-90));
-		if(isRight)
+		if(toRight)
 			turnPoseX = new Pose(turnOffsetX, 0, Math.toRadians(90));
 				
 		double turnOffsetY = target.turnOffsetY;
 		Pose turnPoseY = new Pose(targetPosition.getX(), targetPosition.getY() - target.turnOffsetY);
-		if(isRight)
+		if(toRight)
 			 turnPoseY = new Pose(targetPosition.getX(), targetPosition.getY() + target.turnOffsetY);
 		
 		intersection = Util.getLineIntersection(turnPoseX, turnPoseY);
@@ -154,7 +152,7 @@ public class PowerUpAutoActions {
 		
 		// get backup position
 		Vector2d backupPosition = targetPosition.add(FieldDimensions.getBackupPosition());
-		if(isRight)
+		if(toRight)
 			backupPosition = targetPosition.sub(FieldDimensions.getBackupPosition());
 		
 		

@@ -58,9 +58,11 @@ public class CollisionDetectionAction implements Action
         boolean collisionDetected = false;
         if ( ( Math.abs(currentJerkX) > Constants.kCollisionThreshold ) ||
              ( Math.abs(currentJerkY) > Constants.kCollisionThreshold) ) {
+        	System.out.println("MAXIMUM JERK X: " + currentJerkX);
+        	System.out.println("MAXIMUM JERK Y: " + currentJerkY);
+        	System.out.println("COLLISION DETECTED");
             collisionDetected = true;
         }
-    	
     	return collisionDetected;
     }
 
