@@ -339,4 +339,12 @@ public class Path
     }
     
     public List<Waypoint> getPath() { return waypoints; }
+    
+    public String toString()
+    {
+    	String str = "";
+        for (int i=0; i<segments.size(); i++) 
+            str += String.format("Segment %2d: %s\n", i, segments.get(i).toString());
+        return str;
+    }
  }

@@ -174,12 +174,12 @@ System.out.printf("GameData: %s, switchPose = %c, scalePose = %c\n ", gameData, 
 
 				if( switchPose == 'L' )
 				{
-					autoMode = new CenterStartToNearSwitchMode(false);
+					autoMode = new CenterStartToSwitchMode(false);
 					// SCORE CUBE
 				}
 				else
 				{
-					autoMode = new CenterStartToNearSwitchMode(true);
+					autoMode = new CenterStartToSwitchMode(true);
 				}
 				break;
 			}
@@ -283,9 +283,9 @@ System.out.printf("GameData: %s, switchPose = %c, scalePose = %c\n ", gameData, 
 					autoMode = new SideStartToFarSwitchMode(InitialStateEnum.RIGHT);
 				break;
 			case CENTER_START:
-				autoMode = new CenterStartToNearSwitchMode(false);
+				autoMode = new CenterStartToSwitchMode(false);
 				if(switchPose == 'R')
-					autoMode = new CenterStartToNearSwitchMode(true); 
+					autoMode = new CenterStartToSwitchMode(true); 
 				break;
 			}
 			

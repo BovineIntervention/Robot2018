@@ -59,19 +59,19 @@ System.out.println("STARTING AUTOMODE: " + initialState.name + " to Near Switch"
 		}
 
 		
-		Path path = new Path();
+		Path path = new Path(Constants.kCollisionVel);	// final velocity of this path will be collisionVelocity required by next path
 		path.add(new Waypoint(initialPosition, pathOptions));
-		System.out.println("INITIAL POSITION: " + initialPosition.toString());
 		path.add(new Waypoint(turnPosition, pathOptions));
-		System.out.println("TURN POSITION: " + turnPosition.toString());
 		//path.add(new Waypoint(turnPosition1, pathOptions));
 		path.add(new Waypoint(startCollisionPosition, tightTurnOptions));
-		System.out.println("COLLISION POSITION: " + startCollisionPosition.toString());
 		
-		Path collisionPath = new Path(Constants.kCollisionVel);
+		Path collisionPath = new Path();	// final velocity of this path will be 0
 		collisionPath.add(new Waypoint(startCollisionPosition, collisionOptions));
 		collisionPath.add(new Waypoint(switchStopPosition, collisionOptions));
-		System.out.println("STOP POSITION:" + switchStopPosition.toString());
+		
+		System.out.println("SideStartToNearSwitchMode path");
+		System.out.println(path.toString());
+		System.out.println(collisionPath.toString());
 		
 		runAction( new PathFollowerWithVisionAction(path) );
 		runAction( new ParallelAction(Arrays.asList(new Action[] {

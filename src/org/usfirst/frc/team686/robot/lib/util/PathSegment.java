@@ -55,6 +55,12 @@ public class PathSegment
 	    public double   getLookaheadDist()  { return lookaheadDist; }
 	    public boolean  getVisionEnable()   { return visionEnable; }
 	    public Optional<String> getMarker() { return marker; }
+	    
+	    public String toString()
+	    {
+	    	return String.format("MaxSpeed: %5.1, MaxAccel: %5.1: LookaheadDist: %4.1, VisionEnable: %b", maxSpeed, maxAccel, lookaheadDist, visionEnable);
+	    }
+	    
     };
 	    
 	    
@@ -104,4 +110,10 @@ public class PathSegment
         Vector2d startToThat = _that.sub(start);
         return startToEnd.dot(startToThat);
     }
+    
+    public String toString()
+    {
+    	return "Start: " + start.toString() + ", End: " + end.toString() + ", Options: " + options.toString();
+    }
+    
 }

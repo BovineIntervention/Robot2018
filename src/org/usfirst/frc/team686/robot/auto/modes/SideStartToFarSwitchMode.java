@@ -58,24 +58,29 @@ public class SideStartToFarSwitchMode extends AutoModeBase {
 		
 		
 		if(initialState == InitialStateEnum.LEFT)
+		{
 			switchStopPosition.setY(-switchStopPosition.getY());
 			turnPosition.setY(-turnPosition.getY());
 			turnPosition1.setY(-turnPosition1.getY());
 			turnPosition2.setY(-turnPosition2.getY());
 			startCollisionPosition.setY(-startCollisionPosition.getY());
+		}
 		
 		
-		
-		Path path = new Path();
+		Path path = new Path(Constants.kCollisionVel);	// final velocity of this path will be collisionVelocity required by next path
 		path.add(new Waypoint(initialPosition, pathOptions));
 		path.add(new Waypoint(turnPosition, pathOptions));
 		path.add(new Waypoint(turnPosition1, pathOptions));
 		path.add(new Waypoint(turnPosition2, pathOptions));
 		path.add(new Waypoint(startCollisionPosition, pathOptions));
 		
-		Path collisionPath = new Path();
+		Path collisionPath = new Path();	// final velocity of this path will be 0
 		collisionPath.add(new Waypoint(startCollisionPosition, collisionOptions));
 		collisionPath.add(new Waypoint(switchStopPosition, collisionOptions));
+
+		System.out.println("SideStartToFarSwitchMode path");
+		System.out.println(path.toString());
+		System.out.println(collisionPath.toString());
 		
 		runAction( new PathFollowerWithVisionAction(path) );
 		runAction( new ParallelAction(Arrays.asList(new Action[] {

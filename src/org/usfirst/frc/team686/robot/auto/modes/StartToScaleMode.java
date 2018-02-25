@@ -61,6 +61,11 @@ public class StartToScaleMode extends AutoModeBase {
 		//pathToScale.add(new Waypoint(turnPosition1, pathOptions));
 		pathToScale.add(new Waypoint(scaleStopPosition, pathOptions));
 		
+		System.out.println("StartToScaleMode path");
+		System.out.println(path.toString());
+		System.out.println(pathToScale.toString());
+	
+		
 		runAction( new PathFollowerWithVisionAction(path) );
 		runAction( new ParallelAction(Arrays.asList(new Action[] {
 				//new ElevatorAction(ElevatorArmBarStateEnum.SWITCH),
