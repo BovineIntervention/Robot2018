@@ -497,7 +497,7 @@ public class Constants extends ConstantsBase
 	    
 	    // Path following constants
 	    kPathFollowingMaxVel    = 72.0; // inches/sec  		
-	    kPathFollowingMaxAccel  = 144.0; // inches/sec^2	
+	    kPathFollowingMaxAccel  = 144.0; // inches/sec^2	 
 	    kPathFollowingLookahead = 24.0; // inches
 	    kPathFollowingCompletionTolerance = 1.0; 
 	    

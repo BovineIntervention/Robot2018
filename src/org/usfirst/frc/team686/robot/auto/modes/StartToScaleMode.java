@@ -35,7 +35,7 @@ public class StartToScaleMode extends AutoModeBase {
 	
 
 
-
+ 
 	@Override
 	protected void routine() throws AutoModeEndedException {
 

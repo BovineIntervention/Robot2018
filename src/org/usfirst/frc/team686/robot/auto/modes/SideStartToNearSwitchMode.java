@@ -32,7 +32,7 @@ public class SideStartToNearSwitchMode extends AutoModeBase {
 	protected void routine() throws AutoModeEndedException {
 		
 		
-		
+		 
 System.out.println("STARTING AUTOMODE: " + initialState.name + " to Near Switch");
 		
 		PathSegment.Options pathOptions	= new PathSegment.Options(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, 36, false);

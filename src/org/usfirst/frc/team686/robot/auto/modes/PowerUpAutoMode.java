@@ -285,7 +285,7 @@ System.out.printf("GameData: %s, switchPose = %c, scalePose = %c\n ", gameData, 
 			case CENTER_START:
 				autoMode = new CenterStartToNearSwitchMode(false);
 				if(switchPose == 'R')
-					autoMode = new CenterStartToNearSwitchMode(true);
+					autoMode = new CenterStartToNearSwitchMode(true); 
 				break;
 			}
 			

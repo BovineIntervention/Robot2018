@@ -229,7 +229,7 @@ public class Robot extends IterativeRobot {
 			autoModeExecuter.setAutoMode( smartDashboardInteractions.getAutoModeSelection() );
 
 			setInitialPose( autoModeExecuter.getAutoMode().getInitialPose() );
-
+ 
 			autoModeExecuter.start();
     	}
     	catch(Throwable t)

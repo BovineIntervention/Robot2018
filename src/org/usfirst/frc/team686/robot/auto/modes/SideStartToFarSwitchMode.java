@@ -27,7 +27,7 @@ public class SideStartToFarSwitchMode extends AutoModeBase {
 	
 	public SideStartToFarSwitchMode (InitialStateEnum _initialState)
 	{
-		initialState = _initialState;
+		initialState = _initialState; 
 	}
 	
 	

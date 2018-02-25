@@ -10,7 +10,7 @@ import org.usfirst.frc.team686.robot.lib.util.PathFollowerWithVisionDriveControl
  * 
  * Serially configures a PathFollower object to follow each path 
  */
-public class PathFollowerWithVisionAction implements Action 
+public class PathFollowerWithVisionAction implements Action  
 {
 	PathFollowerWithVisionDriveController driveCtrl;
 	Path path;
