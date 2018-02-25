@@ -1,13 +1,9 @@
 package org.usfirst.frc.team686.robot.auto.actions;
 
 import org.usfirst.frc.team686.robot.Constants;
+import org.usfirst.frc.team686.robot.command_status.DriveState;
 import org.usfirst.frc.team686.robot.lib.sensors.NavX;
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
-import org.usfirst.frc.team686.robot.lib.util.Path;
-import org.usfirst.frc.team686.robot.lib.util.PathFollowerWithVisionDriveController;
-import org.usfirst.frc.team686.robot.lib.util.PathFollowerWithVisionDriveController.PathVisionState;
-
-import edu.wpi.first.wpilibj.Timer;
 
 /**
  * Action for following a path defined by a Path object.
@@ -17,10 +13,12 @@ import edu.wpi.first.wpilibj.Timer;
 public class CollisionDetectionAction implements Action 
 {
 	public static NavX gyro;
-	private double lastWorldLinearAccelerationX;
-	private double lastWorldLinearAccelerationY;
-	double currentJerkX = 0.0;
-	double currentJerkY = 0.0;
+	private double lastAccelX;
+	private double lastAccelY;
+	double jerkX = 0.0;
+	double jerkY = 0.0;
+	double lMotorCurrent = 0.0;
+	double rMotorCurrent = 0.0;
 	
     public CollisionDetectionAction() 
     {
@@ -31,8 +29,8 @@ public class CollisionDetectionAction implements Action
     public void start() 
     {
 		System.out.println("Starting CollisionDetectionAction");
-    	lastWorldLinearAccelerationX = gyro.getWorldLinearAccelerationX();
-    	lastWorldLinearAccelerationY = gyro.getWorldLinearAccelerationY();
+    	lastAccelX = gyro.getWorldLinearAccelerationX();
+    	lastAccelY = gyro.getWorldLinearAccelerationY();
     }
 
 
@@ -46,23 +44,29 @@ public class CollisionDetectionAction implements Action
     @Override
     public boolean isFinished() 
     {
-        double currWorldLinearAccelerationX = gyro.getWorldLinearAccelerationX();
-        double currentJerkX = currWorldLinearAccelerationX - lastWorldLinearAccelerationX;
-        lastWorldLinearAccelerationX = currWorldLinearAccelerationX;
-        double currWorldLinearAccelerationY = gyro.getWorldLinearAccelerationY();
-        double currentJerkY = currWorldLinearAccelerationY - lastWorldLinearAccelerationY;
-        lastWorldLinearAccelerationY = currWorldLinearAccelerationY;
+        double accelX = gyro.getWorldLinearAccelerationX();
+        double accelY = gyro.getWorldLinearAccelerationY();
+        jerkX = accelX - lastAccelX;
+        jerkY = accelY - lastAccelY;
+        lastAccelX = accelX;
+        lastAccelY = accelY;
 
-        //System.out.println("jerkX: " + currentJerkX + ", jerkY: " + currentJerkY + ", threshold: " + Constants.kCollisionThreshold);  
-        
+        //System.out.println(this.toString());  
+       
         boolean collisionDetected = false;
-        if ( ( Math.abs(currentJerkX) > Constants.kCollisionThreshold ) ||
-             ( Math.abs(currentJerkY) > Constants.kCollisionThreshold) ) {
-        	System.out.println("MAXIMUM JERK X: " + currentJerkX);
-        	System.out.println("MAXIMUM JERK Y: " + currentJerkY);
-        	System.out.println("COLLISION DETECTED");
-            collisionDetected = true;
+        if ( ( Math.abs(jerkX) > Constants.kCollisionJerkThreshold ) ||
+             ( Math.abs(jerkY) > Constants.kCollisionJerkThreshold) ) {
+             collisionDetected = true;
         }
+        
+        lMotorCurrent = DriveState.getInstance().getLeftMotorCurrent();
+        rMotorCurrent = DriveState.getInstance().getRightMotorCurrent();
+        
+        if ( ( lMotorCurrent > Constants.kCollisionCurrentThreshold ) ||
+             ( rMotorCurrent > Constants.kCollisionCurrentThreshold) ) {
+                collisionDetected = true;
+           }
+        
     	return collisionDetected;
     }
 
@@ -70,12 +74,16 @@ public class CollisionDetectionAction implements Action
     public void done() 
     {
 		System.out.println("Finished CollisionDetectionAction");
-        System.out.println("jerkX: " + currentJerkX + ", jerkY: " + currentJerkY + ", threshold: " + Constants.kCollisionThreshold);  
+        System.out.println(this.toString());  
 		
 		// cleanup code, if any
     }
 
- 
+    public String toString()
+    {
+    	return String.format("Collision Detection -- JerkX: % 5.3f, JerkY: % 5.3f, JerkThresh: %4.1, lMotorCurrent: % 5.3f, rMotorCurrent: % 5.3f, CurrentThresh: %4.1, ", jerkX, jerkY, Constants.kCollisionJerkThreshold, lMotorCurrent, rMotorCurrent, Constants.kCollisionCurrentThreshold);
+    }
+    
     
 	private final DataLogger logger = new DataLogger()
     {
@@ -83,9 +91,12 @@ public class CollisionDetectionAction implements Action
         public void log()
         {
     		put("AutoAction", "CollisionDetectionAction" );
-   			put("CollisionDetectionAction/JerkX", currentJerkX );
-   			put("CollisionDetectionAction/JerkY", currentJerkY );
-   			put("CollisionDetectionAction/JerkThresh", Constants.kCollisionThreshold );
+   			put("CollisionDetectionAction/JerkX", jerkX );
+   			put("CollisionDetectionAction/JerkY", jerkY );
+   			put("CollisionDetectionAction/JerkThresh", Constants.kCollisionJerkThreshold );
+   			put("CollisionDetectionAction/lMotorCurrent", jerkX );
+   			put("CollisionDetectionAction/rMotorCurrent", jerkY );
+   			put("CollisionDetectionAction/CurrentThresh", Constants.kCollisionCurrentThreshold );
         }
     };
      

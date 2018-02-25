@@ -96,7 +96,8 @@ public class Constants extends ConstantsBase
     
     public static double kCollisionVel 			= 24;
     public static double kCollisionAccel 		= 24;
-    public static double kCollisionThreshold 	= 0.5;		// maximum JerkY was 0.9 for a 24 inch/sec collision into wall (<0.1 when driving normal)
+    public static double kCollisionJerkThreshold 	= 0.5;		// maximum JerkY was 0.9 for a 24 inch/sec collision into wall (<0.1 when driving normal)
+    public static double kCollisionCurrentThreshold = 30;		// threshold to detect stall current
     
     // Vision constants
     public static double kCameraPoseX ;	// camera location with respect to robot center of rotation, +X axis is in direction of travel
