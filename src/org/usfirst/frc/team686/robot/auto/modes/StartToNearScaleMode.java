@@ -3,6 +3,7 @@ package org.usfirst.frc.team686.robot.auto.modes;
 import java.util.Arrays;
 
 import org.usfirst.frc.team686.robot.Constants;
+import org.usfirst.frc.team686.robot.SmartDashboardInteractions.StartPositionOption;
 import org.usfirst.frc.team686.robot.auto.AutoModeBase;
 import org.usfirst.frc.team686.robot.auto.AutoModeEndedException;
 import org.usfirst.frc.team686.robot.auto.actions.Action;
@@ -12,7 +13,6 @@ import org.usfirst.frc.team686.robot.auto.actions.InterruptableAction;
 import org.usfirst.frc.team686.robot.auto.actions.OuttakeAction;
 import org.usfirst.frc.team686.robot.auto.actions.ParallelAction;
 import org.usfirst.frc.team686.robot.auto.actions.PathFollowerWithVisionAction;
-import org.usfirst.frc.team686.robot.auto.modes.PowerUpAutoMode.InitialStateEnum;
 import org.usfirst.frc.team686.robot.lib.util.Path;
 import org.usfirst.frc.team686.robot.lib.util.Path.Waypoint;
 import org.usfirst.frc.team686.robot.lib.util.PathSegment;
@@ -20,19 +20,16 @@ import org.usfirst.frc.team686.robot.lib.util.Pose;
 import org.usfirst.frc.team686.robot.lib.util.Vector2d;
 import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar.ElevatorArmBarStateEnum;
 
-public class StartToScaleMode extends AutoModeBase {
+public class StartToNearScaleMode extends AutoModeBase {
 	
-
-	
+	StartPositionOption startPosition;
 	boolean toRight;
-	InitialStateEnum initialState;
 	
-	public StartToScaleMode (InitialStateEnum _initialState, boolean _toRight)
+	public StartToNearScaleMode (StartPositionOption _startPosition, boolean _toRight)
 	{
+		startPosition = _startPosition; 
 		toRight = _toRight;
-		initialState = _initialState;
 	}
-	
 
 
  
@@ -41,7 +38,7 @@ public class StartToScaleMode extends AutoModeBase {
 
 		PathSegment.Options pathOptions	= new PathSegment.Options(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, 36, false);
 		
-		Vector2d initialPosition = initialState.pose.getPosition();
+		Vector2d initialPosition = startPosition.initialPose.getPosition();
 		
 		Vector2d turnPosition = new Vector2d(205, 130);
 				

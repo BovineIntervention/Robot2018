@@ -1,8 +1,10 @@
 package org.usfirst.frc.team686.robot.auto.modes;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 import org.usfirst.frc.team686.robot.Constants;
+import org.usfirst.frc.team686.robot.SmartDashboardInteractions.StartPositionOption;
 import org.usfirst.frc.team686.robot.auto.AutoModeBase;
 import org.usfirst.frc.team686.robot.auto.AutoModeEndedException;
 import org.usfirst.frc.team686.robot.auto.actions.Action;
@@ -12,66 +14,78 @@ import org.usfirst.frc.team686.robot.auto.actions.InterruptableAction;
 import org.usfirst.frc.team686.robot.auto.actions.OuttakeAction;
 import org.usfirst.frc.team686.robot.auto.actions.ParallelAction;
 import org.usfirst.frc.team686.robot.auto.actions.PathFollowerWithVisionAction;
-import org.usfirst.frc.team686.robot.auto.modes.PowerUpAutoMode.InitialStateEnum;
 import org.usfirst.frc.team686.robot.lib.util.Path;
 import org.usfirst.frc.team686.robot.lib.util.Path.Waypoint;
 import org.usfirst.frc.team686.robot.lib.util.PathSegment;
 import org.usfirst.frc.team686.robot.lib.util.Pose;
+import org.usfirst.frc.team686.robot.lib.util.Util;
 import org.usfirst.frc.team686.robot.lib.util.Vector2d;
 import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar.ElevatorArmBarStateEnum;
 
 public class SideStartToFarSwitchMode extends AutoModeBase {
 	
 	
-	InitialStateEnum initialState;
+	StartPositionOption startPosition;
+	boolean toRight;
 	
-	public SideStartToFarSwitchMode (InitialStateEnum _initialState)
+	public SideStartToFarSwitchMode (StartPositionOption _startPosition, boolean _toRight)
 	{
-		initialState = _initialState; 
+		startPosition = _startPosition; 
+		toRight = _toRight;
 	}
-	
 	
 
 	@Override
 	protected void routine() throws AutoModeEndedException {
 		
 		
-		System.out.println("STARTING AUTOMODE: " + initialState.name + " to Switch");
+		System.out.println("STARTING AUTOMODE: " + startPosition.name + " to Switch");
 		
 		PathSegment.Options pathOptions	= new PathSegment.Options(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, Constants.kPathFollowingLookahead, false);
 		PathSegment.Options collisionOptions = new PathSegment.Options(Constants.kCollisionVel, Constants.kCollisionAccel, Constants.kPathFollowingLookahead, false);
 		
-		Vector2d initialPosition = initialState.pose.getPosition(); //first assume start is left and goal is right 
+		// first assume start is left and goal is right
+		Vector2d initialPosition = startPosition.initialPose.getPosition();  
 		
-		Vector2d switchStopPosition = new Vector2d(FieldDimensions.kSwitchFromCenterStartDistX + (FieldDimensions.kSwitchLengthX/2),
-													-(FieldDimensions.kSwitchLengthY/2) - Constants.kCenterToFrontBumper);
+		// drive straight until we are between the switch and platform
+		Vector2d turnPosition1 = new Vector2d(FieldDimensions.getScalePlatformFromCenterStartDistX() - Constants.kCenterToSideBumper - 12, initialPosition.getY());
+
+		// turn between switch and platform
+		Vector2d turnPosition2 = new Vector2d(FieldDimensions.getScalePlatformFromCenterStartDistX() - Constants.kCenterToSideBumper - 12, FieldDimensions.kSwitchLengthY/2);
 		
-		Vector2d turnPosition = new Vector2d( FieldDimensions.kSwitchFromCenterStartDistX - Constants.kCenterToCornerBumper,
-											  FieldDimensions.kSwitchLengthY + Constants.kCenterToCornerBumper);
+		// drive to opposite side of field
+		Vector2d turnPosition3 = new Vector2d(turnPosition2.getX(), -turnPosition2.getY());
 		
-		Vector2d turnPosition1 = new Vector2d(FieldDimensions.getScalePlatformFromCenterStartDistX() - Constants.kCenterToSideBumper, 
-											  turnPosition.getY());
+		// switch corner
+		Vector2d switchStopPosition = new Vector2d(FieldDimensions.kSwitchFromCenterStartDistX + FieldDimensions.kSwitchLengthX - 12, FieldDimensions.kSwitchLengthY/2 - 6);
+
+		// position that defines the turn around point
+		Optional<Vector2d> turnAroundPositionOption = Util.getLineIntersection(new Pose(switchStopPosition, -Math.PI/4), new Pose(turnPosition3, -Math.PI/2));
+		if (!turnAroundPositionOption.isPresent())
+			System.out.println("Error in line intersection calc");
 		
-		Vector2d turnPosition2 = new Vector2d(turnPosition1.getX(), -turnPosition1.getY());
+		Vector2d turnAroundPosition = turnAroundPositionOption.get();
+
+		// distance at which we 
+		Vector2d startCollisionPosition = switchStopPosition.add(Vector2d.magnitudeAngle(24.0, -Math.PI/4));
 		
-		Vector2d startCollisionPosition = new Vector2d(turnPosition2.getX(), turnPosition.getY() - 12);
-		
-		
-		if(initialState == InitialStateEnum.LEFT)
+		if (toRight)
 		{
-			switchStopPosition.setY(-switchStopPosition.getY());
-			turnPosition.setY(-turnPosition.getY());
 			turnPosition1.setY(-turnPosition1.getY());
 			turnPosition2.setY(-turnPosition2.getY());
+			turnPosition3.setY(-turnPosition3.getY());
 			startCollisionPosition.setY(-startCollisionPosition.getY());
+			turnAroundPosition.setY(-turnAroundPosition.getY());
+			switchStopPosition.setY(-switchStopPosition.getY());
 		}
 		
 		
 		Path path = new Path(Constants.kCollisionVel);	// final velocity of this path will be collisionVelocity required by next path
 		path.add(new Waypoint(initialPosition, pathOptions));
-		path.add(new Waypoint(turnPosition, pathOptions));
 		path.add(new Waypoint(turnPosition1, pathOptions));
 		path.add(new Waypoint(turnPosition2, pathOptions));
+		path.add(new Waypoint(turnPosition3, pathOptions));
+		path.add(new Waypoint(turnAroundPosition, pathOptions));
 		path.add(new Waypoint(startCollisionPosition, pathOptions));
 		
 		Path collisionPath = new Path();	// final velocity of this path will be 0

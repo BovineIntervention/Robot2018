@@ -37,18 +37,20 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class SmartDashboardInteractions 
 {
 
-    static SendableChooser<StartOption> startChooser;
+    static SendableChooser<StartPositionOption> startChooser;
 
-    public enum StartOption
+    public enum StartPositionOption
     {
-        LEFT_START("Left Start"),
-        CENTER_START("Center Start"),
-        RIGHT_START("Right Start");
+        LEFT_START("Left Start", FieldDimensions.getLeftStartPose()),
+        CENTER_START("Center Start", FieldDimensions.getCenterStartPose()),
+        RIGHT_START("Right Start", FieldDimensions.getRightStartPose());
 
         public final String name;
+        public final Pose initialPose;
 
-        StartOption(String name) {
+        StartPositionOption(String name, Pose initialPose) {
             this.name = name;
+            this.initialPose = initialPose;
         }
     }
 
@@ -127,10 +129,10 @@ public class SmartDashboardInteractions
     
     public void initWithDefaults() 
     {
-        startChooser = new SendableChooser<StartOption>();
-        startChooser.addDefault(StartOption.LEFT_START.toString(),    StartOption.LEFT_START);
-        startChooser.addObject(StartOption.CENTER_START.toString(),    StartOption.CENTER_START);
-        startChooser.addObject(StartOption.RIGHT_START.toString(),    StartOption.RIGHT_START);
+        startChooser = new SendableChooser<StartPositionOption>();
+        startChooser.addDefault(StartPositionOption.LEFT_START.toString(),    StartPositionOption.LEFT_START);
+        startChooser.addObject(StartPositionOption.CENTER_START.toString(),    StartPositionOption.CENTER_START);
+        startChooser.addObject(StartPositionOption.RIGHT_START.toString(),    StartPositionOption.RIGHT_START);
         SmartDashboard.putData("Start Chooser", startChooser);
         
         priorityChooser = new SendableChooser<PriorityOption>();
@@ -178,7 +180,7 @@ public class SmartDashboardInteractions
     	}
     	
     	StartDelayOption startDelay = startDelayChooser.getSelected();
-    	StartOption startPose = (StartOption)startChooser.getSelected();
+    	StartPositionOption startPose = (StartPositionOption)startChooser.getSelected();
     	PriorityOption priority = (PriorityOption)priorityChooser.getSelected();
     	
     	

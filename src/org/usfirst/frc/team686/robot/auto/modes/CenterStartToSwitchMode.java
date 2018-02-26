@@ -3,6 +3,7 @@ package org.usfirst.frc.team686.robot.auto.modes;
 import java.util.Arrays;
 
 import org.usfirst.frc.team686.robot.Constants;
+import org.usfirst.frc.team686.robot.SmartDashboardInteractions.StartPositionOption;
 import org.usfirst.frc.team686.robot.auto.AutoModeBase;
 import org.usfirst.frc.team686.robot.auto.AutoModeEndedException;
 import org.usfirst.frc.team686.robot.auto.actions.Action;
@@ -19,12 +20,12 @@ import org.usfirst.frc.team686.robot.lib.util.Vector2d;
 
 public class CenterStartToSwitchMode extends AutoModeBase {
 	
-
-	
+	StartPositionOption startPosition;
 	boolean toRight;
 	
-	public CenterStartToSwitchMode (boolean _toRight)
+	public CenterStartToSwitchMode (StartPositionOption _startPosition, boolean _toRight)
 	{
+		startPosition = _startPosition; 
 		toRight = _toRight;
 	}
 	
@@ -37,7 +38,7 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 		PathSegment.Options pathOptions	= new PathSegment.Options(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, Constants.kPathFollowingLookahead, false);
 		PathSegment.Options collisionOptions = new PathSegment.Options(Constants.kCollisionVel, Constants.kCollisionAccel, Constants.kPathFollowingLookahead, false);
 		
-		Vector2d initialPosition = FieldDimensions.getCenterStartPose().getPosition();
+		Vector2d initialPosition = startPosition.initialPose.getPosition();
 		
 		Vector2d switchStopPosition = FieldDimensions.getLeftSwitchPose().getPosition();		
 		
