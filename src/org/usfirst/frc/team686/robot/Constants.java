@@ -86,7 +86,7 @@ public class Constants extends ConstantsBase
     public static double kPointTurnMaxVel; // inches/sec  		
     public static double kPointTurnMaxAccel; // inches/sec^2	
     public static double kPointTurnMinSpeed; // inches/sec 
-    public static double kPointTurnCompletionTolerance; 
+    public static double kPointTurnCompletionToleranceDeg; 
     
     // Path following constants
     public static double kPathFollowingMaxVel; // inches/sec  		
@@ -493,7 +493,7 @@ public class Constants extends ConstantsBase
 	    kPointTurnMaxVel    = 80.0; // inches/sec  		
 	    kPointTurnMaxAccel  = 200.0; // inches/sec^2	
 	    kPointTurnMinSpeed  = 20.0; // inches/sec 
-	    kPointTurnCompletionTolerance = 1.0 * (Math.PI/180.0); 
+	    kPointTurnCompletionToleranceDeg = 3.0; 
 	    
 	    // Path following constants
 	    kPathFollowingMaxVel    = 72.0; // inches/sec  		

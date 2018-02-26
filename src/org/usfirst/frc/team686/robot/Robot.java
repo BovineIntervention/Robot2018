@@ -318,23 +318,23 @@ public class Robot extends IterativeRobot {
 					controls.getButton(Constants.kIntakeButton), 
 					controls.getButton(Constants.kOuttakeButton), 
 					controls.getButton(Constants.kGrabberButton));
-			
-			
-//			// turn-to-angle controls
-//			Optional<Double> buttonBoardDirection = buttonBoard.getDirection();
-//			autoModeExecuter = null;
-//			if (buttonBoardDirection.isPresent())
-//			{
-//				if (autoModeExecuter != null)
-//					autoModeExecuter.stop();	// kill any old commands
-//				autoModeExecuter = new AutoModeExecuter();
-//				AutoModeBase autoMode = new PointTurnMode( buttonBoardDirection.get().doubleValue() );
-//				autoModeExecuter.setAutoMode( autoMode );
-//				autoModeExecuter.start();
-//			}
-//				
-//			// drive controls
-//			if ((autoModeExecuter == null) || (!autoModeExecuter.getAutoMode().isActive()))	// ignore joystick when doing auto turns
+						
+			// turn-to-angle controls
+			int buttonBoardDirection = buttonBoard.getPOV();
+			autoModeExecuter = null;
+			if (buttonBoardDirection >= 0)
+			{
+//				System.out.println("POV: " + buttonBoardDirection);
+				if (autoModeExecuter != null)
+					autoModeExecuter.stop();	// kill any old commands
+				autoModeExecuter = new AutoModeExecuter();
+				AutoModeBase autoMode = new PointTurnMode( (double)(-buttonBoardDirection) );
+				autoModeExecuter.setAutoMode( autoMode );
+				autoModeExecuter.start();
+			}
+				
+			// drive controls
+			if ((autoModeExecuter == null) || (!autoModeExecuter.getAutoMode().isActive()))	// ignore joystick when doing auto turns
 			{
 				double elevatorHeight = elevatorState.getPositionInches();
 				double normalizedHeight = (elevatorHeight/Constants.kElevatorMaxHeightLimit);

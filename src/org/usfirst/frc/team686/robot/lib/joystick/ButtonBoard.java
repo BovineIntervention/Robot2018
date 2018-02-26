@@ -1,7 +1,5 @@
 package org.usfirst.frc.team686.robot.lib.joystick;
 
-import java.util.Optional;
-
 import edu.wpi.first.wpilibj.Joystick;
 
 /**
@@ -21,22 +19,8 @@ public class ButtonBoard
 
     public boolean getButton(int _num) { return mStick.getRawButton(_num); }
 
-    public Optional<Double> getDirection() 
+    public int getPOV() 
     {
-    	double vert = -mStick.getY();
-    	double horiz = -mStick.getX();
-    	double midPoint = 0.5;
-    	
-    	Optional<Double> directionDeg = Optional.empty();
-    	if (vert > midPoint && Math.abs(horiz) < midPoint)
-    		directionDeg = Optional.of(0.0);
-    	else if (vert < -midPoint && Math.abs(horiz) < midPoint)
-    		directionDeg = Optional.of(180.0);
-    	else if (horiz > midPoint && Math.abs(vert) < midPoint)
-    		directionDeg = Optional.of(90.0);
-    	else if (horiz < -midPoint && Math.abs(vert) < midPoint)
-    		directionDeg = Optional.of(-90.0);
-   		
-    	return directionDeg;
+    	return mStick.getPOV();
     }    
 }
