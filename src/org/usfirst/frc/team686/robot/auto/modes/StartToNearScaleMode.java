@@ -36,10 +36,11 @@ public class StartToNearScaleMode extends AutoModeBase {
 	@Override
 	protected void routine() throws AutoModeEndedException {
 
-		PathSegment.Options pathOptions	= new PathSegment.Options(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, 36, false);
+		PathSegment.Options pathOptions	= new PathSegment.Options(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, 48, false);
 		
 		Vector2d initialPosition = startPosition.initialPose.getPosition();
 		
+		// TODO: Center to Scale will hit the corner of the switch.  Add an intermediate point (maybe (140,130)) to keep it away
 		Vector2d turnPosition = new Vector2d(205, 130);
 				
 		Vector2d scaleStopPosition = new Vector2d(300 - (Constants.kCenterToFrontBumper/Math.sqrt(2)) - 6, (FieldDimensions.kScaleLengthY/2) + (Constants.kCenterToFrontBumper/Math.sqrt(2)));

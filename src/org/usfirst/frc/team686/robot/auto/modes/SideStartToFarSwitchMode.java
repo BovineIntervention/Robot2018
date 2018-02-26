@@ -41,39 +41,27 @@ public class SideStartToFarSwitchMode extends AutoModeBase {
 		
 		System.out.println("STARTING AUTOMODE: " + startPosition.name + " to Switch");
 		
-		PathSegment.Options pathOptions	= new PathSegment.Options(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, Constants.kPathFollowingLookahead, false);
+		PathSegment.Options pathOptions	= new PathSegment.Options(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, 48, false);
 		PathSegment.Options collisionOptions = new PathSegment.Options(Constants.kCollisionVel, Constants.kCollisionAccel, Constants.kPathFollowingLookahead, false);
 		
 		// first assume start is left and goal is right
 		Vector2d initialPosition = startPosition.initialPose.getPosition();  
 		
 		// drive straight until we are between the switch and platform
-		Vector2d turnPosition1 = new Vector2d(FieldDimensions.getScalePlatformFromCenterStartDistX() - Constants.kCenterToSideBumper - 12, initialPosition.getY());
+		Vector2d turnPosition = new Vector2d(230, 116);
 
-		// turn between switch and platform
-		Vector2d turnPosition2 = new Vector2d(FieldDimensions.getScalePlatformFromCenterStartDistX() - Constants.kCenterToSideBumper - 12, FieldDimensions.kSwitchLengthY/2);
-		
-		// drive to opposite side of field
-		Vector2d turnPosition3 = new Vector2d(turnPosition2.getX(), -turnPosition2.getY());
-		
 		// switch corner
-		Vector2d switchStopPosition = new Vector2d(FieldDimensions.kSwitchFromCenterStartDistX + FieldDimensions.kSwitchLengthX - 12, FieldDimensions.kSwitchLengthY/2 - 6);
+		Vector2d switchStopPosition = new Vector2d(190 + Constants.kCenterToFrontBumper/Math.sqrt(2), -71 - Constants.kCenterToFrontBumper/Math.sqrt(2));
 
 		// position that defines the turn around point
-		Optional<Vector2d> turnAroundPositionOption = Util.getLineIntersection(new Pose(switchStopPosition, -Math.PI/4), new Pose(turnPosition3, -Math.PI/2));
-		if (!turnAroundPositionOption.isPresent())
-			System.out.println("Error in line intersection calc");
-		
-		Vector2d turnAroundPosition = turnAroundPositionOption.get();
+		Vector2d turnAroundPosition = new Vector2d(230, -116);
 
-		// distance at which we 
-		Vector2d startCollisionPosition = switchStopPosition.add(Vector2d.magnitudeAngle(24.0, -Math.PI/4));
+		// distance at which we start checking collision detector
+		Vector2d startCollisionPosition = switchStopPosition.add(Vector2d.magnitudeAngle(12.0, -Math.PI/4));
 		
 		if (toRight)
 		{
-			turnPosition1.setY(-turnPosition1.getY());
-			turnPosition2.setY(-turnPosition2.getY());
-			turnPosition3.setY(-turnPosition3.getY());
+			turnPosition.setY(-turnPosition.getY());
 			startCollisionPosition.setY(-startCollisionPosition.getY());
 			turnAroundPosition.setY(-turnAroundPosition.getY());
 			switchStopPosition.setY(-switchStopPosition.getY());
@@ -82,9 +70,7 @@ public class SideStartToFarSwitchMode extends AutoModeBase {
 		
 		Path path = new Path(Constants.kCollisionVel);	// final velocity of this path will be collisionVelocity required by next path
 		path.add(new Waypoint(initialPosition, pathOptions));
-		path.add(new Waypoint(turnPosition1, pathOptions));
-		path.add(new Waypoint(turnPosition2, pathOptions));
-		path.add(new Waypoint(turnPosition3, pathOptions));
+		path.add(new Waypoint(turnPosition, pathOptions));
 		path.add(new Waypoint(turnAroundPosition, pathOptions));
 		path.add(new Waypoint(startCollisionPosition, pathOptions));
 		

@@ -23,54 +23,47 @@ import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar.ElevatorArmBarSta
 public class SideStartToFarScaleMode extends AutoModeBase {
 	
 	StartPositionOption startPosition;
-	boolean toRight;
+	boolean startRight;
 	
 	public SideStartToFarScaleMode (StartPositionOption _startPosition, boolean _toRight)
 	{
 		startPosition = _startPosition; 
-		toRight = _toRight;
+		startRight = _toRight;	// if true: start on right, drive to left side scale
 	}
 
 
  
 	@Override
-	protected void routine() throws AutoModeEndedException {
+	protected void routine() throws AutoModeEndedException 
+	{
 
-		PathSegment.Options pathOptions	= new PathSegment.Options(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, 36, false);
+		PathSegment.Options pathOptions	= new PathSegment.Options(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, 48, false);
 		
-		Vector2d initialPosition = startPosition.initialPose.getPosition();
+		Vector2d initialPosition 	= startPosition.initialPose.getPosition();
+		Vector2d turnPosition1 		= new Vector2d(230, 132 - Constants.kCenterToSideBumper);
+		Vector2d turnPosition2 		= new Vector2d(218, -90);
+		Vector2d shootPosition 		= new Vector2d(294 - Constants.kCenterToFrontBumper, -78);
 		
-		Vector2d turnPosition = new Vector2d(205, 130);
-				
-		Vector2d scaleStopPosition = new Vector2d(300 - (Constants.kCenterToFrontBumper/Math.sqrt(2)) - 6, (FieldDimensions.kScaleLengthY/2) + (Constants.kCenterToFrontBumper/Math.sqrt(2)));
-
-		if(toRight){
-			turnPosition.setY(-turnPosition.getY());
-			scaleStopPosition.setY(-scaleStopPosition.getY());
+		if (startRight)
+		{
+			turnPosition1.setY(-turnPosition1.getY());
+			turnPosition2.setY(-turnPosition2.getY());
+			shootPosition.setY(-shootPosition.getY());
 		}
 		
-		Path path = new Path();
+		Path path = new Path(Constants.kCollisionVel);	// final velocity of this path will be collisionVelocity required by next path
 		path.add(new Waypoint(initialPosition, pathOptions));
-		path.add(new Waypoint(turnPosition, pathOptions));
+		path.add(new Waypoint(turnPosition1,   pathOptions));
+		path.add(new Waypoint(turnPosition2,   pathOptions));
+		path.add(new Waypoint(shootPosition,   pathOptions));
 		
-		Path pathToScale = new Path();
-		pathToScale.add(new Waypoint(turnPosition, pathOptions));
-		//pathToScale.add(new Waypoint(turnPosition1, pathOptions));
-		pathToScale.add(new Waypoint(scaleStopPosition, pathOptions));
-		
-		System.out.println("StartToScaleMode path");
+		System.out.println("SideStartToFarScaleMode path");
 		System.out.println(path.toString());
-		System.out.println(pathToScale.toString());
-	
 		
 		runAction( new PathFollowerWithVisionAction(path) );
-		runAction( new ParallelAction(Arrays.asList(new Action[] {
-				//new ElevatorAction(ElevatorArmBarStateEnum.SWITCH),
-				new PathFollowerWithVisionAction(pathToScale)
-		})));
-		
+		runAction( new ElevatorAction(ElevatorArmBarStateEnum.SCALE_HIGH) );
 		runAction( new OuttakeAction() );
-		
+		runAction( new ElevatorAction(ElevatorArmBarStateEnum.GROUND) );
 	}
 
 }
