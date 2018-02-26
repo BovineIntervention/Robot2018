@@ -15,6 +15,11 @@ public class PointTurnMode extends AutoModeBase {
     	targetHeadingDeg = _targetHeadingDeg;
     }
 
+    public void setHeading(double _targetHeadingDeg)
+    {
+    	targetHeadingDeg = _targetHeadingDeg;
+    }
+    
     @Override
     protected void routine() throws AutoModeEndedException 
     {

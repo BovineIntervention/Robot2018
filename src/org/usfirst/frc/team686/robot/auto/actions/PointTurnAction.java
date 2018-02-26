@@ -26,8 +26,8 @@ public class PointTurnAction implements Action
     private Drive drive = Drive.getInstance();
     private RobotState robotState = RobotState.getInstance();
     
-    static final double Kp = 0.02;
-    static final double Kd = 0.00;
+    static final double Kp = 0.05;
+    static final double Kd = 0.40;
     static final double Ki = 0.00;
     static final double Kf = 0.00;
     
@@ -80,16 +80,18 @@ public class PointTurnAction implements Action
     {
     	heading = robotState.getLatestFieldToVehicle().getHeadingDeg();
        	error = Vector2d.normalizeAngleDeg( targetHeading - heading );
+    	dError = error - lastError;	// note: lastError updated in update(), not here
 
 		System.out.println(this.toString());
-//    	return (Math.abs(error) < Constants.kPointTurnCompletionToleranceDeg && output < 0.1);
-    	return false;
+		
+		// finished if angle is close to target and our turn rate is slow (indicating we aren't flying past the target)
+    	return ((Math.abs(error) < Constants.kPointTurnCompletionToleranceDeg) && (Math.abs(dError) < 0.1/Constants.kLoopDt));
     }
 
     @Override
     public void done()
     {
-//		drive.setOpenLoop(DriveCommand.COAST());
+		drive.setOpenLoop(DriveCommand.COAST());
     }
 
     public String toString()

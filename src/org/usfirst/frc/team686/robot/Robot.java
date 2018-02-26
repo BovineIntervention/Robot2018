@@ -258,6 +258,8 @@ public class Robot extends IterativeRobot {
 	 * TELEOP MODE
 	 ****************************************************************/
 
+	PointTurnMode pointTurnAutoMode = new PointTurnMode( 0.0 );	
+	
 	@Override
 	public void teleopInit(){
 		operationalMode = OperationalMode.TELEOP;
@@ -279,8 +281,10 @@ public class Robot extends IterativeRobot {
 			if(autoModeExecuter != null){
     			autoModeExecuter.stop();
     		}
-    		autoModeExecuter = null;
-
+			// configure PointTurn as auto mode during teleop
+			autoModeExecuter = new AutoModeExecuter();
+			autoModeExecuter.setAutoMode( pointTurnAutoMode );
+    		
 			drive.setOpenLoop(DriveCommand.COAST());
 			
 			elevatorArmBar.set(ElevatorArmBarStateEnum.GROUND, false);	// prepare to intake during teleop
@@ -293,6 +297,7 @@ public class Robot extends IterativeRobot {
 		}
 	}
 	
+	public int prevButtonBoardDirection = -1;
 	
 	@Override
 	public void teleopPeriodic() 
@@ -322,26 +327,24 @@ public class Robot extends IterativeRobot {
 			// turn-to-angle controls
 			int buttonBoardDirection = buttonBoard.getPOV();
 			autoModeExecuter = null;
-			if (buttonBoardDirection >= 0)
+			if (buttonBoardDirection >= 0 && (buttonBoardDirection != prevButtonBoardDirection))
 			{
-//				System.out.println("POV: " + buttonBoardDirection);
-				if (autoModeExecuter != null)
-					autoModeExecuter.stop();	// kill any old commands
-				autoModeExecuter = new AutoModeExecuter();
-				AutoModeBase autoMode = new PointTurnMode( (double)(-buttonBoardDirection) );
-				autoModeExecuter.setAutoMode( autoMode );
+				pointTurnAutoMode.setHeading(buttonBoardDirection);
 				autoModeExecuter.start();
 			}
+			prevButtonBoardDirection = buttonBoardDirection;
 				
 			// drive controls
 			if ((autoModeExecuter == null) || (!autoModeExecuter.getAutoMode().isActive()))	// ignore joystick when doing auto turns
 			{
+				// slow down drivetrain when elevator is extended
 				double elevatorHeight = elevatorState.getPositionInches();
 				double normalizedHeight = (elevatorHeight/Constants.kElevatorMaxHeightLimit);
 				double slope = -(1.0 - Constants.kDriveScaleFactorAtMaxElevatorHeight);
 				double scaleFactor = slope*normalizedHeight + 1.0;
 				DriveCommand driveCmd = controls.getDriveCommand();
 				driveCmd.scale(scaleFactor);
+				
 				drive.setOpenLoop(driveCmd);
 			}
 		

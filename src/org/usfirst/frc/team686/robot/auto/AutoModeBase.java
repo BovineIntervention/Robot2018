@@ -2,6 +2,7 @@ package org.usfirst.frc.team686.robot.auto;
 
 
 
+import org.usfirst.frc.team686.robot.Constants;
 import org.usfirst.frc.team686.robot.auto.actions.Action;
 import org.usfirst.frc.team686.robot.lib.util.DataLogController;
 import org.usfirst.frc.team686.robot.lib.util.Pose;
@@ -14,7 +15,7 @@ import edu.wpi.first.wpilibj.Timer;
  */
 public abstract class AutoModeBase
 {
-    protected double updatePeriod = 1.0 / 50.0;
+    protected double updatePeriod = Constants.kLoopDt;
     protected boolean active = false;
     protected Pose initialPose = new Pose();
     
