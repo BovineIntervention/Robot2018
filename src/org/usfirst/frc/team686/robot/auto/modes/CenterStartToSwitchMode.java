@@ -17,6 +17,7 @@ import org.usfirst.frc.team686.robot.lib.util.Path;
 import org.usfirst.frc.team686.robot.lib.util.Path.Waypoint;
 import org.usfirst.frc.team686.robot.lib.util.PathSegment;
 import org.usfirst.frc.team686.robot.lib.util.Vector2d;
+import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar.ElevatorArmBarStateEnum;
 
 public class CenterStartToSwitchMode extends AutoModeBase {
 	
@@ -68,12 +69,12 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 		
 		runAction( new PathFollowerWithVisionAction(path) );
 		runAction( new ParallelAction(Arrays.asList(new Action[] {
-				//new ElevatorAction(ElevatorArmBarStateEnum.SWITCH),
+				new ElevatorAction(ElevatorArmBarStateEnum.SWITCH),
 				new InterruptableAction(new CollisionDetectionAction(),
 				new PathFollowerWithVisionAction(collisionPath))
 		})));
-		//runAction( new OuttakeAction() );
-		
+		runAction( new OuttakeAction() );
+		runAction( new ElevatorAction(ElevatorArmBarStateEnum.GROUND) );
 	}
 
 }

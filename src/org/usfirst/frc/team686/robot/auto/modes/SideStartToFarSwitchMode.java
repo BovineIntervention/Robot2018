@@ -84,13 +84,12 @@ public class SideStartToFarSwitchMode extends AutoModeBase {
 		
 		runAction( new PathFollowerWithVisionAction(path) );
 		runAction( new ParallelAction(Arrays.asList(new Action[] {
-				//new ElevatorAction(ElevatorArmBarStateEnum.SWITCH),
+				new ElevatorAction(ElevatorArmBarStateEnum.SWITCH),
 				new InterruptableAction(new CollisionDetectionAction(),
 				new PathFollowerWithVisionAction(collisionPath))
 		})));
-		
 		runAction( new OuttakeAction() );
-		
+		runAction( new ElevatorAction(ElevatorArmBarStateEnum.GROUND) );
 	}
 
 }

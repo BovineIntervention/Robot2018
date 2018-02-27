@@ -41,39 +41,32 @@ public class StartToNearScaleMode extends AutoModeBase {
 		
 		Vector2d initialPosition = startPosition.initialPose.getPosition();
 		
-		// TODO: Center to Scale will hit the corner of the switch.  Add an intermediate point (maybe (140,130)) to keep it away
-		Vector2d turnPosition = new Vector2d(205, 130);
+		Vector2d centerStartTurnPosition = new Vector2d(140, 130);	// needed if starting from center to avoid clipping switch
+
+		Vector2d turnToScalePosition = new Vector2d(205, 130);
 				
 		Vector2d scaleStopPosition = new Vector2d(300 - (Constants.kCenterToFrontBumper/Math.sqrt(2)) - 6, (FieldDimensions.kScaleLengthY/2) + (Constants.kCenterToFrontBumper/Math.sqrt(2)));
 
 		if (scaleSide == 'R') {
-			turnPosition.setY(-turnPosition.getY());
+			centerStartTurnPosition.setY(-centerStartTurnPosition.getY());
+			turnToScalePosition.setY(-turnToScalePosition.getY());
 			scaleStopPosition.setY(-scaleStopPosition.getY());
 		}
 		
 		Path path = new Path();
 		path.add(new Waypoint(initialPosition, pathOptions));
-		path.add(new Waypoint(turnPosition, pathOptions));
-		
-		Path pathToScale = new Path();
-		pathToScale.add(new Waypoint(turnPosition, pathOptions));
-		//pathToScale.add(new Waypoint(turnPosition1, pathOptions));
-		pathToScale.add(new Waypoint(scaleStopPosition, pathOptions));
+		path.add(new Waypoint(centerStartTurnPosition, pathOptions));
+		path.add(new Waypoint(turnToScalePosition, pathOptions));
+		path.add(new Waypoint(scaleStopPosition, pathOptions));
 		
 		System.out.println("StartToScaleMode path");
 		System.out.println(path.toString());
-		System.out.println(pathToScale.toString());
 	
 		
 		runAction( new PathFollowerWithVisionAction(path) );
-		runAction( new ParallelAction(Arrays.asList(new Action[] {
-				//new ElevatorAction(ElevatorArmBarStateEnum.SWITCH),
-				new PathFollowerWithVisionAction(pathToScale)
-		})));
-		
+		runAction( new ElevatorAction(ElevatorArmBarStateEnum.SCALE_HIGH) );
 		runAction( new OuttakeAction() );
-
-		//runAction( new ElevatorAction(ElevatorArmBarStateEnum.GROUND) );
+		runAction( new ElevatorAction(ElevatorArmBarStateEnum.GROUND) );
 
 		
 		
@@ -81,9 +74,9 @@ public class StartToNearScaleMode extends AutoModeBase {
 		AutoModeBase secondCubeAutoMode;
 		
 		if (switchSide == scaleSide)
-			secondCubeAutoMode = new SameSideSwitchSecondCubeMode(scaleStopPosition, switchSide, scaleSide);
+			secondCubeAutoMode = new SecondCubeForSameSideSwitchMode(scaleStopPosition, switchSide, scaleSide);
 		else
-			secondCubeAutoMode = new ScaleSecondCubeMode(scaleStopPosition, switchSide, scaleSide);
+			secondCubeAutoMode = new SecondCubeForScaleMode(scaleStopPosition, switchSide, scaleSide);
 		
 		secondCubeAutoMode.run();
 		

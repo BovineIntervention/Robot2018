@@ -12,15 +12,15 @@ import org.usfirst.frc.team686.robot.lib.util.Vector2d;
 import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar.ElevatorArmBarStateEnum;
 import org.usfirst.frc.team686.robot.lib.util.Path.Waypoint;
 
-public class SameSideSwitchSecondCubeMode  extends AutoModeBase {
+public class SecondCubeForSameSideSwitchMode  extends AutoModeBase {
 
-	Vector2d startPosition;
+	Vector2d currentPosition;
 	char switchSide;
 	char scaleSide;
 	
-	public SameSideSwitchSecondCubeMode(Vector2d _currentPosition, char _switchSide, char _scaleSide)
+	public SecondCubeForSameSideSwitchMode(Vector2d _currentPosition, char _switchSide, char _scaleSide)
 	{
-		startPosition = _currentPosition;
+		currentPosition = _currentPosition;
 		switchSide = _switchSide;
 		scaleSide = _scaleSide;
 	}
@@ -29,7 +29,7 @@ public class SameSideSwitchSecondCubeMode  extends AutoModeBase {
 	{
 		// define positions, angles
 		Vector2d centerOfSwitch = new Vector2d(168, 0);
-		double turnAroundAngleDeg = startPosition.angle(centerOfSwitch) * Vector2d.radiansToDegrees;
+		double turnAroundAngleDeg = currentPosition.angle(centerOfSwitch) * Vector2d.radiansToDegrees;
 		
 		Vector2d slowDownPosition = 	 new Vector2d(224 + Constants.kCenterToFrontBumper, 70);
 		Vector2d closeIntakePosition = 	 new Vector2d(212 + Constants.kCenterToFrontBumper, 70);
@@ -48,7 +48,7 @@ public class SameSideSwitchSecondCubeMode  extends AutoModeBase {
 		PathSegment.Options collisionOptions = new PathSegment.Options(Constants.kCollisionVel, Constants.kCollisionAccel, Constants.kPathFollowingLookahead, false);
 		
 		Path toCubePath = new Path(slowDownOptions.getMaxSpeed());	// final velocity of this path will be velocity required by next path
-		toCubePath.add(new Waypoint(startPosition, pathOptions));
+		toCubePath.add(new Waypoint(currentPosition, pathOptions));
 		toCubePath.add(new Waypoint(slowDownPosition, pathOptions));
 
 		Path intakePath = new Path(collisionOptions.getMaxSpeed());	// final velocity of this path will be velocity required by next path
@@ -56,8 +56,8 @@ public class SameSideSwitchSecondCubeMode  extends AutoModeBase {
 		intakePath.add(new Waypoint(closeIntakePosition, slowDownOptions));
 		
 		Path collisionPath = new Path();							// final velocity of this path will be 0
-		collisionPath.add(new Waypoint(startPosition, pathOptions));
-		collisionPath.add(new Waypoint(closeIntakePosition, pathOptions));
+		collisionPath.add(new Waypoint(closeIntakePosition, collisionOptions));
+		collisionPath.add(new Waypoint(stopPosition, collisionOptions));
 		
 		
 		// display paths for debug
@@ -80,5 +80,7 @@ public class SameSideSwitchSecondCubeMode  extends AutoModeBase {
 		runAction( new InterruptableAction(new CollisionDetectionAction(),		// run into switch fence
 										   new PathFollowerWithVisionAction(collisionPath)));
 		runAction( new OuttakeAction() );										// shoot!
+		runAction( new ElevatorAction(ElevatorArmBarStateEnum.GROUND) );
+		
 	}
 }	
