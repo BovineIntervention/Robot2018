@@ -185,12 +185,13 @@ public class Constants extends ConstantsBase
 	public static double kArmBarQuadEncoderUnitsPerRev = 4096;
 	public static double kArmBarEncoderUnitsPerDeg = kArmBarQuadEncoderUnitsPerRev / 360.0 * kArmBarQuadEncoderGain; 
 	
-    public static final int kArmBarEncoderLimitUp =     +35000;	// DO NOT CHANGE!!!
+    public static final int kArmBarEncoderLimitUp =    +35000;	// DO NOT CHANGE!!!
+    public static final int kArmBarEncoderAtZeroDeg = -124700;	
     public static final int kArmBarEncoderLimitDown = -185000;	// DO NOT CHANGE!!!
-	
-    public static double kArmBarUpAngleDeg =   +35000 / kArmBarEncoderUnitsPerDeg;	// just short of up limit
-    public static double kArmBarFlatAngleDeg = 	0.0;	
-    public static double kArmBarDownAngleDeg = -180000 / kArmBarEncoderUnitsPerDeg; // just short of down limit
+    
+    public static double kArmBarUpAngleDeg =    86.6;	// at upper limit
+    public static double kArmBarFlatAngleDeg = 	 0.0;	
+    public static double kArmBarDownAngleDeg = -30.0; 	// at lower limit
 
 	
 	public static double kArmBarKf = 0.0;

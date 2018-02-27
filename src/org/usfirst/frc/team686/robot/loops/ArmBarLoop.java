@@ -252,12 +252,12 @@ public class ArmBarLoop implements Loop
 	
 	public static double encoderUnitsToAngleDeg(int _encoderUnits)
 	{
-		return _encoderUnits / Constants.kArmBarEncoderUnitsPerDeg;
+		return (_encoderUnits - Constants.kArmBarEncoderAtZeroDeg) / Constants.kArmBarEncoderUnitsPerDeg;
 	}
 	
 	public static int angleDegToEncoderUnits(double _deg)
 	{
-		return (int)(_deg * Constants.kArmBarEncoderUnitsPerDeg);
+		return (int)(_deg * Constants.kArmBarEncoderUnitsPerDeg) + Constants.kArmBarEncoderAtZeroDeg;
 	}
 	
 	
