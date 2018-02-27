@@ -326,9 +326,9 @@ public class Robot extends IterativeRobot {
 						
 			// turn-to-angle controls
 			int buttonBoardDirection = buttonBoard.getPOV();
-			autoModeExecuter = null;
 			if (buttonBoardDirection >= 0 && (buttonBoardDirection != prevButtonBoardDirection))
 			{
+				System.out.println(buttonBoardDirection);
 				pointTurnAutoMode.setHeading(buttonBoardDirection);
 				autoModeExecuter.start();
 			}
