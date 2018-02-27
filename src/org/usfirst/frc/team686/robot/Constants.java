@@ -179,7 +179,7 @@ public class Constants extends ConstantsBase
     public static double kArmBarLength = 14.0;
     
     public static double kArmBarZeroingVelocity =	30.0;	// in degrees per second
-    public static double kArmBarVelocity = 			250.0;	// in degrees per second
+    public static double kArmBarVelocity = 			30.0;//250.0;	// in degrees per second
     
 	public static double kArmBarQuadEncoderGain = 81.0 * 2.0;			// two 9:1 gear stages plus a 24:12 tooth reduction after the encoder 
 	public static double kArmBarQuadEncoderUnitsPerRev = 4096;
