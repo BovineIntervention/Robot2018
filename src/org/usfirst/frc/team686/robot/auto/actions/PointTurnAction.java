@@ -7,7 +7,10 @@ import org.usfirst.frc.team686.robot.lib.util.Kinematics.WheelSpeed;
 import org.usfirst.frc.team686.robot.Constants;
 import org.usfirst.frc.team686.robot.command_status.DriveCommand;
 import org.usfirst.frc.team686.robot.command_status.RobotState;
+import org.usfirst.frc.team686.robot.command_status.DriveCommand.DriveControlMode;
 import org.usfirst.frc.team686.robot.subsystems.Drive;
+
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.Timer;
 
@@ -18,7 +21,7 @@ public class PointTurnAction implements Action
     double error;
     double output;
  
-    boolean firstTime = true;
+    boolean firstUpdate = true;
     double lastError = 0.0;
     double dError = 0.0;
     double iError = 0.0;
@@ -44,7 +47,7 @@ public class PointTurnAction implements Action
     @Override
     public void start() 
     {
-    	firstTime = true;
+    	firstUpdate = true;
     	lastError = 0.0;
     }
 
@@ -55,10 +58,10 @@ public class PointTurnAction implements Action
     	heading = robotState.getLatestFieldToVehicle().getHeadingDeg();
     	error = Vector2d.normalizeAngleDeg( targetHeading - heading );
 
-    	if (firstTime)
+    	if (firstUpdate)
     	{
     		lastError = error;
-    		firstTime = false;
+    		firstUpdate = false;
     	}
     	
     	if (Math.abs(error) < Constants.kPointTurnCompletionToleranceDeg)
@@ -71,8 +74,9 @@ public class PointTurnAction implements Action
 		output = Kp * error + Kd * dError + Ki * iError;
 		output = Util.limit(output, 1.0);
     	
-   		// send drive control command
-		drive.setOpenLoop(new DriveCommand(-output, +output));		
+   		// send drive control command (note: using brake mode to help finish at correct angle)
+		DriveCommand cmd = new DriveCommand(DriveControlMode.OPEN_LOOP, -output, +output, NeutralMode.Brake);
+		drive.setCommand(cmd);
     }
 
     @Override
@@ -91,6 +95,7 @@ public class PointTurnAction implements Action
     @Override
     public void done()
     {
+    	// brake off -- back to coasting
 		drive.setOpenLoop(DriveCommand.COAST());
     }
 

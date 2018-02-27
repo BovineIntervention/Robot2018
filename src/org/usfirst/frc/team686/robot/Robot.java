@@ -324,7 +324,7 @@ public class Robot extends IterativeRobot {
 					controls.getButton(Constants.kOuttakeButton), 
 					controls.getButton(Constants.kGrabberButton));
 						
-			// turn-to-angle controls
+			// turn-to-angle controls (assumes that AutoModeExectuer is already set to PointTurnAutoMode)
 			int buttonBoardDirection = buttonBoard.getPOV();
 			if (buttonBoardDirection >= 0 && (buttonBoardDirection != prevButtonBoardDirection))
 			{
@@ -335,8 +335,10 @@ public class Robot extends IterativeRobot {
 			prevButtonBoardDirection = buttonBoardDirection;
 				
 			// drive controls
-			if ((autoModeExecuter == null) || (!autoModeExecuter.getAutoMode().isActive()))	// ignore joystick when doing auto turns
+			if (!autoModeExecuter.getAutoMode().isActive())	// ignore joystick when doing auto turns
 			{
+				autoModeExecuter.stop();	// if point turn action has completed, stop the auto mode so that we can start a new point turn action
+				
 				// slow down drivetrain when elevator is extended
 				double elevatorHeight = elevatorState.getPositionInches();
 				double normalizedHeight = (elevatorHeight/Constants.kElevatorMaxHeightLimit);
