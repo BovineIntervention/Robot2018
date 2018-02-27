@@ -133,8 +133,7 @@ public class ArmBarLoop implements Loop
 		double elapsedZeroingTime = Timer.getFPGATimestamp() - startZeroingTime;
 		double maxZeroingTime = Constants.kElevatorMaxHeightLimit / Constants.kElevatorZeroingVelocity + 2.0;
 		
-		int encoderPosition = talon.getSelectedSensorPosition(Constants.kTalonPidIdx);
-		return ((encoderPosition >= Constants.kArmBarEncoderLimitUp) || 
+		return (armBarState.isLimitSwitchTriggered() || 
 				(armBarState.getMotorCurrent() > Constants.kArmBarMotorStallCurrentThreshold) ||
 				elapsedZeroingTime > maxZeroingTime);
 	}
