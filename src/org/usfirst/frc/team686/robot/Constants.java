@@ -175,25 +175,30 @@ public class Constants extends ConstantsBase
     public static double kDriveScaleFactorAtMaxElevatorHeight = 0.25;    
     
     // ARM BAR
-    public static double kArmBarUpAngleDeg = 	 73.0;
-    public static double kArmBarFlatAngleDeg = 	  0.0;	
-    public static double kArmBarDownAngleDeg = 	45;//-15.0;	//-20.0  
-
+	// absolute encoder values (to be used in place of limit switches)
     public static double kArmBarLength = 14.0;
     
     public static double kArmBarZeroingVelocity =	30.0;	// in degrees per second
-    public static double kArmBarVelocity = 			30.0;//75.0;	// in degrees per second
+    public static double kArmBarVelocity = 			250.0;	// in degrees per second
     
 	public static double kArmBarQuadEncoderGain = 81.0 * 2.0;			// two 9:1 gear stages plus a 24:12 tooth reduction after the encoder 
 	public static double kArmBarQuadEncoderUnitsPerRev = 4096;
 	public static double kArmBarEncoderUnitsPerDeg = kArmBarQuadEncoderUnitsPerRev / 360.0 * kArmBarQuadEncoderGain; 
+	
+    public static final int kArmBarEncoderLimitUp =     +35000;	// DO NOT CHANGE!!!
+    public static final int kArmBarEncoderLimitDown = -185000;	// DO NOT CHANGE!!!
+	
+    public static double kArmBarUpAngleDeg =   +35000 / kArmBarEncoderUnitsPerDeg;	// just short of up limit
+    public static double kArmBarFlatAngleDeg = 	0.0;	
+    public static double kArmBarDownAngleDeg = -180000 / kArmBarEncoderUnitsPerDeg; // just short of down limit
+
 	
 	public static double kArmBarKf = 0.0;
 	public static double kArmBarKp = 0.4;
 	public static double kArmBarKd = 0.0;
 	public static double kArmBarKi = 0.0;
    
-	public static double kMaxArmBarVoltage = 6.0;	// may be less than 12V battery voltage when testing	
+	public static double kMaxArmBarVoltage = 12.0;	// may be less than 12V battery voltage when testing	
 	public static double kArmBarMotorStallCurrentThreshold = 1.0;	// current at which we will assume the limit switch didn't catch it and we are stalled
 
 	public static int kArmBarPeakCurrentLimit = 10;	// current at which current limit is activated

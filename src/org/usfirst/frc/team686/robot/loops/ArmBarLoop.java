@@ -2,18 +2,12 @@ package org.usfirst.frc.team686.robot.loops;
 
 import org.usfirst.frc.team686.robot.Constants;
 import org.usfirst.frc.team686.robot.command_status.ArmBarState;
-import org.usfirst.frc.team686.robot.lib.joystick.ArcadeDriveJoystick;
+import org.usfirst.frc.team686.robot.lib.util.Util;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
-import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
+import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 
 public class ArmBarLoop implements Loop
@@ -33,6 +27,7 @@ public class ArmBarLoop implements Loop
 	private ArmBarState armBarState = ArmBarState.getInstance();
 	
 	public boolean enable = false;
+	public boolean forceDisable = false;
 	
 	public double position;
 	public double target;
@@ -46,14 +41,14 @@ public class ArmBarLoop implements Loop
 	public double voltage = 0.0;
 	
 	public TalonSRX talon;
-	public DigitalInput limitSwitch;
 	
 	private double startZeroingTime;
+	
 	
 	public ArmBarLoop()
 	{
 		System.out.println("ArmBarLoop constructor");
-		
+
 		// Configure Talon
 		talon = new TalonSRX(Constants.kArmBarTalonId);
 		talon.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General,   (int)(1000 * Constants.kLoopDt), Constants.kTalonTimeoutMs);
@@ -69,19 +64,51 @@ public class ArmBarLoop implements Loop
 		
 		
 		// Configure Encoder
-		talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kTalonPidIdx, Constants.kTalonTimeoutMs);	// configure for closed-loop PID
-		talon.setSensorPhase(false);
+		// first, find the current absolute encoder values
+		talon.setSensorPhase(true);
 		talon.setInverted(true);
+
+		talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, Constants.kTalonPidIdx, Constants.kTalonTimeoutMs);	
+		int absoluteEncoderValue = talon.getSensorCollection().getPulseWidthPosition();
+
+		// set relative position to absolute position
+		talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kTalonPidIdx, Constants.kTalonTimeoutMs);	// configure for closed-loop PID
+		talon.setSelectedSensorPosition( absoluteEncoderValue, Constants.kTalonPidIdx, Constants.kTalonTimeoutMs);
 		
-		// Configure Limit Switch
-		talon.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, Constants.kTalonTimeoutMs);
-		talon.overrideLimitSwitchesEnable(true); 	// enable limit switch
+		// set soft limits
+		talon.configForwardSoftLimitThreshold( Constants.kArmBarEncoderLimitUp,   Constants.kTalonTimeoutMs);
+		talon.configReverseSoftLimitThreshold( Constants.kArmBarEncoderLimitDown, Constants.kTalonTimeoutMs);
+		talon.configForwardSoftLimitEnable(true, Constants.kTalonTimeoutMs);
+		talon.configReverseSoftLimitEnable(true, Constants.kTalonTimeoutMs);
+		talon.overrideLimitSwitchesEnable(true);	// enable soft limit switches
+		
+		int relativeEncoderValue = talon.getSelectedSensorPosition(Constants.kTalonPidIdx);
+		if ((relativeEncoderValue > Constants.kArmBarEncoderLimitUp) || (relativeEncoderValue < Constants.kArmBarEncoderLimitDown))
+		{
+			forceDisable = true;
+			String errorString = String.format("Four Bar relative encoder reading of %d not within absolute encoder limits (%d, %d).  Forcing arm bar to disabled", relativeEncoderValue, Constants.kArmBarEncoderLimitDown, Constants.kArmBarEncoderLimitUp);
+			System.out.println(errorString);
+			DriverStation.reportError(errorString, false);
+		}
 		
 		disable();
 	}
 	
 
-	public void enable(){ enable = true; System.out.println("ArmBarLoop enable");}
+	public void enable()
+	{
+		if (forceDisable)
+		{
+			// if relativePosition is not within absolute position limits, do not trust it
+			// disable four bar to avoid damage
+			enable = false;
+		}
+		else
+		{
+			enable = true; 
+			System.out.println("ArmBarLoop enable");
+		}
+	}
 	
 	public void disable()
 	{
@@ -101,19 +128,15 @@ public class ArmBarLoop implements Loop
 
 	public double getPosition() { return position; }
 	
-	public void calibrateAngleDeg(double _angleDeg) 
-	{
-		talon.setSelectedSensorPosition( angleDegToEncoderUnits(_angleDeg), Constants.kTalonPidIdx, Constants.kTalonTimeoutMs);
-	}
-	
 	public boolean getLimitSwitchDuringZeroing()
 	{
 		double elapsedZeroingTime = Timer.getFPGATimestamp() - startZeroingTime;
 		double maxZeroingTime = Constants.kElevatorMaxHeightLimit / Constants.kElevatorZeroingVelocity + 2.0;
 		
-		return (armBarState.isLimitSwitchTriggered() || 
+		int encoderPosition = talon.getSelectedSensorPosition(Constants.kTalonPidIdx);
+		return ((encoderPosition >= Constants.kArmBarEncoderLimitUp) || 
 				(armBarState.getMotorCurrent() > Constants.kArmBarMotorStallCurrentThreshold) ||
-				elapsedZeroingTime > maxZeroingTime); 
+				elapsedZeroingTime > maxZeroingTime);
 	}
 	
 	
@@ -125,6 +148,7 @@ public class ArmBarLoop implements Loop
 		nextState = ArmBarStateEnum.UNINITIALIZED;
 		
 		startTime = Timer.getFPGATimestamp();
+		forceDisable = false;		
 	}
 
 	@Override
@@ -141,7 +165,6 @@ public class ArmBarLoop implements Loop
 		armBarState.setFilteredTargetAngleDeg(filteredTarget);
 		armBarState.setPidError(voltage);
 			
-if (state == ArmBarStateEnum.CALIBRATING)		
 		System.out.println(toString());
 	}
 
@@ -168,36 +191,24 @@ if (state == ArmBarStateEnum.CALIBRATING)
 		{
 		case UNINITIALIZED:
 			// initial state.  stay here until enabled
+			setTarget(position);						// initial goal is to stay in the same position
 			filteredTarget = position;				// hold position
 			if (enabled)
 			{
 				nextState = ArmBarStateEnum.CALIBRATING;	// when enabled, state ZEROING
-				talon.configReverseSoftLimitEnable(false, Constants.kTalonTimeoutMs);
-				talon.configForwardSoftLimitEnable(false, Constants.kTalonTimeoutMs);
-				talon.overrideLimitSwitchesEnable(false);	// disable soft limit switches during zeroing
 			}
 			break;
 			
 		case CALIBRATING:
 			// slowly move up towards limit switch
-			System.out.printf("fTarget: %.1f, V: %.1f, dt: %.1f\n", filteredTarget, Constants.kArmBarZeroingVelocity, Constants.kLoopDt);
 			filteredTarget += (Constants.kArmBarZeroingVelocity * Constants.kLoopDt);
 			
 			if (limitSwitchTriggered)
 			{
 				// CALIBRATING is done when limit switch is hit
-				calibrateAngleDeg(Constants.kArmBarUpAngleDeg);	// write new position to Talon
-				position = Constants.kArmBarUpAngleDeg;		// override position before limit switch was hit
-				setTarget(position);							// initial goal is to stay in the same position
+				setTarget(position);						// initial goal is to stay in the same position
 				filteredTarget = position;					// initial goal is to stay in the same position
 				
-				// set soft limits
-				talon.configReverseSoftLimitThreshold( angleDegToEncoderUnits(Constants.kArmBarDownAngleDeg), Constants.kTalonTimeoutMs);
-				talon.configForwardSoftLimitThreshold( angleDegToEncoderUnits(Constants.kArmBarUpAngleDeg),   Constants.kTalonTimeoutMs);
-				talon.configReverseSoftLimitEnable(true, Constants.kTalonTimeoutMs);
-				talon.configForwardSoftLimitEnable(true, Constants.kTalonTimeoutMs);
-				talon.overrideLimitSwitchesEnable(true);	// enable soft limit switches
-								
 				nextState = ArmBarStateEnum.RUNNING;		// start running state
 			}
 			break;
@@ -231,20 +242,20 @@ if (state == ArmBarStateEnum.CALIBRATING)
 		lastError = error;
 		
 		voltage = Kp * error + Kd * dError + Ki * iError;
-		voltage = Math.min(Constants.kMaxArmBarVoltage, Math.max(-Constants.kMaxArmBarVoltage, voltage));
+		voltage = Util.limit(voltage,  Constants.kMaxArmBarVoltage);
 		
 		if (limitSwitchTriggered)
-			voltage = Math.min(voltage, 0.0);	// do not let elevator continue up when at limit switch
-
+			voltage = Math.min(voltage, 0.0);	// do not let elevator continue up when at limit switch		
+		
 		return voltage;
 	}	
 	
-	public double encoderUnitsToAngleDeg(int _encoderUnits)
+	public static double encoderUnitsToAngleDeg(int _encoderUnits)
 	{
 		return _encoderUnits / Constants.kArmBarEncoderUnitsPerDeg;
 	}
 	
-	public int angleDegToEncoderUnits(double _deg)
+	public static int angleDegToEncoderUnits(double _deg)
 	{
 		return (int)(_deg * Constants.kArmBarEncoderUnitsPerDeg);
 	}
@@ -259,7 +270,7 @@ if (state == ArmBarStateEnum.CALIBRATING)
 		armBarState.setMotorPercentOutput( talon.getMotorOutputPercent() );
 		armBarState.setMotorCurrent( talon.getOutputCurrent() );
 
-		armBarState.setLimitSwitchTriggered( talon.getSensorCollection().isFwdLimitSwitchClosed() );
+		armBarState.setLimitSwitchTriggered( talon.getSelectedSensorPosition(Constants.kTalonPidIdx) >= Constants.kArmBarEncoderLimitUp);
 	}
 
 	
