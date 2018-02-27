@@ -21,12 +21,13 @@ import org.usfirst.frc.team686.robot.lib.util.Vector2d;
 public class CenterStartToSwitchMode extends AutoModeBase {
 	
 	StartPositionOption startPosition;
-	boolean toRight;
+	char switchSide, scaleSide;
 	
-	public CenterStartToSwitchMode (StartPositionOption _startPosition, boolean _toRight)
+	public CenterStartToSwitchMode (StartPositionOption _startPosition, char _switchSide, char _scaleSide)
 	{
 		startPosition = _startPosition; 
-		toRight = _toRight;
+		switchSide = _switchSide;
+		scaleSide = _scaleSide;
 	}
 	
 
@@ -46,8 +47,7 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 		
 		Vector2d startCollisionPosition = new Vector2d(turnPosition.getX() + 12, switchStopPosition.getY());
 		
-		if(toRight)
-		{
+		if (switchSide == 'R') {
 			switchStopPosition.setY(-switchStopPosition.getY());
 			turnPosition.setY(-turnPosition.getY());
 			startCollisionPosition.setY(-startCollisionPosition.getY());

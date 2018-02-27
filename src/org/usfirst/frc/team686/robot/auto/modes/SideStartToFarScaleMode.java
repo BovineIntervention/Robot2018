@@ -23,14 +23,15 @@ import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar.ElevatorArmBarSta
 public class SideStartToFarScaleMode extends AutoModeBase {
 	
 	StartPositionOption startPosition;
-	boolean startRight;
+	char switchSide, scaleSide;
 	
-	public SideStartToFarScaleMode (StartPositionOption _startPosition, boolean _toRight)
+	public SideStartToFarScaleMode (StartPositionOption _startPosition, char _switchSide, char _scaleSide)
 	{
 		startPosition = _startPosition; 
-		startRight = _toRight;	// if true: start on right, drive to left side scale
+		switchSide = _switchSide;
+		scaleSide = _scaleSide;
 	}
-
+	
 
  
 	@Override
@@ -44,8 +45,7 @@ public class SideStartToFarScaleMode extends AutoModeBase {
 		Vector2d turnPosition2 		= new Vector2d(218, -90);
 		Vector2d shootPosition 		= new Vector2d(294 - Constants.kCenterToFrontBumper, -78);
 		
-		if (startRight)
-		{
+		if (scaleSide == 'R') {
 			turnPosition1.setY(-turnPosition1.getY());
 			turnPosition2.setY(-turnPosition2.getY());
 			shootPosition.setY(-shootPosition.getY());

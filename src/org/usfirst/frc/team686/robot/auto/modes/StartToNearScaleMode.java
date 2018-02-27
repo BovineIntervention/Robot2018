@@ -23,12 +23,13 @@ import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar.ElevatorArmBarSta
 public class StartToNearScaleMode extends AutoModeBase {
 	
 	StartPositionOption startPosition;
-	boolean toRight;
+	char switchSide, scaleSide;
 	
-	public StartToNearScaleMode (StartPositionOption _startPosition, boolean _toRight)
+	public StartToNearScaleMode (StartPositionOption _startPosition, char _switchSide, char _scaleSide)
 	{
 		startPosition = _startPosition; 
-		toRight = _toRight;
+		switchSide = _switchSide;
+		scaleSide = _scaleSide;
 	}
 
 
@@ -45,7 +46,7 @@ public class StartToNearScaleMode extends AutoModeBase {
 				
 		Vector2d scaleStopPosition = new Vector2d(300 - (Constants.kCenterToFrontBumper/Math.sqrt(2)) - 6, (FieldDimensions.kScaleLengthY/2) + (Constants.kCenterToFrontBumper/Math.sqrt(2)));
 
-		if(toRight){
+		if (scaleSide == 'R') {
 			turnPosition.setY(-turnPosition.getY());
 			scaleStopPosition.setY(-scaleStopPosition.getY());
 		}

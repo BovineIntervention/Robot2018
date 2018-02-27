@@ -19,12 +19,13 @@ import org.usfirst.frc.team686.robot.lib.util.Path.Waypoint;
 public class SideStartToNearSwitchMode extends AutoModeBase {
 	
 	StartPositionOption startPosition;
-	boolean toRight;
+	char switchSide, scaleSide;
 	
-	public SideStartToNearSwitchMode (StartPositionOption _startPosition, boolean _toRight)
+	public SideStartToNearSwitchMode (StartPositionOption _startPosition, char _switchSide, char _scaleSide)
 	{
 		startPosition = _startPosition; 
-		toRight = _toRight;
+		switchSide = _switchSide;
+		scaleSide = _scaleSide;
 	}
 	
 
@@ -47,7 +48,7 @@ System.out.println("STARTING AUTOMODE: " + startPosition.name + " to Near Switch
 		
 		Vector2d startCollisionPosition = new Vector2d(switchStopPosition.getX()+6, switchStopPosition.getY() + 12);
 		
-		if(toRight){
+		if (switchSide == 'R') {
 			turnPosition.setY(-turnPosition.getY());
 			startCollisionPosition.setY(-startCollisionPosition.getY());
 			switchStopPosition.setY(-switchStopPosition.getY());

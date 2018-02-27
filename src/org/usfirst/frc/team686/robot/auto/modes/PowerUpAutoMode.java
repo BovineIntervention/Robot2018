@@ -36,7 +36,7 @@ System.out.println("INITIAL POSE in AutoSequenceBuilder: " + initialPose.toStrin
     protected void routine() throws AutoModeEndedException 
     {
     	autoSequenceBuilder(gameData, startDelay, startPosition, priority);
-    	
+
     	autoMode.run();
     	System.out.println("Starting Auto Mode: PowerUpAutoMode");
    
@@ -61,8 +61,7 @@ System.out.println("INITIAL POSE in AutoSequenceBuilder: " + initialPose.toStrin
 System.out.printf("GameData: %s, switchPose = %c, scalePose = %c\n ", gameData, gameData.charAt(0), gameData.charAt(1));    	
 		char switchSide = gameData.charAt(0);
 		char scaleSide  = gameData.charAt(1);
-		boolean toRight = false;
-
+		
 		autoMode = new StandStillMode();
 
 		
@@ -78,49 +77,25 @@ System.out.printf("GameData: %s, switchPose = %c, scalePose = %c\n ", gameData, 
 			switch( startPosition )
 			{
 			case LEFT_START:
-				if( switchSide == 'L' ) {
-					// start on left, go to left side switch
-					toRight = false;
-					autoMode = new SideStartToNearSwitchMode(startPosition, toRight);
-				} else {
+				if( switchSide == 'L' )		autoMode = new SideStartToNearSwitchMode(startPosition, switchSide, scaleSide);	// start on left, go to left side switch
+				else {
 					// switch is not on our side, check scale
-					if( scaleSide == 'L' ) {
-						// start on left, go to left side scale
-						toRight = false;
-						autoMode = new StartToNearScaleMode(startPosition, toRight);
-					} else {
-						// both switch and scale on wrong side, prioritize switch
-						// start on left, go to right side switch
-						toRight = false;
-						autoMode = new SideStartToFarSwitchMode(startPosition, toRight);
-					}
+					if ( scaleSide == 'L' )	autoMode = new StartToNearScaleMode(startPosition, switchSide, scaleSide);		// start on left, go to left side scale
+					else					autoMode = new SideStartToFarSwitchMode(startPosition, switchSide, scaleSide);	// both switch and scale on wrong side, prioritize switch, start on left, go to right side switch
 				}
 				break;
 			
 			case RIGHT_START:
-				if( switchSide == 'R' ) {
-					// start on right, go to right side switch
-					toRight = true;
-					autoMode = new SideStartToNearSwitchMode(startPosition, toRight);
-				} else {
+				if( switchSide == 'R' )		autoMode = new SideStartToNearSwitchMode(startPosition, switchSide, scaleSide);	// start on right, go to right side switch
+				else {
 					// switch is not on our side, check scale
-					if( scaleSide == 'R' ) {
-						// start on right, go to left side scale
-						toRight = true;
-						autoMode = new StartToNearScaleMode(startPosition, toRight);
-					} else {
-						// both switch and scale on wrong side, prioritize switch
-						// start on right, go to right side switch
-						toRight = false;
-						autoMode = new SideStartToFarSwitchMode(startPosition, toRight);
-					}
+					if( scaleSide == 'R' ) 	autoMode = new StartToNearScaleMode(startPosition, switchSide, scaleSide);		// start on right, go to left side scale
+					else					autoMode = new SideStartToFarSwitchMode(startPosition, switchSide, scaleSide);	// both switch and scale on wrong side, prioritize switch, start on right, go to right side switch 
 				}
 				break;
 			
 			case CENTER_START:
-				// start in center, go to switch
-				toRight = ( switchSide == 'R' );
-				autoMode = new CenterStartToSwitchMode(startPosition, toRight);
+				autoMode = new CenterStartToSwitchMode(startPosition, switchSide, scaleSide);								// start in center, go to switch
 				break;
 			}
 			break;	// case SWITCH_IF_SAME_SIDE
@@ -131,50 +106,26 @@ System.out.printf("GameData: %s, switchPose = %c, scalePose = %c\n ", gameData, 
 		case SCALE_IF_SAME_SIDE:
 			switch( startPosition )
 			{
-			case LEFT_START:
-				if( scaleSide == 'L' ) {
-					// start on left side, go to left side scale
-					toRight = false;
-					autoMode = new StartToNearScaleMode(startPosition, toRight);
-				} else {
+			case LEFT_START:							
+				if( scaleSide == 'L' )		autoMode = new StartToNearScaleMode(startPosition, switchSide, scaleSide);		// start on left side, go to left side scale
+				else {
 					// scale not on same side, check switch
-					if( switchSide == 'L' ) {
-						// start on left, go to left side switch
-						toRight = false;
-						autoMode = new SideStartToNearSwitchMode(startPosition, toRight);
-					} else {
-						// both switch and scale on wrong side, prioritize scale
-						// start on left, go to right side scale
-						toRight = true;
-						autoMode = new SideStartToFarScaleMode(startPosition, toRight);
-					}
+					if( switchSide == 'L' ) autoMode = new SideStartToNearSwitchMode(startPosition, switchSide, scaleSide);	// start on left, go to left side switch
+					else 					autoMode = new SideStartToFarScaleMode(startPosition, switchSide, scaleSide);	// both switch and scale on wrong side, prioritize scale, start on left, go to right side scale 
 				}
 				break;
 				
 			case RIGHT_START:
-				if( scaleSide == 'R' ) {
-					// start on right side, go to right side scale
-					toRight = true;
-					autoMode = new StartToNearScaleMode(startPosition, toRight);
-				} else {
+				if( scaleSide == 'R' )		autoMode = new StartToNearScaleMode(startPosition, switchSide, scaleSide);		// start on right side, go to right side scale
+				else {
 					// scale not on same side, check switch
-					if( switchSide == 'R' ) {
-						// start on right, go to right side scale
-						toRight = true;
-						autoMode = new SideStartToNearSwitchMode(startPosition, true);
-					} else {
-						// both switch and scale on wrong side, prioritize scale
-						// start on left, go to right side scale
-						toRight = false;
-						autoMode = new SideStartToFarScaleMode(startPosition, toRight);
-					}
+					if( switchSide == 'R' ) autoMode = new SideStartToNearSwitchMode(startPosition, switchSide, scaleSide);	// start on right, go to right side scale
+					else					autoMode = new SideStartToFarScaleMode(startPosition, switchSide, scaleSide);	// both switch and scale on wrong side, prioritize scale, start on left, go to right side scale 	
 				}
 				break;
 			
 			case CENTER_START:
-				// start in center, go to scale
-				toRight = ( scaleSide == 'R' );
-				autoMode = new CenterStartToSwitchMode(startPosition, toRight);
+				autoMode = new CenterStartToSwitchMode(startPosition, switchSide, scaleSide);								// start in center, go to scale
 				break;
 			}
 			break;	// case SCALE_IF_SAME_SIDE
@@ -187,28 +138,17 @@ System.out.printf("GameData: %s, switchPose = %c, scalePose = %c\n ", gameData, 
 			switch( startPosition )
 			{
 			case LEFT_START:
-				if (switchSide == 'L') {
-					toRight = false;
-					autoMode = new SideStartToNearSwitchMode(startPosition, toRight);
-				} else {
-					toRight = true;
-					autoMode = new SideStartToFarSwitchMode(startPosition, toRight);
-				}
+				if (switchSide == 'L')	autoMode = new SideStartToNearSwitchMode(startPosition, switchSide, scaleSide);
+				else					autoMode = new SideStartToFarSwitchMode(startPosition, switchSide, scaleSide);
 				break;
 				
 			case RIGHT_START:
-				if (switchSide == 'R') {
-					toRight = true;
-					autoMode = new SideStartToNearSwitchMode(startPosition, toRight);
-				} else {
-					toRight = false;
-					autoMode = new SideStartToFarSwitchMode(startPosition, toRight);
-				}
+				if (switchSide == 'R')	autoMode = new SideStartToNearSwitchMode(startPosition, switchSide, scaleSide);
+				else					autoMode = new SideStartToFarSwitchMode(startPosition, switchSide, scaleSide);
 				break;
 				
 			case CENTER_START:
-				toRight = (switchSide == 'R');
-				autoMode = new CenterStartToSwitchMode(startPosition, toRight);
+				autoMode = new CenterStartToSwitchMode(startPosition, switchSide, scaleSide);
 				break;
 			}			
 			break; // case: SWITCH_ALWAYS
@@ -220,28 +160,17 @@ System.out.printf("GameData: %s, switchPose = %c, scalePose = %c\n ", gameData, 
 			switch( startPosition )
 			{
 			case LEFT_START:
-				if (scaleSide == 'L') {
-					toRight = false;
-					autoMode = new StartToNearScaleMode(startPosition, toRight);
-				} else {
-					toRight = true;
-					autoMode = new SideStartToFarScaleMode(startPosition, toRight);
-				}
+				if (scaleSide == 'L')	autoMode = new StartToNearScaleMode(startPosition, switchSide, scaleSide);
+				else					autoMode = new SideStartToFarScaleMode(startPosition, switchSide, scaleSide);
 				break;
 				
 			case RIGHT_START:
-				if (scaleSide == 'R') {
-					toRight = true;
-					autoMode = new StartToNearScaleMode(startPosition, toRight);
-				} else {
-					toRight = false;
-					autoMode = new SideStartToFarScaleMode(startPosition, toRight);
-				}
+				if (scaleSide == 'R') 	autoMode = new StartToNearScaleMode(startPosition, switchSide, scaleSide);
+				else					autoMode = new SideStartToFarScaleMode(startPosition, switchSide, scaleSide);
 				break;
 				
 			case CENTER_START:
-				toRight = (scaleSide == 'R');
-				autoMode = new StartToNearScaleMode(startPosition, toRight);
+				autoMode = new StartToNearScaleMode(startPosition, switchSide, scaleSide);
 				break;
 			}			
 			break; // case: SCALE_ALWAYS
