@@ -23,8 +23,9 @@ public class IntakeLoop implements Loop
 	public double rVelocity;
 	public Value solenoidValue = DoubleSolenoid.Value.kOff;
 	
-	public boolean intakeFlag = false;
-	public boolean outtakeFlag = false;
+	public enum IntakeModeEnum { STOP, INTAKE, OUTTAKE, HOLD; }
+	IntakeModeEnum intakeMode = IntakeModeEnum.STOP; 
+	
 	public boolean grabberInFlag = false;
 	
 	public IntakeLoop()
@@ -44,11 +45,13 @@ public class IntakeLoop implements Loop
 	}
 	
 	
-	public void startIntake() { intakeFlag = true; }
-	public void stopIntake() { intakeFlag = false; }
+	public void startIntake() { intakeMode = IntakeModeEnum.INTAKE; }
+	public void stopIntake() { intakeMode = IntakeModeEnum.STOP; }
 	
-	public void startOuttake() { outtakeFlag = true; }
-	public void stopOuttake() { outtakeFlag = false; }
+	public void startHold() { intakeMode = IntakeModeEnum.HOLD; }
+	
+	public void startOuttake() { intakeMode = IntakeModeEnum.OUTTAKE; }
+	public void stopOuttake() { intakeMode = IntakeModeEnum.STOP; }
 	
 	public void grabberIn() { grabberInFlag = true;	}
 	public void grabberOut() { grabberInFlag = false; }
@@ -57,10 +60,11 @@ public class IntakeLoop implements Loop
 
 	public void stop()
 	{
+		intakeMode = IntakeModeEnum.STOP;
 		lMotor.set(0);
 		rMotor.set(0);
 		grabber.set(DoubleSolenoid.Value.kOff);
-}
+	}
 	
 	@Override
 	public void onStart() 
@@ -73,20 +77,28 @@ public class IntakeLoop implements Loop
 	@Override
 	public void onLoop() 
 	{
-		if (intakeFlag)
+		switch (intakeMode)
 		{
+		case INTAKE:
 			lVelocity = Constants.kIntakeSpeed;
 			rVelocity = Constants.kIntakeSpeed;
-		}
-		else if (outtakeFlag)
-		{
+			break;
+
+		case HOLD:
+			lVelocity = Constants.kIntakeHoldSpeed;
+			rVelocity = Constants.kIntakeHoldSpeed;
+			break;
+			
+		case OUTTAKE:
 			lVelocity = Constants.kOuttakeSpeed;
 			rVelocity = Constants.kOuttakeSpeed;
-		}
-		else
-		{
+			break;
+			
+		case STOP:
+		default:
 			lVelocity = 0;
 			rVelocity = 0;
+			break;
 		}
 		
 

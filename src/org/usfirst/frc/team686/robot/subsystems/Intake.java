@@ -67,13 +67,21 @@ public class Intake extends Subsystem {
 	}
 	
 	
+	public void startIntake(){ intakeLoop.startIntake(); }
+	public void stopIntake(){ intakeLoop.stopOuttake(); }
+
+	public void startHold(){ intakeLoop.startHold(); }
+	
 	public void startOuttake(){ intakeLoop.startOuttake(); }
 	public void stopOuttake(){ intakeLoop.stopOuttake(); }
+	
+	public void grabberIn() { intakeLoop.grabberIn();	}
+	public void grabberOut() { intakeLoop.grabberIn(); }
+	public void grabberToggle() { intakeLoop.grabberToggle(); }
 	
 	@Override
 	public void stop() {
 		intakeLoop.stop();
-		
 	}
 
 	@Override

@@ -216,7 +216,8 @@ public class Constants extends ConstantsBase
     public static double kIntakeMaxRPM = kBagMotorRPM / kIntakeMotorGain;
     public static double kIntakeRPM = 1200;
     public static double kIntakeSpeed = 0.8;
-    public static double kOuttakeSpeed = -1.0;	// full speed reverse
+    public static double kIntakeHoldSpeed = 0.2;	// apply some force to keep in    
+    public static double kOuttakeSpeed = -1.0;		// full speed reverse
     
     public static boolean kIntakeLeftMotorInverted = true;
     public static boolean kIntakeRightMotorInverted = true;

@@ -37,8 +37,8 @@ System.out.println("INITIAL POSE in AutoSequenceBuilder: " + initialPose.toStrin
     {
     	autoSequenceBuilder(gameData, startDelay, startPosition, priority);
 
-    	autoMode.run();
     	System.out.println("Starting Auto Mode: PowerUpAutoMode");
+    	autoMode.run();
    
     }
 

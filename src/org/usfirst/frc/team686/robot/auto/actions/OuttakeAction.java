@@ -1,10 +1,7 @@
 package org.usfirst.frc.team686.robot.auto.actions;
 
-import org.usfirst.frc.team686.robot.Constants;
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
-import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar;
 import org.usfirst.frc.team686.robot.subsystems.Intake;
-import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar.ElevatorArmBarStateEnum;
 
 import edu.wpi.first.wpilibj.Timer;
 
@@ -18,12 +15,15 @@ public class OuttakeAction implements Action {
 	Intake intake = Intake.getInstance();
 	
 	public OuttakeAction() {
-		
 		finished = false;
-		
 	}
 	
 	
+	@Override
+	public void start() {
+		mStartTime = Timer.getFPGATimestamp();
+	}
+
 	@Override
 	public boolean isFinished() {
 		return finished;
@@ -32,24 +32,15 @@ public class OuttakeAction implements Action {
 	@Override
 	public void update() {
 		
-		System.out.println("scoring power cube");
-		
 		finished = (Timer.getFPGATimestamp() - mStartTime) >= mTimeToOuttake;
 		intake.startOuttake();
-		if(finished)
+		if (finished)
 			intake.stopOuttake();
 		
 	}
 
 	@Override
 	public void done() {
-		
-		
-	}
-
-	@Override
-	public void start() {
-		mStartTime = Timer.getFPGATimestamp();
 	}
 
 	private final DataLogger logger = new DataLogger()

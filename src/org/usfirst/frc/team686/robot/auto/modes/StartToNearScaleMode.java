@@ -72,6 +72,20 @@ public class StartToNearScaleMode extends AutoModeBase {
 		})));
 		
 		runAction( new OuttakeAction() );
+
+		//runAction( new ElevatorAction(ElevatorArmBarStateEnum.GROUND) );
+
+		
+		
+		// go after second cube
+		AutoModeBase secondCubeAutoMode;
+		
+		if (switchSide == scaleSide)
+			secondCubeAutoMode = new SameSideSwitchSecondCubeMode(scaleStopPosition, switchSide, scaleSide);
+		else
+			secondCubeAutoMode = new ScaleSecondCubeMode(scaleStopPosition, switchSide, scaleSide);
+		
+		secondCubeAutoMode.run();
 		
 	}
 
