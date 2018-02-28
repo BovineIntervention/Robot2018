@@ -183,7 +183,7 @@ public class Constants extends ConstantsBase
     public static double kArmBarLength = 14.0;
     
     public static double kArmBarZeroingVelocity =	30.0;	// in degrees per second
-    public static double kArmBarVelocity = 			30.0;//250.0;	// in degrees per second
+    public static double kArmBarVelocity = 		   250.0;	// in degrees per second
     
 	public static double kArmBarQuadEncoderGain = 81.0 * 2.0;			// two 9:1 gear stages plus a 24:12 tooth reduction after the encoder 
 	public static double kArmBarQuadEncoderUnitsPerRev = 4096;
@@ -204,7 +204,7 @@ public class Constants extends ConstantsBase
 	public static double kArmBarKi = 0.0;
    
 	public static double kMaxArmBarVoltage = 12.0;	// may be less than 12V battery voltage when testing	
-	public static double kArmBarMotorStallCurrentThreshold = 1.0;	// current at which we will assume the limit switch didn't catch it and we are stalled
+	public static double kArmBarMotorStallCurrentThreshold = 2.0;	// current at which we will assume the limit switch didn't catch it and we are stalled
 
 	public static int kArmBarPeakCurrentLimit = 10;	// current at which current limit is activated
 	public static int kArmBarPeakCurrentDuration = 200;	// duration at which current limit is activated

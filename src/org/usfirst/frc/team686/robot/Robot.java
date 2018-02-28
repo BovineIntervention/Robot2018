@@ -94,8 +94,8 @@ public class Robot extends IterativeRobot {
     		loopController.register(DriveLoop.getInstance());
     		if (Constants.kRobotSelection == RobotSelectionEnum.COMPETITION_BOT)
     			loopController.register(ElevatorLoop.getInstance());
-      		//loopController.register(ArmBarLoop.getInstance());
-      		//loopController.register(IntakeLoop.getInstance());
+      		loopController.register(ArmBarLoop.getInstance());
+      		loopController.register(IntakeLoop.getInstance());
        		loopController.register(RobotStateLoop.getInstance());
     		
     		smartDashboardInteractions = new SmartDashboardInteractions();
@@ -108,8 +108,8 @@ public class Robot extends IterativeRobot {
     		robotLogger.register(Drive.getInstance().getLogger());
     		robotLogger.register(drive.getCommand().getLogger());
     		robotLogger.register(DriveState.getInstance().getLogger());
-    		//robotLogger.register(ElevatorArmBar.getInstance().getLogger());
-    		//robotLogger.register(Intake.getInstance().getLogger());
+    		robotLogger.register(ElevatorArmBar.getInstance().getLogger());
+    		robotLogger.register(Intake.getInstance().getLogger());
     		robotLogger.register(RobotState.getInstance().getLogger());
     		
     		setInitialPose(new Pose());

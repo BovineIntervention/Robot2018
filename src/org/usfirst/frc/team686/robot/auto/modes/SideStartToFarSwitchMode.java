@@ -62,9 +62,9 @@ public class SideStartToFarSwitchMode extends AutoModeBase {
 		if (switchSide == 'L') 
 		{
 			turnPosition.setY(-turnPosition.getY());
-			turnPosition1.setY(-turnPosition1.getY());
-			turnPosition2.setY(-turnPosition2.getY());
-			startCollisionPosition.setY(-startCollisionPosition.getY());
+		    turnAroundPosition.setY(-turnAroundPosition.getY());     
+		    startCollisionPosition.setY(-startCollisionPosition.getY());
+		    switchStopPosition.setY(-switchStopPosition.getY());
 		}
 
 		
@@ -84,13 +84,11 @@ public class SideStartToFarSwitchMode extends AutoModeBase {
 		System.out.println(collisionPath.toString());
 		
 		runAction( new PathFollowerWithVisionAction(path) );
-/*		runAction( new ParallelAction(Arrays.asList(new Action[] {
-				//new ElevatorAction(ElevatorArmBarStateEnum.SWITCH),
+		runAction( new ParallelAction(Arrays.asList(new Action[] {
+				new ElevatorAction(ElevatorArmBarStateEnum.SWITCH),
 				new InterruptableAction(new CollisionDetectionAction(),
 				new PathFollowerWithVisionAction(collisionPath))
 		})));
 		runAction( new OuttakeAction() );
-*/		
-		
 	}
 }

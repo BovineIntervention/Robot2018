@@ -74,7 +74,6 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 				new PathFollowerWithVisionAction(collisionPath))
 		})));
 		runAction( new OuttakeAction() );
-		runAction( new ElevatorAction(ElevatorArmBarStateEnum.GROUND) );
 	}
 
 }

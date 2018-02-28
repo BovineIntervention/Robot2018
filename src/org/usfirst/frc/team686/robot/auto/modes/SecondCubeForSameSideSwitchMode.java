@@ -81,7 +81,6 @@ public class SecondCubeForSameSideSwitchMode  extends AutoModeBase {
 		runAction( new InterruptableAction(new CollisionDetectionAction(),		// run into switch fence
 										   new PathFollowerWithVisionAction(collisionPath)));
 		runAction( new OuttakeAction() );										// shoot!
-		runAction( new ElevatorAction(ElevatorArmBarStateEnum.GROUND) );
 		
 	}
 }	

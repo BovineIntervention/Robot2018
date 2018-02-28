@@ -63,16 +63,15 @@ System.out.println("STARTING AUTOMODE: " + startPosition.name + " to Near Switch
 		
 		System.out.println("SideStartToNearSwitchMode path");
 		System.out.println(path.toString());
-		//System.out.println(collisionPath.toString());
+		System.out.println(collisionPath.toString());
 		
 		runAction( new PathFollowerWithVisionAction(path) );
 		runAction( new ParallelAction(Arrays.asList(new Action[] {
 				new ElevatorAction(ElevatorArmBarStateEnum.SWITCH),
-				//new InterruptableAction(new CollisionDetectionAction(),
-				new PathFollowerWithVisionAction(collisionPath)//)
+				new InterruptableAction(new CollisionDetectionAction(),
+				new PathFollowerWithVisionAction(collisionPath))
 		})));
 		runAction( new OuttakeAction() );
-		runAction( new ElevatorAction(ElevatorArmBarStateEnum.GROUND) );
 	}
 	
 }

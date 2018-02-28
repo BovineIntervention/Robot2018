@@ -202,10 +202,11 @@ public class ArmBarLoop implements Loop
 			// slowly move up towards limit switch
 			filteredTarget += (Constants.kArmBarZeroingVelocity * Constants.kLoopDt);
 			
-			if (limitSwitchTriggered)
+			if (getLimitSwitchDuringZeroing())
 			{
 				// CALIBRATING is done when limit switch is hit
-				setTarget(position);						// initial goal is to stay in the same position
+				talon.setSelectedSensorPosition( Constants.kArmBarEncoderLimitUp, Constants.kTalonPidIdx, Constants.kTalonTimeoutMs);
+				setTarget(Constants.kArmBarUpAngleDeg);		// initial goal is to stay in the same position
 				filteredTarget = position;					// initial goal is to stay in the same position
 				
 				nextState = ArmBarStateEnum.RUNNING;		// start running state
