@@ -505,7 +505,7 @@ public class Constants extends ConstantsBase
 	    kPointTurnCompletionTolerance = 1.0 * (Math.PI/180.0); 
 	    
 	    // Path following constants
-	    kPathFollowingMaxVel    = 36.0; // inches/sec  		
+	    kPathFollowingMaxVel    = 24.0;//72.0; // inches/sec  		
 	    kPathFollowingAccelTime = 0.5;
 	    kPathFollowingMaxAccel  = kPathFollowingMaxVel / kPathFollowingAccelTime; // inches/sec^2	 
 	    kPathFollowingLookahead = 24.0; // inches

@@ -41,11 +41,11 @@ public class SideStartToFarScaleMode extends AutoModeBase {
 		PathSegment.Options pathOptions	= new PathSegment.Options(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, 48, false);
 		
 		Vector2d initialPosition 	= startPosition.initialPose.getPosition();
-		Vector2d turnPosition1 		= new Vector2d(230, 132 - Constants.kCenterToSideBumper);
-		Vector2d turnPosition2 		= new Vector2d(218, -90);
-		Vector2d shootPosition 		= new Vector2d(294 - Constants.kCenterToFrontBumper, -78);
+		Vector2d turnPosition1 		= new Vector2d(245, 132 - Constants.kCenterToSideBumper);
+		Vector2d turnPosition2 		= new Vector2d(245, -90);
+		Vector2d shootPosition 		= new Vector2d(282 - Constants.kCenterToFrontBumper, -78);
 		
-		if (scaleSide == 'R') {
+		if (scaleSide == 'L') {
 			turnPosition1.setY(-turnPosition1.getY());
 			turnPosition2.setY(-turnPosition2.getY());
 			shootPosition.setY(-shootPosition.getY());

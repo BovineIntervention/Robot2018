@@ -37,6 +37,7 @@ public class SecondCubeForSameSideSwitchMode  extends AutoModeBase {
 
 		if (switchSide == 'R') {
 			turnAroundAngleDeg = -turnAroundAngleDeg;
+			slowDownPosition.setY(-slowDownPosition.getY());
 			closeIntakePosition.setY(-closeIntakePosition.getY());
 			stopPosition.setY(-stopPosition.getY());
 		}

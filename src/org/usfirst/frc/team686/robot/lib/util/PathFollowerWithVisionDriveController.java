@@ -354,8 +354,8 @@ imageTimestamp = currentTime - Constants.kCameraLatencySeconds;		// remove camer
 			
 			put("PathVision/speed", 	speed);
 			put("PathVision/curvature", curvature );
-			put("PathVision/lSpeed", 	wheelSpeed.left);
-			put("PathVision/rSpeed", 	wheelSpeed.right);
+//			put("PathVision/lSpeed", 	wheelSpeed.left);
+	//		put("PathVision/rSpeed", 	wheelSpeed.right);
 			
         }
     };
