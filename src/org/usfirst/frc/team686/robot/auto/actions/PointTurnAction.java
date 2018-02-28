@@ -1,124 +1,130 @@
 package org.usfirst.frc.team686.robot.auto.actions;
 
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
+import org.usfirst.frc.team686.robot.lib.util.Util;
 import org.usfirst.frc.team686.robot.lib.util.Vector2d;
 import org.usfirst.frc.team686.robot.lib.util.Kinematics.WheelSpeed;
 import org.usfirst.frc.team686.robot.Constants;
+import org.usfirst.frc.team686.robot.command_status.DriveCommand;
 import org.usfirst.frc.team686.robot.command_status.RobotState;
+import org.usfirst.frc.team686.robot.command_status.DriveCommand.DriveControlMode;
 import org.usfirst.frc.team686.robot.subsystems.Drive;
+
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.Timer;
 
 public class PointTurnAction implements Action
 {
-	
-    private double thetaTarget;
+    private double targetHeading;
+    double heading;
+    double error;
+    double output;
+ 
+    double Kp = Constants.kPointTurnKp;
+    double Kd = Constants.kPointTurnKd;
+    double Ki = Constants.kPointTurnKi;
+    double Kf = Constants.kPointTurnKf;
+    
+    boolean firstUpdate = true;
+    double lastError = 0.0;
+    double dError = 0.0;
+    double iError = 0.0;
+    double dErrorFilt = 0.0;
+    
+    double startTime;
+    
     private Drive drive = Drive.getInstance();
     private RobotState robotState = RobotState.getInstance();
-
-    private double thetaGyro;
-    private double thetaRemaining;
-    private double distanceRemaining;
     
-	private final double turnRadius = Constants.kTrackWidthInches / 2;
     
-    private double speed;
-    private WheelSpeed wheelSpeed;
-    
-	private double prevSpeed;
-	private double prevTime;
-	
     public PointTurnAction(double _targetHeadingDeg)
     {
-        thetaTarget = _targetHeadingDeg * Vector2d.degreesToRadians;
+    	setHeading(_targetHeadingDeg);
     }
 
+    public void setHeading(double _targetHeadingDeg)
+    {
+    	targetHeading = _targetHeadingDeg;
+    }
+    
     @Override
     public void start() 
     {
-    	prevSpeed = 0.0;
-    	prevTime = Timer.getFPGATimestamp();
+    	firstUpdate = true;
+    	lastError = 0.0;
+    	dErrorFilt = 0.0;
+    	iError = 0.0;
+    	startTime = Timer.getFPGATimestamp();
     }
 
     
     @Override
     public void update() 
     {
-    	// calculate distance remaining for each wheel
-    	thetaGyro = robotState.getLatestFieldToVehicle().getHeading();
-    	thetaRemaining = Vector2d.normalizeAngle( thetaTarget - thetaGyro );
-    	distanceRemaining = Math.abs(turnRadius * thetaRemaining);
-    	
-    	// calculate speed for left/right wheels, considering max velocity & acceleration
-    	double currentTime = Timer.getFPGATimestamp();
-    	speedControl(currentTime, distanceRemaining, Constants.kPointTurnMaxVel, Constants.kPointTurnMaxAccel);
-    	speed *= Math.signum(thetaRemaining);	// positive: right turn, negative: left turn
-   		wheelSpeed = new WheelSpeed(-speed, +speed);
+    	heading = robotState.getLatestFieldToVehicle().getHeadingDeg();
+    	error = Vector2d.normalizeAngleDeg( targetHeading - heading );
 
-   		// send drive control command
-        drive.setVelocitySetpoint(wheelSpeed);
+    	if (firstUpdate)
+    	{
+    		lastError = error;
+    		firstUpdate = false;
+    	}
+    	
+    	dError = error - lastError;
+    	iError += error;
+		lastError = error;
+		
+		dErrorFilt = (1-0.25)*dErrorFilt + 0.25*dError;
+		
+		output = Kp * error + Kd * dErrorFilt + Ki * iError;
+		output = Util.limit(output, Constants.kPointTurnMaxOutput);
+    	
+   		// send drive control command (note: using brake mode to help finish at correct angle)
+		DriveCommand cmd = new DriveCommand(DriveControlMode.OPEN_LOOP, -output, +output, NeutralMode.Brake);
+		drive.setCommand(cmd);
     }
 
-	// keep speed within acceleration limits
-	public void speedControl(double _currentTime, double _remainingDistance, double _maxSpeed, double _maxAccel)
-	{
-		//---------------------------------------------------
-		// Apply speed control
-		//---------------------------------------------------
-		speed = _maxSpeed;
-		
-		double dt = _currentTime - prevTime;
-		
-		// apply acceleration limits
-		double accel = (speed - prevSpeed) / dt;
-		if (accel > _maxAccel)
-			speed = prevSpeed + _maxAccel * dt;
-		else if (accel < -_maxAccel)
-			speed = prevSpeed - _maxAccel * dt;
-
-		// apply braking distance limits
-		// vf^2 = v^2 + 2*a*d   Solve for v, given vf=0, configured a, and measured d
-		double stoppingDistance = _remainingDistance;
-		double maxBrakingSpeed = Math.sqrt(2.0 * _maxAccel * stoppingDistance);
-		if (Math.abs(speed) > maxBrakingSpeed)
-			speed = Math.signum(speed) * maxBrakingSpeed;
-
-		// apply minimum velocity limit
-		final double kMinSpeed = Constants.kPointTurnMinSpeed;
-		if (Math.abs(speed) < kMinSpeed) 
-			speed = Math.signum(speed) * kMinSpeed;
-
-		// store for next time through loop	
-		prevTime = _currentTime;
-		prevSpeed = speed;
-	}
-    
-    
     @Override
     public boolean isFinished() 
     {
-    	thetaGyro = robotState.getLatestFieldToVehicle().getHeading();
-    	thetaRemaining = Vector2d.normalizeAngle( thetaTarget - thetaGyro );
+    	// don't allow point turn to take forever
+    	double elapsedTime = Timer.getFPGATimestamp() - startTime;
+    	if (elapsedTime > 1.0)
+    		return true;
     	
-    	return (Math.abs(thetaRemaining) < Constants.kPointTurnCompletionTolerance);
+    	heading = robotState.getLatestFieldToVehicle().getHeadingDeg();
+       	error = Vector2d.normalizeAngleDeg( targetHeading - heading );
+    	dError = error - lastError;	// note: lastError updated in update(), not here
+
+		System.out.println(this.toString());
+		
+		// finished if angle is close to target and our turn rate is slow (indicating we aren't flying past the target)
+    	return ((Math.abs(error) < Constants.kPointTurnCompletionToleranceDeg) && (Math.abs(dErrorFilt) < 0.01/Constants.kLoopDt));
     }
 
     @Override
     public void done()
     {
-        drive.setVelocitySetpoint(0, 0);
+    	// keep brake on so that momentum doesn't take us too far.  Need to set back to coast mode elsewhere
+		drive.setOpenLoop(DriveCommand.BRAKE());
     }
 
+    public String toString()
+    {
+    	return String.format("PointTurnAction: target: %6.1f, actual: %6.1f, error: %6.2f, dError: %6.3f, iError: %6.3f, output: %.3f",  targetHeading, Vector2d.normalizeAngleDeg(heading), error, dErrorFilt, iError, output);
+    }
+    
 	private final DataLogger logger = new DataLogger()
     {
         @Override
         public void log()
         {
     		put("AutoAction", "PointTurn" );
-			put("PointTurn/thetaGyro", thetaGyro );
-			put("PointTurn/thetaRemaining", thetaRemaining );
-			put("PointTurn/distanceRemaining", distanceRemaining );
-			put("PointTurn/speed", speed );
+			put("PointTurn/targetHeading", targetHeading );
+			put("PointTurn/heading", heading );
+			put("PointTurn/error", error );
+			put("PointTurn/output", output );
 	    }
     };
 	

@@ -258,6 +258,8 @@ public class Robot extends IterativeRobot {
 	 * TELEOP MODE
 	 ****************************************************************/
 
+	PointTurnMode pointTurnAutoMode = new PointTurnMode( 0.0 );	
+	
 	@Override
 	public void teleopInit(){
 		operationalMode = OperationalMode.TELEOP;
@@ -279,8 +281,10 @@ public class Robot extends IterativeRobot {
 			if(autoModeExecuter != null){
     			autoModeExecuter.stop();
     		}
-    		autoModeExecuter = null;
-
+			// configure PointTurn as auto mode during teleop
+			autoModeExecuter = new AutoModeExecuter();
+			autoModeExecuter.setAutoMode( pointTurnAutoMode );
+    		
 			drive.setOpenLoop(DriveCommand.COAST());
 			
 			elevatorArmBar.set(ElevatorArmBarStateEnum.GROUND, false);	// prepare to intake during teleop
@@ -293,6 +297,7 @@ public class Robot extends IterativeRobot {
 		}
 	}
 	
+	int prevButtonBoardDirection = -1;
 	
 	@Override
 	public void teleopPeriodic() 
@@ -318,30 +323,31 @@ public class Robot extends IterativeRobot {
 					controls.getButton(Constants.kIntakeButton), 
 					controls.getButton(Constants.kOuttakeButton), 
 					controls.getButton(Constants.kGrabberButton));
-			
-			
-//			// turn-to-angle controls
-//			Optional<Double> buttonBoardDirection = buttonBoard.getDirection();
-//			autoModeExecuter = null;
-//			if (buttonBoardDirection.isPresent())
-//			{
-//				if (autoModeExecuter != null)
-//					autoModeExecuter.stop();	// kill any old commands
-//				autoModeExecuter = new AutoModeExecuter();
-//				AutoModeBase autoMode = new PointTurnMode( buttonBoardDirection.get().doubleValue() );
-//				autoModeExecuter.setAutoMode( autoMode );
-//				autoModeExecuter.start();
-//			}
-//				
-//			// drive controls
-//			if ((autoModeExecuter == null) || (!autoModeExecuter.getAutoMode().isActive()))	// ignore joystick when doing auto turns
+						
+			// turn-to-angle controls (assumes that AutoModeExectuer is already set to PointTurnAutoMode)
+			int pointTurnDirection = buttonBoard.getPOV();
+			if (pointTurnDirection >= 0 && (pointTurnDirection != prevButtonBoardDirection))
 			{
+				System.out.println(pointTurnDirection);
+				pointTurnAutoMode.setHeading(-pointTurnDirection);	// joystick and robot directions are opposites of each other
+				if (!autoModeExecuter.getAutoMode().isActive())
+					autoModeExecuter.start();
+			}
+			prevButtonBoardDirection = pointTurnDirection;
+				
+			// drive controls
+			if (!autoModeExecuter.getAutoMode().isActive())	// ignore joystick when doing auto turns
+			{
+				autoModeExecuter.stop();	// if point turn action has completed, stop the auto mode so that we can start a new point turn action
+				
+				// slow down drivetrain when elevator is extended
 				double elevatorHeight = elevatorState.getPositionInches();
 				double normalizedHeight = (elevatorHeight/Constants.kElevatorMaxHeightLimit);
 				double slope = -(1.0 - Constants.kDriveScaleFactorAtMaxElevatorHeight);
 				double scaleFactor = slope*normalizedHeight + 1.0;
 				DriveCommand driveCmd = controls.getDriveCommand();
 				driveCmd.scale(scaleFactor);
+				
 				drive.setOpenLoop(driveCmd);
 			}
 		

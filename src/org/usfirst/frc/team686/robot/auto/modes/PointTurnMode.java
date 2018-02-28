@@ -8,16 +8,21 @@ import org.usfirst.frc.team686.robot.auto.actions.*;
 
 public class PointTurnMode extends AutoModeBase {
 
-	double targetHeading;
+	double targetHeadingDeg;
 	
-    public PointTurnMode(double _targetHeading) 
+    public PointTurnMode(double _targetHeadingDeg) 
     {
-    	targetHeading = _targetHeading;
+    	targetHeadingDeg = _targetHeadingDeg;
     }
 
+    public void setHeading(double _targetHeadingDeg)
+    {
+    	targetHeadingDeg = _targetHeadingDeg;
+    }
+    
     @Override
     protected void routine() throws AutoModeEndedException 
     {
-        runAction(new PointTurnAction(targetHeading));   
+        runAction(new PointTurnAction(targetHeadingDeg));   
     }
 }
