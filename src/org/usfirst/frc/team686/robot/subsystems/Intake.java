@@ -20,6 +20,7 @@ public class Intake extends Subsystem {
 	public boolean intakeButton = false;
 	public boolean outtakeButton = false;
 	public boolean grabberButton = false;
+	public boolean intakeToggle = false;
 	
 	ElevatorArmBar elevatorArmBar = ElevatorArmBar.getInstance();
 	
@@ -42,11 +43,15 @@ public class Intake extends Subsystem {
 			intakeButton = _newIntakeButton;
 			if (intakeButton && (elevatorArmBar.state == ElevatorArmBarStateEnum.GROUND))
 			{
-				intakeLoop.grabberOut();
-				intakeLoop.startIntake();
+				intakeToggle = !intakeToggle;
+				if (intakeToggle)
+				{
+					intakeLoop.grabberOut();
+					intakeLoop.startIntake();
+				}
+				else
+					intakeLoop.stopIntake();
 			}
-			else
-				intakeLoop.stopIntake();
 		}
 
 		if (_newGrabberButton != grabberButton)
