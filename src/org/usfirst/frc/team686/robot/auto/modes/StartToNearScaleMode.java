@@ -59,7 +59,7 @@ public class StartToNearScaleMode extends AutoModeBase {
 		path.add(new Waypoint(turnToScalePosition, pathOptions));
 		path.add(new Waypoint(scaleStopPosition, pathOptions));
 		
-		System.out.println("StartToScaleMode path");
+		System.out.println("SideStartToNearScaleMode path");
 		System.out.println(path.toString());
 	
 		

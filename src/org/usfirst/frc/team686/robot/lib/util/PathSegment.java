@@ -58,7 +58,7 @@ public class PathSegment
 	    
 	    public String toString()
 	    {
-	    	return String.format("MaxSpeed: %5.1, MaxAccel: %5.1: LookaheadDist: %4.1, VisionEnable: %b", maxSpeed, maxAccel, lookaheadDist, visionEnable);
+	    	return String.format("MaxSpeed: %5.1f, MaxAccel: %5.1f: LookaheadDist: %4.1f, VisionEnable: %b", maxSpeed, maxAccel, lookaheadDist, visionEnable);
 	    }
 	    
     };

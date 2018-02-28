@@ -54,18 +54,13 @@ public class CollisionDetectionAction implements Action
         //System.out.println(this.toString());  
        
         boolean collisionDetected = false;
-        if ( ( Math.abs(jerkX) > Constants.kCollisionJerkThreshold ) ||
-             ( Math.abs(jerkY) > Constants.kCollisionJerkThreshold) ) {
-             collisionDetected = true;
-        }
+        if ( ( Math.abs(jerkX) > Constants.kCollisionJerkThreshold ) || ( Math.abs(jerkY) > Constants.kCollisionJerkThreshold) )
+        	collisionDetected = true;
         
         lMotorCurrent = DriveState.getInstance().getLeftMotorCurrent();
         rMotorCurrent = DriveState.getInstance().getRightMotorCurrent();
-        
-        if ( ( lMotorCurrent > Constants.kCollisionCurrentThreshold ) ||
-             ( rMotorCurrent > Constants.kCollisionCurrentThreshold) ) {
-                collisionDetected = true;
-           }
+        if ( ( lMotorCurrent > Constants.kCollisionCurrentThreshold ) || ( rMotorCurrent > Constants.kCollisionCurrentThreshold) )
+        	collisionDetected = true;
         
     	return collisionDetected;
     }
@@ -81,7 +76,7 @@ public class CollisionDetectionAction implements Action
 
     public String toString()
     {
-    	return String.format("Collision Detection -- JerkX: % 5.3f, JerkY: % 5.3f, JerkThresh: %4.1, lMotorCurrent: % 5.3f, rMotorCurrent: % 5.3f, CurrentThresh: %4.1, ", jerkX, jerkY, Constants.kCollisionJerkThreshold, lMotorCurrent, rMotorCurrent, Constants.kCollisionCurrentThreshold);
+    	return String.format("Collision Detection -- JerkX: % 5.3f, JerkY: % 5.3f, JerkThresh: %4.1f, lMotorCurrent: % 5.3f, rMotorCurrent: % 5.3f, CurrentThresh: %4.1f, ", jerkX, jerkY, Constants.kCollisionJerkThreshold, lMotorCurrent, rMotorCurrent, Constants.kCollisionCurrentThreshold);
     }
     
     

@@ -34,16 +34,16 @@ System.out.println("STARTING AUTOMODE: " + startPosition.name + " to Near Switch
 		
 		PathSegment.Options pathOptions	= new PathSegment.Options(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, 36, false);
 		PathSegment.Options tightTurnOptions = new PathSegment.Options(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, 18, false);
-		PathSegment.Options collisionOptions = new PathSegment.Options(Constants.kCollisionVel, Constants.kCollisionAccel, Constants.kPathFollowingLookahead, false);
+		PathSegment.Options collisionOptions = new PathSegment.Options(Constants.kCollisionVel, Constants.kCollisionAccel, 18, false);
 		
 		Vector2d initialPosition = startPosition.initialPose.getPosition();
 		
 		Vector2d switchStopPosition = new Vector2d(FieldDimensions.kSwitchFromCenterStartDistX + (FieldDimensions.kSwitchLengthX/2) + 12,
-													(FieldDimensions.kSwitchLengthY/2) + Constants.kCenterToFrontBumper + 6);
+													(FieldDimensions.kSwitchLengthY/2) + Constants.kCenterToFrontBumper);
 		
-		Vector2d turnPosition = new Vector2d(switchStopPosition.getX() + 12, switchStopPosition.getY() + 36);
+		Vector2d turnPosition = new Vector2d(switchStopPosition.getX() + 3 , switchStopPosition.getY() + 30);
 		
-		Vector2d startCollisionPosition = new Vector2d(switchStopPosition.getX()+6, switchStopPosition.getY() + 12);
+		Vector2d startCollisionPosition = new Vector2d(switchStopPosition.getX() + 3, switchStopPosition.getY() + 12);
 		
 		if (switchSide == 'R') {
 			turnPosition.setY(-turnPosition.getY());
@@ -63,13 +63,13 @@ System.out.println("STARTING AUTOMODE: " + startPosition.name + " to Near Switch
 		
 		System.out.println("SideStartToNearSwitchMode path");
 		System.out.println(path.toString());
-		System.out.println(collisionPath.toString());
+		//System.out.println(collisionPath.toString());
 		
 		runAction( new PathFollowerWithVisionAction(path) );
 		runAction( new ParallelAction(Arrays.asList(new Action[] {
 				new ElevatorAction(ElevatorArmBarStateEnum.SWITCH),
-				new InterruptableAction(new CollisionDetectionAction(),
-				new PathFollowerWithVisionAction(collisionPath))
+				//new InterruptableAction(new CollisionDetectionAction(),
+				new PathFollowerWithVisionAction(collisionPath)//)
 		})));
 		runAction( new OuttakeAction() );
 		runAction( new ElevatorAction(ElevatorArmBarStateEnum.GROUND) );

@@ -89,14 +89,16 @@ public class Constants extends ConstantsBase
     public static double kPointTurnCompletionTolerance; 
     
     // Path following constants
-    public static double kPathFollowingMaxVel; // inches/sec  		
+    public static double kPathFollowingMaxVel; // inches/sec  
+    public static double kPathFollowingAccelTime = 0.5;	// sec to reach max velocity
     public static double kPathFollowingMaxAccel; // inches/sec^2	
     public static double kPathFollowingLookahead ; // inches
     public static double kPathFollowingCompletionTolerance;
     
     public static double kCollisionVel 			= 24;
-    public static double kCollisionAccel 		= 24;
-    public static double kCollisionJerkThreshold 	= 0.5;		// maximum JerkY was 0.9 for a 24 inch/sec collision into wall (<0.1 when driving normal)
+    public static double kCollisionAccelTime = 0.5;	// sec to reach max velocity
+    public static double kCollisionAccel 		= kCollisionVel / kCollisionAccelTime;
+    public static double kCollisionJerkThreshold 	= 0.7;		// maximum JerkY was 0.9 for a 24 inch/sec collision into wall (<0.1 when driving normal)
     public static double kCollisionCurrentThreshold = 30;		// threshold to detect stall current
     
     // Vision constants
@@ -503,8 +505,9 @@ public class Constants extends ConstantsBase
 	    kPointTurnCompletionTolerance = 1.0 * (Math.PI/180.0); 
 	    
 	    // Path following constants
-	    kPathFollowingMaxVel    = 72.0; // inches/sec  		
-	    kPathFollowingMaxAccel  = 144.0; // inches/sec^2	 
+	    kPathFollowingMaxVel    = 36.0; // inches/sec  		
+	    kPathFollowingAccelTime = 0.5;
+	    kPathFollowingMaxAccel  = kPathFollowingMaxVel / kPathFollowingAccelTime; // inches/sec^2	 
 	    kPathFollowingLookahead = 24.0; // inches
 	    kPathFollowingCompletionTolerance = 1.0; 
 	    
