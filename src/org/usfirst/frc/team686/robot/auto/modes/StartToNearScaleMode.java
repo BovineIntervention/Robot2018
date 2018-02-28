@@ -67,6 +67,7 @@ public class StartToNearScaleMode extends AutoModeBase {
 		runAction( new PathFollowerWithVisionAction(path) );
 		runAction( new ElevatorAction(ElevatorArmBarStateEnum.SCALE_HIGH) );
 		runAction( new OuttakeAction() );
+		runAction( new ElevatorAction(ElevatorArmBarStateEnum.GROUND) );
 
 		
 		
