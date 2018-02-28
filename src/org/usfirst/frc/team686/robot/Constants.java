@@ -83,10 +83,12 @@ public class Constants extends ConstantsBase
     public static double kDriveHeadingVelocityKd;
     
     // Point Turn constants
-    public static double kPointTurnMaxVel; // inches/sec  		
-    public static double kPointTurnMaxAccel; // inches/sec^2	
-    public static double kPointTurnMinSpeed; // inches/sec 
-    public static double kPointTurnCompletionToleranceDeg; 
+    public static double kPointTurnKp = 0.05;
+    public static double kPointTurnKd = 0.50;
+    public static double kPointTurnKi = 0.00;
+    public static double kPointTurnKf = 0.00;
+    public static double kPointTurnCompletionToleranceDeg = 3.0;
+    public static double kPointTurnMaxOutput = 0.7; 
     
     // Path following constants
     public static double kPathFollowingMaxVel; // inches/sec  		
@@ -488,12 +490,6 @@ public class Constants extends ConstantsBase
 	    kTrackEffectiveDiameter = (kTrackWidthInches * kTrackWidthInches + kTrackLengthInches * kTrackLengthInches) / kTrackWidthInches;
 
 	    kQuadEncoderUnitsPerRev = (int)(4*kQuadEncoderCodesPerRev / kQuadEncoderGain);    
-	    
-	    // Point Turn constants
-	    kPointTurnMaxVel    = 80.0; // inches/sec  		
-	    kPointTurnMaxAccel  = 200.0; // inches/sec^2	
-	    kPointTurnMinSpeed  = 20.0; // inches/sec 
-	    kPointTurnCompletionToleranceDeg = 3.0; 
 	    
 	    // Path following constants
 	    kPathFollowingMaxVel    = 72.0; // inches/sec  		

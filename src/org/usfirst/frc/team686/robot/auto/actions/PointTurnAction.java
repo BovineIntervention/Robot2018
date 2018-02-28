@@ -21,18 +21,22 @@ public class PointTurnAction implements Action
     double error;
     double output;
  
+    double Kp = Constants.kPointTurnKp;
+    double Kd = Constants.kPointTurnKd;
+    double Ki = Constants.kPointTurnKi;
+    double Kf = Constants.kPointTurnKf;
+    
     boolean firstUpdate = true;
     double lastError = 0.0;
     double dError = 0.0;
     double iError = 0.0;
+    double dErrorFilt = 0.0;
+    
+    double startTime;
     
     private Drive drive = Drive.getInstance();
     private RobotState robotState = RobotState.getInstance();
     
-    static final double Kp = 0.05;
-    static final double Kd = 0.40;
-    static final double Ki = 0.00;
-    static final double Kf = 0.00;
     
     public PointTurnAction(double _targetHeadingDeg)
     {
@@ -49,6 +53,9 @@ public class PointTurnAction implements Action
     {
     	firstUpdate = true;
     	lastError = 0.0;
+    	dErrorFilt = 0.0;
+    	iError = 0.0;
+    	startTime = Timer.getFPGATimestamp();
     }
 
     
@@ -64,15 +71,14 @@ public class PointTurnAction implements Action
     		firstUpdate = false;
     	}
     	
-    	if (Math.abs(error) < Constants.kPointTurnCompletionToleranceDeg)
-    		error = 0.0;
-    	
     	dError = error - lastError;
     	iError += error;
 		lastError = error;
 		
-		output = Kp * error + Kd * dError + Ki * iError;
-		output = Util.limit(output, 1.0);
+		dErrorFilt = (1-0.25)*dErrorFilt + 0.25*dError;
+		
+		output = Kp * error + Kd * dErrorFilt + Ki * iError;
+		output = Util.limit(output, Constants.kPointTurnMaxOutput);
     	
    		// send drive control command (note: using brake mode to help finish at correct angle)
 		DriveCommand cmd = new DriveCommand(DriveControlMode.OPEN_LOOP, -output, +output, NeutralMode.Brake);
@@ -82,6 +88,11 @@ public class PointTurnAction implements Action
     @Override
     public boolean isFinished() 
     {
+    	// don't allow point turn to take forever
+    	double elapsedTime = Timer.getFPGATimestamp() - startTime;
+    	if (elapsedTime > 1.0)
+    		return true;
+    	
     	heading = robotState.getLatestFieldToVehicle().getHeadingDeg();
        	error = Vector2d.normalizeAngleDeg( targetHeading - heading );
     	dError = error - lastError;	// note: lastError updated in update(), not here
@@ -89,19 +100,19 @@ public class PointTurnAction implements Action
 		System.out.println(this.toString());
 		
 		// finished if angle is close to target and our turn rate is slow (indicating we aren't flying past the target)
-    	return ((Math.abs(error) < Constants.kPointTurnCompletionToleranceDeg) && (Math.abs(dError) < 0.1/Constants.kLoopDt));
+    	return ((Math.abs(error) < Constants.kPointTurnCompletionToleranceDeg) && (Math.abs(dErrorFilt) < 0.01/Constants.kLoopDt));
     }
 
     @Override
     public void done()
     {
-    	// brake off -- back to coasting
-		drive.setOpenLoop(DriveCommand.COAST());
+    	// keep brake on so that momentum doesn't take us too far.  Need to set back to coast mode elsewhere
+		drive.setOpenLoop(DriveCommand.BRAKE());
     }
 
     public String toString()
     {
-    	return String.format("PointTurnAction: target: %6.1f, actual: %6.1f, error: %6.1f, dError: %6.1f, iError: %6.1f, output: %.2f",  targetHeading, Vector2d.normalizeAngleDeg(heading), error, dError, iError, output);
+    	return String.format("PointTurnAction: target: %6.1f, actual: %6.1f, error: %6.2f, dError: %6.3f, iError: %6.3f, output: %.3f",  targetHeading, Vector2d.normalizeAngleDeg(heading), error, dErrorFilt, iError, output);
     }
     
 	private final DataLogger logger = new DataLogger()

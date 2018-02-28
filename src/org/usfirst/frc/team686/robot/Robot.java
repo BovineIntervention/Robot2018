@@ -297,7 +297,7 @@ public class Robot extends IterativeRobot {
 		}
 	}
 	
-	public int prevButtonBoardDirection = -1;
+	int prevButtonBoardDirection = -1;
 	
 	@Override
 	public void teleopPeriodic() 
@@ -325,14 +325,15 @@ public class Robot extends IterativeRobot {
 					controls.getButton(Constants.kGrabberButton));
 						
 			// turn-to-angle controls (assumes that AutoModeExectuer is already set to PointTurnAutoMode)
-			int buttonBoardDirection = buttonBoard.getPOV();
-			if (buttonBoardDirection >= 0 && (buttonBoardDirection != prevButtonBoardDirection))
+			int pointTurnDirection = buttonBoard.getPOV();
+			if (pointTurnDirection >= 0 && (pointTurnDirection != prevButtonBoardDirection))
 			{
-				System.out.println(buttonBoardDirection);
-				pointTurnAutoMode.setHeading(buttonBoardDirection);
-				autoModeExecuter.start();
+				System.out.println(pointTurnDirection);
+				pointTurnAutoMode.setHeading(-pointTurnDirection);	// joystick and robot directions are opposites of each other
+				if (!autoModeExecuter.getAutoMode().isActive())
+					autoModeExecuter.start();
 			}
-			prevButtonBoardDirection = buttonBoardDirection;
+			prevButtonBoardDirection = pointTurnDirection;
 				
 			// drive controls
 			if (!autoModeExecuter.getAutoMode().isActive())	// ignore joystick when doing auto turns
