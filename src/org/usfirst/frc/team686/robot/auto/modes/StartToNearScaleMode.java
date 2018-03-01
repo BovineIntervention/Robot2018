@@ -13,6 +13,7 @@ import org.usfirst.frc.team686.robot.auto.actions.InterruptableAction;
 import org.usfirst.frc.team686.robot.auto.actions.OuttakeAction;
 import org.usfirst.frc.team686.robot.auto.actions.ParallelAction;
 import org.usfirst.frc.team686.robot.auto.actions.PathFollowerWithVisionAction;
+import org.usfirst.frc.team686.robot.auto.actions.SeriesAction;
 import org.usfirst.frc.team686.robot.lib.util.Path;
 import org.usfirst.frc.team686.robot.lib.util.Path.Waypoint;
 import org.usfirst.frc.team686.robot.lib.util.PathSegment;
@@ -47,7 +48,7 @@ public class StartToNearScaleMode extends AutoModeBase {
 				
 		Vector2d scaleStopPosition = new Vector2d(300 - (Constants.kCenterToFrontBumper/Math.sqrt(2)) - 6, (FieldDimensions.kScaleLengthY/2) + (Constants.kCenterToFrontBumper/Math.sqrt(2)));
 
-		if (scaleSide == 'R') {
+		if (startPosition == StartPositionOption.RIGHT_START) {
 			centerStartTurnPosition.setY(-centerStartTurnPosition.getY());
 			turnToScalePosition.setY(-turnToScalePosition.getY());
 			scaleStopPosition.setY(-scaleStopPosition.getY());
@@ -66,18 +67,19 @@ public class StartToNearScaleMode extends AutoModeBase {
 		runAction( new PathFollowerWithVisionAction(path) );
 		runAction( new ElevatorAction(ElevatorArmBarStateEnum.SCALE_HIGH) );
 		runAction( new OuttakeAction() );
+		runAction( new ElevatorAction(ElevatorArmBarStateEnum.GROUND) );
 
 		
 		
 		// go after second cube
-		AutoModeBase secondCubeAutoMode;
+		SeriesAction secondCubeActions;
 		
 		if (switchSide == scaleSide)
-			secondCubeAutoMode = new SecondCubeForSameSideSwitchMode(scaleStopPosition, switchSide, scaleSide);
+			secondCubeActions = SecondCubeForSameSideSwitchMode.getActions(scaleStopPosition, switchSide, scaleSide);
 		else
-			secondCubeAutoMode = new SecondCubeForScaleMode(scaleStopPosition, switchSide, scaleSide);
+			secondCubeActions = SecondCubeForScaleMode.getActions(scaleStopPosition, switchSide, scaleSide);
 		
-		secondCubeAutoMode.run();
+		runAction( secondCubeActions );
 		
 	}
 

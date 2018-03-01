@@ -48,19 +48,18 @@ public class SideStartToFarSwitchMode extends AutoModeBase {
 		Vector2d initialPosition = startPosition.initialPose.getPosition(); //first assume start is left and goal is right 
 		
 		// drive straight until we are between the switch and platform
-		Vector2d turnPosition = new Vector2d(245, 116);
+		Vector2d turnPosition = new Vector2d(240, 116);
 
 		// switch corner
 		Vector2d switchStopPosition = new Vector2d(190 + Constants.kCenterToFrontBumper/Math.sqrt(2), -71 - Constants.kCenterToFrontBumper/Math.sqrt(2));
 
 		// position that defines the turn around point
-		Vector2d turnAroundPosition = new Vector2d(245, -160);
+		Vector2d turnAroundPosition = new Vector2d(240, -160);
 
 		// distance at which we start checking collision detector
 		Vector2d startCollisionPosition = switchStopPosition.add(Vector2d.magnitudeAngle(24.0, -Math.PI/4));
 		
-		if (switchSide == 'L') 
-		{
+		if (startPosition == StartPositionOption.RIGHT_START) {
 			turnPosition.setY(-turnPosition.getY());
 		    turnAroundPosition.setY(-turnAroundPosition.getY());     
 		    startCollisionPosition.setY(-startCollisionPosition.getY());
