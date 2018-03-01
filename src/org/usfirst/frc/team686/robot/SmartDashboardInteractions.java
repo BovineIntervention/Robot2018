@@ -1,17 +1,6 @@
 package org.usfirst.frc.team686.robot;
 
 import org.usfirst.frc.team686.robot.auto.AutoModeBase;
-import org.usfirst.frc.team686.robot.auto.actions.Action;
-import org.usfirst.frc.team686.robot.auto.actions.PowerUpAutoActions;
-import org.usfirst.frc.team686.robot.auto.actions.PowerUpAutoActions.InitialStateEnum;
-import org.usfirst.frc.team686.robot.auto.actions.PowerUpAutoActions.TargetEnum;
-import org.usfirst.frc.team686.robot.auto.actions.SeriesAction;
-import org.usfirst.frc.team686.robot.auto.actions.WaitAction;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.usfirst.frc.team686.robot.auto.*;
 import org.usfirst.frc.team686.robot.auto.modes.*;
 
 import org.usfirst.frc.team686.robot.lib.joystick.*;
@@ -67,6 +56,21 @@ public class SmartDashboardInteractions
     	public final String name;
     	
     	PriorityOption(String name) {
+    		this.name= name;
+    	}
+    }
+    
+    
+    static SendableChooser<CrossFieldOption> crossFieldChooser;
+    
+    public enum CrossFieldOption
+    {
+    	YES("Yes"),
+    	NO("No");
+    	
+    	public final String name;
+    	
+    	CrossFieldOption(String name) {
     		this.name= name;
     	}
     }
@@ -133,15 +137,19 @@ public class SmartDashboardInteractions
         startChooser.addDefault(StartPositionOption.LEFT_START.toString(),    StartPositionOption.LEFT_START);
         startChooser.addObject(StartPositionOption.CENTER_START.toString(),    StartPositionOption.CENTER_START);
         startChooser.addObject(StartPositionOption.RIGHT_START.toString(),    StartPositionOption.RIGHT_START);
-        SmartDashboard.putData("Start Chooser", startChooser);
+        SmartDashboard.putData("Start Position", startChooser);
         
         priorityChooser = new SendableChooser<PriorityOption>();
         priorityChooser.addDefault(PriorityOption.SWITCH_IF_SAME_SIDE.toString(), PriorityOption.SWITCH_IF_SAME_SIDE);
         priorityChooser.addObject(PriorityOption.SCALE_IF_SAME_SIDE.toString(), PriorityOption.SCALE_IF_SAME_SIDE);
         priorityChooser.addObject(PriorityOption.SWITCH_ALWAYS.toString(), PriorityOption.SWITCH_ALWAYS);
-        priorityChooser.addObject(PriorityOption.SCALE_ALWAYS.toString(), PriorityOption.SCALE_ALWAYS);
-     
-        SmartDashboard.putData("Priority Chooser", priorityChooser);
+        priorityChooser.addObject(PriorityOption.SCALE_ALWAYS.toString(), PriorityOption.SCALE_ALWAYS);   
+        SmartDashboard.putData("Auto Priority", priorityChooser);
+        
+        crossFieldChooser = new SendableChooser<CrossFieldOption>();
+        crossFieldChooser.addDefault(CrossFieldOption.YES.toString(), CrossFieldOption.YES);
+        crossFieldChooser.addObject(CrossFieldOption.NO.toString(), CrossFieldOption.NO);
+        SmartDashboard.putData("Cross Field in Auto?", crossFieldChooser);
         
         startDelayChooser = new SendableChooser<StartDelayOption>();
         startDelayChooser.addDefault(StartDelayOption.DELAY_0_SEC.toString(), StartDelayOption.DELAY_0_SEC);
@@ -150,12 +158,13 @@ public class SmartDashboardInteractions
         startDelayChooser.addObject(StartDelayOption.DELAY_3_SEC.toString(), StartDelayOption.DELAY_0_SEC);
         startDelayChooser.addObject(StartDelayOption.DELAY_4_SEC.toString(), StartDelayOption.DELAY_0_SEC);
         startDelayChooser.addObject(StartDelayOption.DELAY_5_SEC.toString(), StartDelayOption.DELAY_0_SEC);
+        SmartDashboard.putData("Auto Start Delay", startDelayChooser);
        
         autoModeChooser = new SendableChooser<AutoModeOption>();
         autoModeChooser.addDefault(AutoModeOption.POWER_UP.name, AutoModeOption.POWER_UP);
         autoModeChooser.addObject(AutoModeOption.STAND_STILL.name, AutoModeOption.STAND_STILL);
         autoModeChooser.addObject(AutoModeOption.DRIVE_STRAIGHT.name, AutoModeOption.DRIVE_STRAIGHT);
-        SmartDashboard.putData("Auto Mode Chooser", autoModeChooser);
+        SmartDashboard.putData("Auto Mode", autoModeChooser);
     	
     	joystickModeChooser = new SendableChooser<JoystickOption>();
     	joystickModeChooser.addDefault(JoystickOption.ARCADE_DRIVE.name,        JoystickOption.ARCADE_DRIVE);
@@ -182,12 +191,12 @@ public class SmartDashboardInteractions
     	StartDelayOption startDelay = startDelayChooser.getSelected();
     	StartPositionOption startPose = (StartPositionOption)startChooser.getSelected();
     	PriorityOption priority = (PriorityOption)priorityChooser.getSelected();
-    	
+    	CrossFieldOption crossField = (CrossFieldOption)crossFieldChooser.getSelected();
     	
     	switch(autoMode)
     	{
     	case POWER_UP:
-    		return new PowerUpAutoMode(gameData, startDelay, startPose, priority);
+    		return new PowerUpAutoMode(gameData, startDelay, startPose, priority, crossField);
     		
     	case DRIVE_STRAIGHT:
     		return new DriveStraightMode(24, false);

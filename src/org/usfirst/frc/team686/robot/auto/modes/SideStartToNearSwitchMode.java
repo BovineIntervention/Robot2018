@@ -3,6 +3,7 @@ package org.usfirst.frc.team686.robot.auto.modes;
 import java.util.Arrays;
 
 import org.usfirst.frc.team686.robot.Constants;
+import org.usfirst.frc.team686.robot.SmartDashboardInteractions.CrossFieldOption;
 import org.usfirst.frc.team686.robot.SmartDashboardInteractions.StartPositionOption;
 import org.usfirst.frc.team686.robot.auto.AutoModeBase;
 import org.usfirst.frc.team686.robot.auto.AutoModeEndedException;
@@ -17,12 +18,14 @@ public class SideStartToNearSwitchMode extends AutoModeBase {
 	
 	StartPositionOption startPosition;
 	char switchSide, scaleSide;
+	CrossFieldOption crossField;
 	
-	public SideStartToNearSwitchMode (StartPositionOption _startPosition, char _switchSide, char _scaleSide)
+	public SideStartToNearSwitchMode (StartPositionOption _startPosition, char _switchSide, char _scaleSide, CrossFieldOption _crossField)
 	{
 		startPosition = _startPosition; 
 		switchSide = _switchSide;
 		scaleSide = _scaleSide;
+		crossField = _crossField;
 	}
 	
 

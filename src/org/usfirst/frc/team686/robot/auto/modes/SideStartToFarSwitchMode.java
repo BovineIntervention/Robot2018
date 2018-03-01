@@ -3,6 +3,7 @@ package org.usfirst.frc.team686.robot.auto.modes;
 import java.util.Arrays;
 
 import org.usfirst.frc.team686.robot.Constants;
+import org.usfirst.frc.team686.robot.SmartDashboardInteractions.CrossFieldOption;
 import org.usfirst.frc.team686.robot.SmartDashboardInteractions.StartPositionOption;
 import org.usfirst.frc.team686.robot.auto.AutoModeBase;
 import org.usfirst.frc.team686.robot.auto.AutoModeEndedException;
@@ -25,12 +26,14 @@ public class SideStartToFarSwitchMode extends AutoModeBase {
 	
 	StartPositionOption startPosition;
 	char switchSide, scaleSide;
+	CrossFieldOption crossField;
 	
-	public SideStartToFarSwitchMode (StartPositionOption _startPosition, char _switchSide, char _scaleSide)
+	public SideStartToFarSwitchMode (StartPositionOption _startPosition, char _switchSide, char _scaleSide, CrossFieldOption _crossField)
 	{
 		startPosition = _startPosition; 
 		switchSide = _switchSide;
 		scaleSide = _scaleSide;
+		crossField = _crossField;
 	}
 	
 
@@ -67,27 +70,38 @@ public class SideStartToFarSwitchMode extends AutoModeBase {
 		}
 
 		
-		
-		
-		Path path = new Path(collisionOptions.getMaxSpeed());
-		path.add(new Waypoint(initialPosition, pathOptions));
-		path.add(new Waypoint(turnPosition, pathOptions));
-		path.add(new Waypoint(turnAroundPosition, backOptions));
-		path.add(new Waypoint(startCollisionPosition, tightTurnOptions));
-		
-		Path collisionPath = new Path();
-		collisionPath.add(new Waypoint(startCollisionPosition, collisionOptions));
-		collisionPath.add(new Waypoint(switchStopPosition, collisionOptions));
-		
-		System.out.println(path.toString());
-		System.out.println(collisionPath.toString());
-		
-		runAction( new PathFollowerWithVisionAction(path) );
-		runAction( new ParallelAction(Arrays.asList(new Action[] {
-				new ElevatorAction(ElevatorArmBarStateEnum.SWITCH),
-				new InterruptableAction(new CollisionDetectionAction(),
-				new PathFollowerWithVisionAction(collisionPath))
-		})));
-		runAction( new OuttakeAction() );
+		if (crossField == CrossFieldOption.YES)
+		{
+			Path path = new Path(collisionOptions.getMaxSpeed());
+			path.add(new Waypoint(initialPosition, pathOptions));
+			path.add(new Waypoint(turnPosition, pathOptions));
+			path.add(new Waypoint(turnAroundPosition, backOptions));
+			path.add(new Waypoint(startCollisionPosition, tightTurnOptions));
+			
+			Path collisionPath = new Path();
+			collisionPath.add(new Waypoint(startCollisionPosition, collisionOptions));
+			collisionPath.add(new Waypoint(switchStopPosition, collisionOptions));
+			
+			System.out.println(path.toString());
+			System.out.println(collisionPath.toString());
+			
+			runAction( new PathFollowerWithVisionAction(path) );
+			runAction( new ParallelAction(Arrays.asList(new Action[] {
+					new ElevatorAction(ElevatorArmBarStateEnum.SWITCH),
+					new InterruptableAction(new CollisionDetectionAction(),
+					new PathFollowerWithVisionAction(collisionPath))
+			})));
+			runAction( new OuttakeAction() );
+		}
+		else
+		{
+			// just cross line if everything is on the other side, and we don't want to interfere with a partner
+			
+			Path path = new Path();	// final velocity of this path will be collisionVelocity required by next path
+			path.add(new Waypoint(initialPosition, pathOptions));
+			path.add(new Waypoint(turnPosition,   pathOptions));
+
+			runAction( new PathFollowerWithVisionAction(path) );
+		}
 	}
 }
