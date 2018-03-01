@@ -7,6 +7,7 @@ import org.usfirst.frc.team686.robot.command_status.ElevatorState;
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
 import org.usfirst.frc.team686.robot.loops.ArmBarLoop;
 import org.usfirst.frc.team686.robot.loops.ElevatorLoop;
+import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar.ElevatorArmBarStateEnum;
 
 public class ElevatorArmBar extends Subsystem {
 	
@@ -49,6 +50,10 @@ public class ElevatorArmBar extends Subsystem {
 	double armBarAngle = 0.0;
 	double elevatorHeight = 0.0;
 	
+	Intake intake = Intake.getInstance();
+	boolean prevIntakeButton = false;
+	boolean intakeToggle = false;
+	
 	private ElevatorArmBar()
 	{
 		if (Constants.kRobotSelection == RobotSelectionEnum.COMPETITION_BOT)		 	
@@ -69,6 +74,9 @@ public class ElevatorArmBar extends Subsystem {
 	
 	public void enable()
 	{
+		prevIntakeButton = false;
+		intakeToggle = false;
+
 		if (Constants.kRobotSelection == RobotSelectionEnum.COMPETITION_BOT)		 	
 			elevatorLoop.enable();
 		armBarLoop.enable();
@@ -112,11 +120,33 @@ public class ElevatorArmBar extends Subsystem {
 		}
 
 		
-		if (_intakeButton)
-			set(state, true);
-		else
-			set(state, false);
-		
+		if (_intakeButton != prevIntakeButton)
+		{
+			if (_intakeButton && state == ElevatorArmBarStateEnum.GROUND)
+			{
+				intakeToggle = !intakeToggle;
+				if (intakeToggle)
+				{
+					set(state, true);
+					intake.grabberOut();
+					intake.startIntake();
+				}
+				else
+				{
+					set(state, false);
+					intake.grabberIn();
+					intake.startHold();
+				}
+			}
+			prevIntakeButton = _intakeButton;
+		}
+
+		// grabber is always in and intake stopped when off the ground
+		if (state != ElevatorArmBarStateEnum.GROUND)
+		{
+			intake.grabberIn();
+			intake.stopIntake();
+		}		
 	}
 	
 	

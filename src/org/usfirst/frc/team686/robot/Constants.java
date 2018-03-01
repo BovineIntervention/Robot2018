@@ -204,11 +204,11 @@ public class Constants extends ConstantsBase
 	public static double kArmBarKi = 0.0;
    
 	public static double kMaxArmBarVoltage = 12.0;	// may be less than 12V battery voltage when testing	
-	public static double kArmBarMotorStallCurrentThreshold = 2.0;	// current at which we will assume the limit switch didn't catch it and we are stalled
+	public static double kArmBarMotorStallCurrentThreshold = 10.0;	// current at which we will assume the limit switch didn't catch it and we are stalled
 
-	public static int kArmBarPeakCurrentLimit = 10;	// current at which current limit is activated
+	public static int kArmBarPeakCurrentLimit = 20;	// current at which current limit is activated
 	public static int kArmBarPeakCurrentDuration = 200;	// duration at which current limit is activated
-	public static int kArmBarContinuousCurrentLimit = 5;	// limit to this value when current limit is activated
+	public static int kArmBarContinuousCurrentLimit = 10;	// limit to this value when current limit is activated
 	
     // CUBE HEIGHT
     public static double kCubeGrabHeight = 8.5;		// inches above ground where cube is grabbed

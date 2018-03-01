@@ -51,11 +51,11 @@ public class ArmBarState
 		this.filteredTargetAngleDeg = filteredTargetAngleDeg;
 	}
 
-	public synchronized double getPidError() {
+	public synchronized double getVoltage() {
 		return pidError;
 	}
 
-	public synchronized void setPidError(double pidError) {
+	public synchronized void setVoltage(double pidError) {
 		this.pidError = pidError;
 	}
 

@@ -20,9 +20,6 @@ public class Intake extends Subsystem {
 	public boolean intakeButton = false;
 	public boolean outtakeButton = false;
 	public boolean grabberButton = false;
-	public boolean intakeToggle = false;
-	
-	ElevatorArmBar elevatorArmBar = ElevatorArmBar.getInstance();
 	
 	
 
@@ -37,38 +34,15 @@ public class Intake extends Subsystem {
 				intakeLoop.stopOuttake();
 		}
 
-		// intake has higher priority than outtake
-		if (_newIntakeButton != intakeButton)
-		{
-			intakeButton = _newIntakeButton;
-			if (intakeButton && (elevatorArmBar.state == ElevatorArmBarStateEnum.GROUND))
-			{
-				intakeToggle = !intakeToggle;
-				if (intakeToggle)
-				{
-					intakeLoop.grabberOut();
-					intakeLoop.startIntake();
-				}
-				else
-					intakeLoop.stopIntake();
-			}
-		}
-
 		if (_newGrabberButton != grabberButton)
 		{
 			grabberButton = _newGrabberButton;
-			if (grabberButton && (elevatorArmBar.state == ElevatorArmBarStateEnum.GROUND))
+			if (grabberButton)
 				intakeLoop.grabberToggle();
 		}
 
+		// intake start/stop at ground state taken care of by ElevatorArmBar
 		
-		// grabber is always in and intake stopped when off the ground
-		if (elevatorArmBar.state != ElevatorArmBarStateEnum.GROUND)
-		{
-			intakeLoop.grabberIn();
-			intakeLoop.stopIntake();
-		}
-
 	}
 	
 	
@@ -81,7 +55,7 @@ public class Intake extends Subsystem {
 	public void stopOuttake(){ intakeLoop.stopOuttake(); }
 	
 	public void grabberIn() { intakeLoop.grabberIn();	}
-	public void grabberOut() { intakeLoop.grabberIn(); }
+	public void grabberOut() { intakeLoop.grabberOut(); }
 	public void grabberToggle() { intakeLoop.grabberToggle(); }
 	
 	@Override

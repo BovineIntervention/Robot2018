@@ -288,6 +288,8 @@ public class Robot extends IterativeRobot {
 			drive.setOpenLoop(DriveCommand.COAST());
 			
 			elevatorArmBar.set(ElevatorArmBarStateEnum.GROUND, false);	// prepare to intake during teleop
+			intake.stopIntake();
+			intake.grabberIn();
 			
 		} 
 		catch (Throwable t) 

@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Timer;
 
 public class ArmBarLoop implements Loop
@@ -133,20 +134,24 @@ public class ArmBarLoop implements Loop
 		double elapsedZeroingTime = Timer.getFPGATimestamp() - startZeroingTime;
 		double maxZeroingTime = Constants.kElevatorMaxHeightLimit / Constants.kElevatorZeroingVelocity + 2.0;
 		
+		if (armBarState.isLimitSwitchTriggered())
+			System.out.println("LIMIT SWITCH TRIGGERED");
+		if (armBarState.getMotorCurrent() > Constants.kArmBarMotorStallCurrentThreshold)
+			System.out.println("MOTOR CURRENT > THRESHOLD: " + armBarState.getMotorCurrent());
+		if (elapsedZeroingTime > maxZeroingTime)
+			System.out.println("ELAPSED ZEROING TIME");
+		
 		return (armBarState.isLimitSwitchTriggered() || 
 				(armBarState.getMotorCurrent() > Constants.kArmBarMotorStallCurrentThreshold) ||
 				elapsedZeroingTime > maxZeroingTime);
 	}
 	
 	
-	double startTime;
-	
 	@Override
 	public void onStart() {
 		state = ArmBarStateEnum.UNINITIALIZED;
 		nextState = ArmBarStateEnum.UNINITIALIZED;
 		
-		startTime = Timer.getFPGATimestamp();
 		forceDisable = false;		
 	}
 
@@ -162,9 +167,9 @@ public class ArmBarLoop implements Loop
 		// set PID status before we leave
 		armBarState.setTargetAngleDeg(target);		
 		armBarState.setFilteredTargetAngleDeg(filteredTarget);
-		armBarState.setPidError(voltage);
+		armBarState.setVoltage(voltage);
 			
-		System.out.println(toString());
+		//System.out.println(toString());
 	}
 
 	@Override
@@ -194,6 +199,12 @@ public class ArmBarLoop implements Loop
 			filteredTarget = position;				// hold position
 			if (enabled)
 			{
+				startZeroingTime = Timer.getFPGATimestamp();
+
+				talon.configReverseSoftLimitEnable(false, Constants.kTalonTimeoutMs);
+				talon.configForwardSoftLimitEnable(false, Constants.kTalonTimeoutMs);
+				talon.overrideLimitSwitchesEnable(false);	// disable soft limit switches during zeroing
+				
 				nextState = ArmBarStateEnum.CALIBRATING;	// when enabled, state ZEROING
 			}
 			break;
@@ -206,8 +217,12 @@ public class ArmBarLoop implements Loop
 			{
 				// CALIBRATING is done when limit switch is hit
 				talon.setSelectedSensorPosition( Constants.kArmBarEncoderLimitUp, Constants.kTalonPidIdx, Constants.kTalonTimeoutMs);
-				setTarget(Constants.kArmBarUpAngleDeg);		// initial goal is to stay in the same position
-				filteredTarget = position;					// initial goal is to stay in the same position
+				setTarget(Constants.kArmBarUpAngleDeg);			// initial goal is to stay in the same position
+				filteredTarget = Constants.kArmBarUpAngleDeg;	// initial goal is to stay in the same position
+				
+				talon.configReverseSoftLimitEnable(true, Constants.kTalonTimeoutMs);
+				talon.configForwardSoftLimitEnable(true, Constants.kTalonTimeoutMs);
+				talon.overrideLimitSwitchesEnable(true);	// enable soft limit switches
 				
 				nextState = ArmBarStateEnum.RUNNING;		// start running state
 			}
@@ -245,7 +260,10 @@ public class ArmBarLoop implements Loop
 		voltage = Util.limit(voltage,  Constants.kMaxArmBarVoltage);
 		
 		if (limitSwitchTriggered)
+		{
+			System.out.println("LIMITSWITCHTRIGGERED");
 			voltage = Math.min(voltage, 0.0);	// do not let elevator continue up when at limit switch		
+		}
 		
 		return voltage;
 	}	
@@ -270,7 +288,8 @@ public class ArmBarLoop implements Loop
 		armBarState.setMotorPercentOutput( talon.getMotorOutputPercent() );
 		armBarState.setMotorCurrent( talon.getOutputCurrent() );
 
-		armBarState.setLimitSwitchTriggered( talon.getSelectedSensorPosition(Constants.kTalonPidIdx) >= Constants.kArmBarEncoderLimitUp);
+//		armBarState.setLimitSwitchTriggered( talon.getSelectedSensorPosition(Constants.kTalonPidIdx) >= Constants.kArmBarEncoderLimitUp);
+		armBarState.setLimitSwitchTriggered( false );
 	}
 
 	
@@ -278,6 +297,6 @@ public class ArmBarLoop implements Loop
     {
 		return String.format("%s, Target: %4.1f, FilteredTarget %4.1f, Angle: %4.1f, PIDError: %7.1f, Motor%%Output: %6.3f, MotorCurrent: %5.1f, LimitSwitch: %d",
 				state.toString(), armBarState.getTargetAngleDeg(), armBarState.getFilteredTargetAngleDeg(), armBarState.getAngleDeg(),
-				armBarState.getPidError(), armBarState.getMotorPercentOutput(), armBarState.getMotorCurrent(), armBarState.isLimitSwitchTriggered() ? 1 : 0);
+				armBarState.getVoltage(), armBarState.getMotorPercentOutput(), armBarState.getMotorCurrent(), armBarState.isLimitSwitchTriggered() ? 1 : 0);
     }
 }
