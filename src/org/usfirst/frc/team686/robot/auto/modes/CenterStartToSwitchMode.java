@@ -7,13 +7,7 @@ import org.usfirst.frc.team686.robot.SmartDashboardInteractions.CrossFieldOption
 import org.usfirst.frc.team686.robot.SmartDashboardInteractions.StartPositionOption;
 import org.usfirst.frc.team686.robot.auto.AutoModeBase;
 import org.usfirst.frc.team686.robot.auto.AutoModeEndedException;
-import org.usfirst.frc.team686.robot.auto.actions.Action;
-import org.usfirst.frc.team686.robot.auto.actions.CollisionDetectionAction;
-import org.usfirst.frc.team686.robot.auto.actions.ElevatorAction;
-import org.usfirst.frc.team686.robot.auto.actions.InterruptableAction;
-import org.usfirst.frc.team686.robot.auto.actions.OuttakeAction;
-import org.usfirst.frc.team686.robot.auto.actions.ParallelAction;
-import org.usfirst.frc.team686.robot.auto.actions.PathFollowerWithVisionAction;
+import org.usfirst.frc.team686.robot.auto.actions.*;
 import org.usfirst.frc.team686.robot.lib.util.Path;
 import org.usfirst.frc.team686.robot.lib.util.Path.Waypoint;
 import org.usfirst.frc.team686.robot.lib.util.PathSegment;
@@ -44,12 +38,9 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 		PathSegment.Options collisionOptions = new PathSegment.Options(Constants.kCollisionVel, Constants.kCollisionAccel, Constants.kPathFollowingLookahead, false);
 		
 		Vector2d initialPosition = startPosition.initialPose.getPosition();
-		
-		Vector2d switchStopPosition = FieldDimensions.getLeftSwitchPose().getPosition();		
-		
-		Vector2d turnPosition = new Vector2d(switchStopPosition.getX() - 36, switchStopPosition.getY());
-		
-		Vector2d startCollisionPosition = new Vector2d(turnPosition.getX() + 12, switchStopPosition.getY());
+		Vector2d switchStopPosition = 	  new Vector2d(140 - Constants.kCenterToFrontBumper, 58);	// 58 is center of switch platform		
+		Vector2d turnPosition = 		  new Vector2d( 80, 58);
+		Vector2d startCollisionPosition = new Vector2d(100, 58);
 		
 		if (switchSide == 'R') {
 			switchStopPosition.setY(-switchStopPosition.getY());
@@ -77,6 +68,37 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 				new PathFollowerWithVisionAction(collisionPath))
 		})));
 		runAction( new OuttakeAction() );
+		
+		
+		
+		
+		
+		
+		// Pick up a 2nd cube from the pile
+		
+		Vector2d backupPosition = 		new Vector2d(48, 0);
+		Vector2d cubePickupPosition = 	new Vector2d(98 - Constants.kCenterToFrontBumper, 0);	
+		Vector2d startIntakePosition =	cubePickupPosition.sub(new Vector2d(18,0));
+		
+		Path backupPath = new Path();
+		backupPath.add(new Waypoint(switchStopPosition, pathOptions));
+		backupPath.add(new Waypoint(backupPosition, pathOptions));
+		backupPath.setReverseDirection();
+		
+		Path approachCubePath = new Path(Constants.kCollisionVel);
+		approachCubePath.add(new Waypoint(backupPosition, pathOptions));
+		approachCubePath.add(new Waypoint(startIntakePosition, pathOptions));
+		
+		Path intakeCubePath = new Path();
+		intakeCubePath.add(new Waypoint(startIntakePosition, collisionOptions));
+		intakeCubePath.add(new Waypoint(cubePickupPosition, collisionOptions));
+		
+		runAction( new PathFollowerWithVisionAction(backupPath) );			// backup
+		runAction( new PathFollowerWithVisionAction(approachCubePath) );	// approach cube
+		runAction( new IntakeStartAction() );								// turn on intake
+		runAction( new InterruptableAction( new CollisionDetectionAction(), 
+				   new PathFollowerWithVisionAction(intakeCubePath)) );		// close in on cube
+		runAction( new PickUpCubeAction() );								// close grabber
 	}
 
 }

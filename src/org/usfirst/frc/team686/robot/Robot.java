@@ -86,7 +86,7 @@ public class Robot extends IterativeRobot {
     	{
     		CrashTracker.logRobotInit();
     		
-    		LiveWindow.disableTelemetry(pdp);	// workaround to get rid of CTRE CAN Receive Timeout errors for PowerDistributionPanel.getPDPTotalCurrent()
+    		//LiveWindow.disableTelemetry(pdp);	// workaround to get rid of CTRE CAN Receive Timeout errors for PowerDistributionPanel.getPDPTotalCurrent()
     											// TODO: re-enable to see if WPILib fixes this in the future
     		
     		loopController = new LoopController();
@@ -290,7 +290,6 @@ public class Robot extends IterativeRobot {
 			elevatorArmBar.set(ElevatorArmBarStateEnum.GROUND, false);	// prepare to intake during teleop
 			intake.stopIntake();
 			intake.grabberIn();
-			
 		} 
 		catch (Throwable t) 
 		{
@@ -318,8 +317,7 @@ public class Robot extends IterativeRobot {
 					buttonBoard.getButton(Constants.kElevatorScaleLowButton),
 					buttonBoard.getButton(Constants.kElevatorScaleMedButton),
 					buttonBoard.getButton(Constants.kElevatorScaleHighButton));
-					
-			
+								
 			// intake controls
 			intake.processInputs(
 					controls.getButton(Constants.kIntakeButton), 

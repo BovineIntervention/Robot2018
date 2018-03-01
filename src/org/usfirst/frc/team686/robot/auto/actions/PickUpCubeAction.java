@@ -8,14 +8,14 @@ import edu.wpi.first.wpilibj.Timer;
 import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar;
 import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar.ElevatorArmBarStateEnum;
 
-public class IntakeCubeAction implements Action {
+public class PickUpCubeAction implements Action {
 	ElevatorArmBar elevatorArmBar = ElevatorArmBar.getInstance();
 	Intake intake = Intake.getInstance();
 	private boolean finished;
 	double startTime = 0.0;
 	double cubeCollectionTime = 0.5;
 	
-	public IntakeCubeAction() {
+	public PickUpCubeAction() {
 		finished = false;
 	}
 	

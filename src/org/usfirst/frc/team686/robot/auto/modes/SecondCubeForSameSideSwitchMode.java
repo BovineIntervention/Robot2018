@@ -62,9 +62,10 @@ public class SecondCubeForSameSideSwitchMode {
 		actions.add( new ParallelAction(Arrays.asList(new Action[] {
 						new IntakeStartAction(),								// turn on intake
 						new PathFollowerWithVisionAction(toCubePath) })));		// close in on cube
-		actions.add( new ParallelAction(Arrays.asList(new Action[] {
-					new PathFollowerWithVisionAction(intakePath),				// intake cube at slower speed
-					new IntakeCubeAction() })));								// close grabber
+		actions.add( new InterruptableAction( new CollisionDetectionAction(), 
+				       new PathFollowerWithVisionAction(intakePath)) );			// close in on cube
+		actions.add( new PickUpCubeAction() );									// close grabber
+		
 		actions.add( new ElevatorAction(ElevatorArmBarStateEnum.SWITCH) );		// raise four bar to switch height
 		actions.add( new InterruptableAction(new CollisionDetectionAction(),	// run into switch fence
 						new PathFollowerWithVisionAction(collisionPath)));
