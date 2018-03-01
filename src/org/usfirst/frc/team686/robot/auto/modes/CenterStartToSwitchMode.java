@@ -99,6 +99,32 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 		runAction( new InterruptableAction( new CollisionDetectionAction(), 
 				   new PathFollowerWithVisionAction(intakeCubePath)) );		// close in on cube
 		runAction( new PickUpCubeAction() );								// close grabber
+
+		
+		
+		// score 2nd cube on switch
+		
+		// redo path to start at cubePickupPosition
+		path = new Path(Constants.kCollisionVel);	// final velocity of this path will be collisionVelocity required by next path
+		path.add(new Waypoint(cubePickupPosition, pathOptions));
+		path.add(new Waypoint(turnPosition, pathOptions));
+		path.add(new Waypoint(startCollisionPosition, pathOptions));
+		
+		double turnAngleDeg = cubePickupPosition.angle(turnPosition) * Vector2d.radiansToDegrees;
+
+		
+		runAction( new WaitAction(0.5) );					// wait for arm to retract
+		runAction( new PointTurnAction(turnAngleDeg) );		// turn
+		
+		// repeat cube scoring actions
+		runAction( new PathFollowerWithVisionAction(path) );
+		runAction( new ParallelAction(Arrays.asList(new Action[] {
+				new ElevatorAction(ElevatorArmBarStateEnum.SWITCH),
+				new InterruptableAction(new CollisionDetectionAction(),
+				new PathFollowerWithVisionAction(collisionPath))
+		})));
+		runAction( new OuttakeAction() );
+		
 	}
 
 }
