@@ -86,7 +86,7 @@ public class Robot extends IterativeRobot {
     	{
     		CrashTracker.logRobotInit();
     		
-    		//LiveWindow.disableTelemetry(pdp);	// workaround to get rid of CTRE CAN Receive Timeout errors for PowerDistributionPanel.getPDPTotalCurrent()
+    		LiveWindow.disableTelemetry(pdp);	// workaround to get rid of CTRE CAN Receive Timeout errors for PowerDistributionPanel.getPDPTotalCurrent()
     											// TODO: re-enable to see if WPILib fixes this in the future
     		
     		loopController = new LoopController();

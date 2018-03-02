@@ -160,7 +160,7 @@ public class Constants extends ConstantsBase
     public static double kElevataorMaxEncoderPulsePer100ms = 3200;		// velocity at a max throttle (measured using NI web interface)
     public static double kElevatorMaxPercentOutput 		= 1.0;		// percent output of motor at above throttle (using NI web interface)
 
-    public static double kElevatorCruiseVelocity = 0.75 * kElevataorMaxEncoderPulsePer100ms;		// cruise below top speed
+    public static double kElevatorCruiseVelocity = 0.25 * kElevataorMaxEncoderPulsePer100ms;		// cruise below top speed
     public static double kElevatorTimeToCruiseVelocity = 0.25;				// seconds to reach cruise velocity
     public static double kElevatorAccel = kElevatorCruiseVelocity / kElevatorTimeToCruiseVelocity; 
     
@@ -224,7 +224,7 @@ public class Constants extends ConstantsBase
     public static double kOuttakeSpeed = -1.0;		// full speed reverse
     
     public static boolean kIntakeLeftMotorInverted = true;
-    public static boolean kIntakeRightMotorInverted = true;
+    public static boolean kIntakeRightMotorInverted = false;
     
     // Do not change anything after this line!
     
@@ -325,7 +325,7 @@ public class Constants extends ConstantsBase
     
     public Constants()
     {
-        kRobotSelection = RobotSelectionEnum.PRACTICE_BOT;	// select which robot we are building code for (TODO: make this automatic?)
+        kRobotSelection = RobotSelectionEnum.COMPETITION_BOT;	// select which robot we are building code for (TODO: make this automatic?)
     	
     	// place robot-specific constants here
     	
