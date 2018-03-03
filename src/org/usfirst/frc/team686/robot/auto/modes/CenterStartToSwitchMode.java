@@ -39,7 +39,7 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 		
 		Vector2d initialPosition = startPosition.initialPose.getPosition();
 		Vector2d switchStopPosition = 	  new Vector2d(140 - Constants.kCenterToFrontBumper, 58);	// 58 is center of switch platform		
-		Vector2d turnPosition = 		  new Vector2d( 80, 58);
+		Vector2d turnPosition = 		  new Vector2d( 60, 58);
 		Vector2d startCollisionPosition = new Vector2d(100, 58);
 		
 		if (switchSide == 'R') {

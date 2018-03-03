@@ -167,8 +167,8 @@ public class SmartDashboardInteractions
         SmartDashboard.putData("Auto Mode", autoModeChooser);
     	
     	joystickModeChooser = new SendableChooser<JoystickOption>();
-    	joystickModeChooser.addDefault(JoystickOption.ARCADE_DRIVE.name,        JoystickOption.ARCADE_DRIVE);
-    	joystickModeChooser.addObject(JoystickOption.TRIGGER_DRIVE.name,        JoystickOption.TRIGGER_DRIVE);
+    	joystickModeChooser.addObject(JoystickOption.ARCADE_DRIVE.name,        JoystickOption.ARCADE_DRIVE);
+    	joystickModeChooser.addDefault(JoystickOption.TRIGGER_DRIVE.name,        JoystickOption.TRIGGER_DRIVE);
     	joystickModeChooser.addObject(JoystickOption.TANK_DRIVE.name, 	      JoystickOption.TANK_DRIVE);
      	joystickModeChooser.addObject(JoystickOption.CHEESY_ARCADE_DRIVE.name,  JoystickOption.CHEESY_ARCADE_DRIVE);
     	joystickModeChooser.addObject(JoystickOption.CHEESY_TRIGGER_DRIVE.name, JoystickOption.CHEESY_TRIGGER_DRIVE);

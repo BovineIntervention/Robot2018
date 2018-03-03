@@ -160,7 +160,7 @@ public class ElevatorArmBar extends Subsystem {
 		if (state != ElevatorArmBarStateEnum.GROUND)
 		{
 			intake.grabberIn();
-			intake.stopIntake();
+			//intake.stopIntake();
 		}		
 	}
 	

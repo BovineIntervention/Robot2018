@@ -48,9 +48,9 @@ public class IntakeLoop implements Loop
 	public void startIntake() { intakeMode = IntakeModeEnum.INTAKE; }
 	public void stopIntake() { intakeMode = IntakeModeEnum.STOP; }
 	
-	public void startHold() { intakeMode = IntakeModeEnum.HOLD; }
+	public void startHold() {  intakeMode = IntakeModeEnum.HOLD; }
 	
-	public void startOuttake() { intakeMode = IntakeModeEnum.OUTTAKE; }
+	public void startOuttake() {intakeMode = IntakeModeEnum.OUTTAKE; }
 	public void stopOuttake() { intakeMode = IntakeModeEnum.STOP; }
 	
 	public void grabberIn() { grabberInFlag = true;	}
@@ -77,6 +77,8 @@ public class IntakeLoop implements Loop
 	@Override
 	public void onLoop() 
 	{
+		//System.out.println("IntakeLoop onLoop");
+		
 		switch (intakeMode)
 		{
 		case INTAKE:
@@ -95,7 +97,6 @@ public class IntakeLoop implements Loop
 			break;
 			
 		case STOP:
-		default:
 			lVelocity = 0;
 			rVelocity = 0;
 			break;
@@ -134,6 +135,6 @@ public class IntakeLoop implements Loop
 	
     public String toString() 
     {
-    	return String.format("lMotor: %5.2f, rMotor: %5.2f, Grabber: %s", lMotor.get(), rMotor.get(), grabber.get().name());
+    	return String.format("intakeMode: %s, lMotor: %5.2f, rMotor: %5.2f, Grabber: %s", intakeMode, lMotor.get(), rMotor.get(), grabber.get().name());
     }
 }

@@ -44,7 +44,7 @@ System.out.println("STARTING AUTOMODE: " + startPosition.name + " to Near Switch
 		Vector2d switchStopPosition = new Vector2d(FieldDimensions.kSwitchFromCenterStartDistX + (FieldDimensions.kSwitchLengthX/2) + 12,
 													(FieldDimensions.kSwitchLengthY/2) + Constants.kCenterToFrontBumper);
 		
-		Vector2d turnPosition = new Vector2d(switchStopPosition.getX() + 3 , switchStopPosition.getY() + 30);
+		Vector2d turnPosition = new Vector2d(switchStopPosition.getX() + 12 , switchStopPosition.getY() + 50);
 		
 		Vector2d startCollisionPosition = new Vector2d(switchStopPosition.getX() + 3, switchStopPosition.getY() + 12);
 		
