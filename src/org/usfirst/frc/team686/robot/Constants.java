@@ -160,7 +160,7 @@ public class Constants extends ConstantsBase
     public static double kElevataorMaxEncoderPulsePer100ms = 3200;		// velocity at a max throttle (measured using NI web interface)
     public static double kElevatorMaxPercentOutput 		= 1.0;		// percent output of motor at above throttle (using NI web interface)
 
-    public static double kElevatorCruiseVelocity = 0.25 * kElevataorMaxEncoderPulsePer100ms;		// cruise below top speed
+    public static double kElevatorCruiseVelocity = 0.75 * kElevataorMaxEncoderPulsePer100ms;		// cruise below top speed
     public static double kElevatorTimeToCruiseVelocity = 0.25;				// seconds to reach cruise velocity
     public static double kElevatorAccel = kElevatorCruiseVelocity / kElevatorTimeToCruiseVelocity; 
     
@@ -183,7 +183,7 @@ public class Constants extends ConstantsBase
     public static double kArmBarLength = 14.0;
     
     public static double kArmBarZeroingVelocity =	30.0;	// in degrees per second
-    public static double kArmBarVelocity = 		   250.0;	// in degrees per second
+    public static double kArmBarVelocity = 		   180.0;//250.0;	// in degrees per second
     
 	public static double kArmBarQuadEncoderGain = 81.0 * 2.0;			// two 9:1 gear stages plus a 24:12 tooth reduction after the encoder 
 	public static double kArmBarQuadEncoderUnitsPerRev = 4096;
@@ -501,7 +501,7 @@ public class Constants extends ConstantsBase
 	    kQuadEncoderUnitsPerRev = (int)(4*kQuadEncoderCodesPerRev / kQuadEncoderGain);    
 	    
 	    // Path following constants
-	    kPathFollowingMaxVel    = 24.0;//72.0; // inches/sec  		
+	    kPathFollowingMaxVel    = 72.0; // inches/sec  		
 	    kPathFollowingAccelTime = 0.5;
 	    kPathFollowingMaxAccel  = kPathFollowingMaxVel / kPathFollowingAccelTime; // inches/sec^2	 
 	    kPathFollowingLookahead = 24.0; // inches

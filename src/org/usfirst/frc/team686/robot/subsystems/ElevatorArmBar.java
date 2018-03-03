@@ -119,7 +119,7 @@ public class ElevatorArmBar extends Subsystem {
 			if (_scaleHighButton) 	{ set(ElevatorArmBarStateEnum.SCALE_HIGH, extended); }
 		}
 
-		
+/*		
 		if (_intakeButton != prevIntakeButton)
 		{
 			if (_intakeButton && state == ElevatorArmBarStateEnum.GROUND)
@@ -140,7 +140,22 @@ public class ElevatorArmBar extends Subsystem {
 			}
 			prevIntakeButton = _intakeButton;
 		}
-
+*/
+		
+		if (_intakeButton)
+		{
+			set(state, true);
+			intake.grabberOut();
+			intake.startIntake();
+		}
+		else
+		{
+			set(state, false);
+			intake.grabberIn();
+			intake.startHold();
+		}
+		
+		
 		// grabber is always in and intake stopped when off the ground
 		if (state != ElevatorArmBarStateEnum.GROUND)
 		{

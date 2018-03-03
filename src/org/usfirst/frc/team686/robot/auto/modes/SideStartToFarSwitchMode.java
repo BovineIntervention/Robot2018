@@ -54,7 +54,7 @@ public class SideStartToFarSwitchMode extends AutoModeBase {
 		Vector2d turnPosition = new Vector2d(240, 116);
 
 		// switch corner
-		Vector2d switchStopPosition = new Vector2d(190 + Constants.kCenterToFrontBumper/Math.sqrt(2), -71 - Constants.kCenterToFrontBumper/Math.sqrt(2));
+		Vector2d switchStopPosition = new Vector2d(178 + Constants.kCenterToFrontBumper/Math.sqrt(2), -71 - Constants.kCenterToFrontBumper/Math.sqrt(2));
 
 		// position that defines the turn around point
 		Vector2d turnAroundPosition = new Vector2d(240, -160);
