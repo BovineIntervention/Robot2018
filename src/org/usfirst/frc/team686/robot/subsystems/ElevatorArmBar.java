@@ -119,33 +119,54 @@ public class ElevatorArmBar extends Subsystem {
 			if (_scaleHighButton) 	{ set(ElevatorArmBarStateEnum.SCALE_HIGH, extended); }
 		}
 
+		boolean john_wants_intake_toggle = false;
 		
-		if (_intakeButton != prevIntakeButton)
+		if (john_wants_intake_toggle)
 		{
-			if (_intakeButton && state == ElevatorArmBarStateEnum.GROUND)
+			if (_intakeButton != prevIntakeButton)
 			{
-				intakeToggle = !intakeToggle;
-				if (intakeToggle)
+				if (_intakeButton && state == ElevatorArmBarStateEnum.GROUND)
 				{
-					set(state, true);
-					intake.grabberOut();
-					intake.startIntake();
+					intakeToggle = !intakeToggle;
+					if (intakeToggle)
+					{
+						set(state, true);
+						intake.grabberOut();
+						intake.startIntake();
+					}
+					else
+					{
+						set(state, false);
+						intake.grabberIn();
+						intake.startHold();
+					}
 				}
-				else
-				{
-					set(state, false);
-					intake.grabberIn();
-					intake.startHold();
-				}
-			}
-			prevIntakeButton = _intakeButton;
+				prevIntakeButton = _intakeButton;
+			} 
 		}
+		else
+		{
+			// nope -- john wants intake button to be held down
+			if (_intakeButton)
+			{
+				set(state, true);
+				intake.grabberOut();
+				intake.startIntake();
+			}
+			else
+			{
+				set(state, false);
+				intake.grabberIn();
+				intake.startHold();
+			}
+		} 
+
 
 		// grabber is always in and intake stopped when off the ground
 		if (state != ElevatorArmBarStateEnum.GROUND)
 		{
 			intake.grabberIn();
-			intake.stopIntake();
+			intake.startHold();
 		}		
 	}
 	
@@ -205,6 +226,7 @@ public class ElevatorArmBar extends Subsystem {
 		armBarLoop.stop();
 		if (Constants.kRobotSelection == RobotSelectionEnum.COMPETITION_BOT)		 	
 			elevatorLoop.stop();
+		intake.stop();
 	}
 
 	@Override
