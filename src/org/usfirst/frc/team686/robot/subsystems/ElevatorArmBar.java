@@ -145,15 +145,22 @@ public class ElevatorArmBar extends Subsystem {
 		if (_intakeButton)
 		{
 			set(state, true);
-			intake.grabberOut();
-			intake.startIntake();
+			if (_intakeButton != prevIntakeButton)
+			{
+				intake.grabberIn();
+				intake.startIntake();
+			}
 		}
 		else
 		{
 			set(state, false);
-			intake.grabberIn();
-			intake.startHold();
+			if (_intakeButton != prevIntakeButton)
+			{			
+				intake.grabberIn();
+				intake.startHold();
+			}
 		}
+		prevIntakeButton = _intakeButton;
 		
 		
 		// grabber is always in and intake stopped when off the ground

@@ -284,12 +284,12 @@ public class ElevatorLoop implements Loop{
 		elevatorState.setLimitSwitchTriggered( !limitSwitch.get() );
 	}
 	
-	public double encoderUnitsToInches(int _encoderUnits)
+	public static double encoderUnitsToInches(int _encoderUnits)
 	{
 		return _encoderUnits / Constants.kElevatorEncoderUnitsPerInch;
 	}
 	
-	public int inchesToEncoderUnits(double _inches)
+	public static int inchesToEncoderUnits(double _inches)
 	{
 		return (int)(_inches * Constants.kElevatorEncoderUnitsPerInch);
 	}
