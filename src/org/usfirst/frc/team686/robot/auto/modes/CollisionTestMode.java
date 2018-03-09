@@ -40,6 +40,6 @@ public class CollisionTestMode extends AutoModeBase {
 
     	init();
     	
-        runAction(new InterruptableAction(new CollisionDetectionAction(), new PathFollowerWithVisionAction(path)));			
+        runAction(new InterruptableAction(new CollisionDetectionAction(), new PathFollowerAction(path)));			
     }
 }

@@ -13,7 +13,7 @@ import org.usfirst.frc.team686.robot.auto.actions.ElevatorAction;
 import org.usfirst.frc.team686.robot.auto.actions.InterruptableAction;
 import org.usfirst.frc.team686.robot.auto.actions.OuttakeAction;
 import org.usfirst.frc.team686.robot.auto.actions.ParallelAction;
-import org.usfirst.frc.team686.robot.auto.actions.PathFollowerWithVisionAction;
+import org.usfirst.frc.team686.robot.auto.actions.PathFollowerAction;
 import org.usfirst.frc.team686.robot.lib.util.Path;
 import org.usfirst.frc.team686.robot.lib.util.Path.Waypoint;
 import org.usfirst.frc.team686.robot.lib.util.PathSegment;
@@ -85,11 +85,11 @@ public class SideStartToFarSwitchMode extends AutoModeBase {
 			System.out.println(path.toString());
 			System.out.println(collisionPath.toString());
 			
-			runAction( new PathFollowerWithVisionAction(path) );
+			runAction( new PathFollowerAction(path) );
 			runAction( new ParallelAction(Arrays.asList(new Action[] {
 					new ElevatorAction(ElevatorArmBarStateEnum.SWITCH),
 					new InterruptableAction(new CollisionDetectionAction(),
-					new PathFollowerWithVisionAction(collisionPath))
+					new PathFollowerAction(collisionPath))
 			})));
 			runAction( new OuttakeAction() );
 		}
@@ -101,7 +101,7 @@ public class SideStartToFarSwitchMode extends AutoModeBase {
 			path.add(new Waypoint(initialPosition, pathOptions));
 			path.add(new Waypoint(turnPosition,   pathOptions));
 
-			runAction( new PathFollowerWithVisionAction(path) );
+			runAction( new PathFollowerAction(path) );
 		}
 	}
 }

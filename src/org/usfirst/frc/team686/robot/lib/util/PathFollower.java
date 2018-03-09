@@ -16,7 +16,7 @@ import org.usfirst.frc.team686.robot.subsystems.Drive;
  * 
  * Serially configures a PathFollower object to follow each path 
  */
-public class PathFollowerWithVisionDriveController 
+public class PathFollower 
 { 
 	/* Controller can be started in PATH_FOLLOWING or VISION state, as set by _initialState in constructor
 	 * If in PATH_FOLLOWING state, it will transition to VISION state when the robot locates a vision target.  
@@ -68,7 +68,7 @@ public class PathFollowerWithVisionDriveController
 	private double prevTime;
 
 	
-    public PathFollowerWithVisionDriveController(Path _path, PathVisionState _initialState) 
+    public PathFollower(Path _path, PathVisionState _initialState) 
     {
         drive = Drive.getInstance();
         path = _path;

@@ -2,27 +2,27 @@ package org.usfirst.frc.team686.robot.auto.actions;
 
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
 import org.usfirst.frc.team686.robot.lib.util.Path;
-import org.usfirst.frc.team686.robot.lib.util.PathFollowerWithVisionDriveController;
-import org.usfirst.frc.team686.robot.lib.util.PathFollowerWithVisionDriveController.PathVisionState;
+import org.usfirst.frc.team686.robot.lib.util.PathFollower;
+import org.usfirst.frc.team686.robot.lib.util.PathFollower.PathVisionState;
 
 /**
  * Action for following a path defined by a Path object.
  * 
  * Serially configures a PathFollower object to follow each path 
  */
-public class PathFollowerWithVisionAction implements Action  
+public class PathFollowerAction implements Action  
 {
-	PathFollowerWithVisionDriveController driveCtrl;
+	PathFollower driveCtrl;
 	Path path;
 
-    public PathFollowerWithVisionAction(Path _path) 
+    public PathFollowerAction(Path _path) 
     {
-    	driveCtrl = new PathFollowerWithVisionDriveController(_path, PathVisionState.PATH_FOLLOWING);
+    	driveCtrl = new PathFollower(_path, PathVisionState.PATH_FOLLOWING);
     	
     	path = _path;
     }
 
-    public PathFollowerWithVisionDriveController getDriveController() { return driveCtrl; }
+    public PathFollower getDriveController() { return driveCtrl; }
 
     @Override
     public void start() 

@@ -62,13 +62,13 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 		System.out.println(path.toString());
 		System.out.println(collisionPath.toString());
 		
-		runAction( new PathFollowerWithVisionAction(path) );
+		runAction( new PathFollowerAction(path) );						// drive towards switch
 		runAction( new ParallelAction(Arrays.asList(new Action[] {
-				new ElevatorAction(ElevatorArmBarStateEnum.SWITCH),
-				new InterruptableAction(new CollisionDetectionAction(),
-				new PathFollowerWithVisionAction(collisionPath))
+				new ElevatorAction(ElevatorArmBarStateEnum.SWITCH),		// raise elevator
+				new InterruptableAction(new CollisionDetectionAction(),	// crash into switch
+				new PathFollowerAction(collisionPath))
 		})));
-		runAction( new OuttakeAction() );
+		runAction( new OuttakeAction() );								// shoot!
 		
 		
 		
@@ -77,12 +77,12 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 		
 		// Pick up a 2nd cube from the pile
 		
-		Vector2d backupPosition = 		new Vector2d(48, 0);
+		Vector2d backupPosition = 		new Vector2d(36, 0);
 		Vector2d cubePickupPosition = 	new Vector2d(98 - Constants.kCenterToFrontBumper, 0);	
 		Vector2d startIntakePosition =	cubePickupPosition.sub(new Vector2d(18,0));
 		
 		Path backupPath = new Path();
-		backupPath.add(new Waypoint(switchStopPosition, pathOptions));
+		backupPath.add(new Waypoint(switchStopPosition, pathOptions));	// where we finished 
 		backupPath.add(new Waypoint(backupPosition, pathOptions));
 		backupPath.setReverseDirection();
 		
@@ -94,37 +94,48 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 		intakeCubePath.add(new Waypoint(startIntakePosition, collisionOptions));
 		intakeCubePath.add(new Waypoint(cubePickupPosition, collisionOptions));
 		
-		runAction( new PathFollowerWithVisionAction(backupPath) );			// backup
-		runAction( new PathFollowerWithVisionAction(approachCubePath) );	// approach cube
-		runAction( new IntakeStartAction() );								// turn on intake
+		System.out.println("CenterStartToSwitchMode 2nd Cube Pickup");
+		System.out.println(backupPath.toString());
+		System.out.println(approachCubePath.toString());
+		System.out.println(intakeCubePath.toString());
+		
+		runAction( new PathFollowerAction(backupPath) );			// backup
+		runAction( new PathFollowerAction(approachCubePath) );		// approach cube
+		runAction( new IntakeStartAction() );						// turn on intake
 		runAction( new InterruptableAction( new CollisionDetectionAction(), 
-				   new PathFollowerWithVisionAction(intakeCubePath)) );		// close in on cube
-		runAction( new PickUpCubeAction() );								// close grabber
+				   new PathFollowerAction(intakeCubePath)) );		// close in on cube
+		runAction( new PickUpCubeAction() );						// close grabber
 
 		
 		
 		// score 2nd cube on switch
 		
 		// redo path to start at cubePickupPosition
+		backupPath = new Path();
+		backupPath.add(new Waypoint(cubePickupPosition, pathOptions));	
+		backupPath.add(new Waypoint(backupPosition, pathOptions));
+		backupPath.setReverseDirection();
+
 		path = new Path(Constants.kCollisionVel);	// final velocity of this path will be collisionVelocity required by next path
-		path.add(new Waypoint(cubePickupPosition, pathOptions));
+		path.add(new Waypoint(backupPosition, pathOptions));
 		path.add(new Waypoint(turnPosition, pathOptions));
 		path.add(new Waypoint(startCollisionPosition, pathOptions));
 		
-		double turnAngleDeg = cubePickupPosition.angle(turnPosition) * Vector2d.radiansToDegrees;
-
+		System.out.println("CenterStartToSwitchMode 2nd Cube Score");
+		System.out.println(backupPath.toString());
+		System.out.println(path.toString());
+		System.out.println(collisionPath.toString());
 		
-		runAction( new WaitAction(0.5) );					// wait for arm to retract
-		runAction( new PointTurnAction(turnAngleDeg) );		// turn
 		
 		// repeat cube scoring actions
-		runAction( new PathFollowerWithVisionAction(path) );
+		runAction( new PathFollowerAction(backupPath) );				// backup
+		runAction( new PathFollowerAction(path) );						// approach switch						
 		runAction( new ParallelAction(Arrays.asList(new Action[] {
-				new ElevatorAction(ElevatorArmBarStateEnum.SWITCH),
-				new InterruptableAction(new CollisionDetectionAction(),
-				new PathFollowerWithVisionAction(collisionPath))
+				new ElevatorAction(ElevatorArmBarStateEnum.SWITCH),		// raise elevator
+				new InterruptableAction(new CollisionDetectionAction(),	// crash into switch
+				new PathFollowerAction(collisionPath))
 		})));
-		runAction( new OuttakeAction() );
+		runAction( new OuttakeAction() );								// shoot!
 		
 	}
 

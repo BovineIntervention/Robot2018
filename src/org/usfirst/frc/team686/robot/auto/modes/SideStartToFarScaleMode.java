@@ -13,7 +13,7 @@ import org.usfirst.frc.team686.robot.auto.actions.ElevatorAction;
 import org.usfirst.frc.team686.robot.auto.actions.InterruptableAction;
 import org.usfirst.frc.team686.robot.auto.actions.OuttakeAction;
 import org.usfirst.frc.team686.robot.auto.actions.ParallelAction;
-import org.usfirst.frc.team686.robot.auto.actions.PathFollowerWithVisionAction;
+import org.usfirst.frc.team686.robot.auto.actions.PathFollowerAction;
 import org.usfirst.frc.team686.robot.lib.util.Path;
 import org.usfirst.frc.team686.robot.lib.util.Path.Waypoint;
 import org.usfirst.frc.team686.robot.lib.util.PathSegment;
@@ -65,7 +65,7 @@ public class SideStartToFarScaleMode extends AutoModeBase {
 			System.out.println("SideStartToFarScaleMode path");
 			System.out.println(path.toString());
 		
-			runAction( new PathFollowerWithVisionAction(path) );
+			runAction( new PathFollowerAction(path) );
 			runAction( new ElevatorAction(ElevatorArmBarStateEnum.SCALE_HIGH) );
 			runAction( new OuttakeAction() );
 			runAction( new ElevatorAction(ElevatorArmBarStateEnum.GROUND) );
@@ -78,7 +78,7 @@ public class SideStartToFarScaleMode extends AutoModeBase {
 			path.add(new Waypoint(initialPosition, pathOptions));
 			path.add(new Waypoint(turnPosition1,   pathOptions));
 
-			runAction( new PathFollowerWithVisionAction(path) );
+			runAction( new PathFollowerAction(path) );
 		}
 	}
 

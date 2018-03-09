@@ -194,13 +194,13 @@ System.out.println("STOP POSITION" + targetPosition.toString());
 		pathBackup.setReverseDirection();	
 		
 		SeriesAction actions = new SeriesAction();
-		actions.add( new PathFollowerWithVisionAction( path ) );
-		actions.add( new PathFollowerWithVisionAction( pathAlign ) );
-		actions.add( new PathFollowerWithVisionAction( pathToTarget ) );
+		actions.add( new PathFollowerAction( path ) );
+		actions.add( new PathFollowerAction( pathAlign ) );
+		actions.add( new PathFollowerAction( pathToTarget ) );
 		//actions.add( new PointTurnAction(90) );
 		//actions.add( new ElevatorAction(ElevatorArmBarStateEnum.SWITCH) );
 		actions.add( new OuttakeAction() );
-		actions.add( new PathFollowerWithVisionAction( pathBackup ) );
+		actions.add( new PathFollowerAction( pathBackup ) );
 		
 		return actions;
 	}

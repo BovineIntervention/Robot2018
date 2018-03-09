@@ -68,11 +68,11 @@ System.out.println("STARTING AUTOMODE: " + startPosition.name + " to Near Switch
 		System.out.println(path.toString());
 		System.out.println(collisionPath.toString());
 		
-		runAction( new PathFollowerWithVisionAction(path) );
+		runAction( new PathFollowerAction(path) );
 		runAction( new ParallelAction(Arrays.asList(new Action[] {
 				new ElevatorAction(ElevatorArmBarStateEnum.SWITCH),
 				new InterruptableAction(new CollisionDetectionAction(),
-				new PathFollowerWithVisionAction(collisionPath))
+				new PathFollowerAction(collisionPath))
 		})));
 		runAction( new OuttakeAction() );
 	}

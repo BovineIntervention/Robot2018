@@ -80,7 +80,7 @@ public class DebugPathFollowingMode extends AutoModeBase
 
     	// execute each path, in sequence
     	for (Path path : pathList)
-    		runAction( new PathFollowerWithVisionAction( path ) );   
+    		runAction( new PathFollowerAction( path ) );   
     		
     }
     

@@ -13,7 +13,7 @@ import org.usfirst.frc.team686.robot.auto.actions.ElevatorAction;
 import org.usfirst.frc.team686.robot.auto.actions.InterruptableAction;
 import org.usfirst.frc.team686.robot.auto.actions.OuttakeAction;
 import org.usfirst.frc.team686.robot.auto.actions.ParallelAction;
-import org.usfirst.frc.team686.robot.auto.actions.PathFollowerWithVisionAction;
+import org.usfirst.frc.team686.robot.auto.actions.PathFollowerAction;
 import org.usfirst.frc.team686.robot.auto.actions.SeriesAction;
 import org.usfirst.frc.team686.robot.lib.util.Path;
 import org.usfirst.frc.team686.robot.lib.util.Path.Waypoint;
@@ -67,7 +67,7 @@ public class StartToNearScaleMode extends AutoModeBase {
 		System.out.println(path.toString());
 	
 		
-		runAction( new PathFollowerWithVisionAction(path) );
+		runAction( new PathFollowerAction(path) );
 		runAction( new ElevatorAction(ElevatorArmBarStateEnum.SCALE_HIGH) );
 		runAction( new OuttakeAction() );
 		runAction( new ElevatorAction(ElevatorArmBarStateEnum.GROUND) );

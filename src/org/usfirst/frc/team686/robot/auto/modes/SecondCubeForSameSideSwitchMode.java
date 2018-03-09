@@ -61,14 +61,14 @@ public class SecondCubeForSameSideSwitchMode {
 		actions.add( new PointTurnAction(turnAroundHeadingDeg) );					// turn towards cube at end of switch
 		actions.add( new ParallelAction(Arrays.asList(new Action[] {
 						new IntakeStartAction(),								// turn on intake
-						new PathFollowerWithVisionAction(toCubePath) })));		// close in on cube
+						new PathFollowerAction(toCubePath) })));		// close in on cube
 		actions.add( new InterruptableAction( new CollisionDetectionAction(), 
-				       new PathFollowerWithVisionAction(intakePath)) );			// close in on cube
+				       new PathFollowerAction(intakePath)) );			// close in on cube
 		actions.add( new PickUpCubeAction() );									// close grabber
 		
 		actions.add( new ElevatorAction(ElevatorArmBarStateEnum.SWITCH) );		// raise four bar to switch height
 		actions.add( new InterruptableAction(new CollisionDetectionAction(),	// run into switch fence
-						new PathFollowerWithVisionAction(collisionPath)));
+						new PathFollowerAction(collisionPath)));
 		actions.add( new OuttakeAction() );										// shoot!
 		
 		return actions;

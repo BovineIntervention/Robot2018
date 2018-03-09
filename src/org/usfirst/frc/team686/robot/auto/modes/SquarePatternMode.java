@@ -3,7 +3,7 @@ package org.usfirst.frc.team686.robot.auto.modes;
 import org.usfirst.frc.team686.robot.Constants;
 import org.usfirst.frc.team686.robot.auto.AutoModeBase;
 import org.usfirst.frc.team686.robot.auto.AutoModeEndedException;
-import org.usfirst.frc.team686.robot.auto.actions.PathFollowerWithVisionAction;
+import org.usfirst.frc.team686.robot.auto.actions.PathFollowerAction;
 import org.usfirst.frc.team686.robot.lib.util.Path;
 import org.usfirst.frc.team686.robot.lib.util.PathSegment;
 import org.usfirst.frc.team686.robot.lib.util.Vector2d;
@@ -48,7 +48,7 @@ public class SquarePatternMode extends AutoModeBase {
         //revPath.setReverseOrder();
         //revPath.setReverseDirection();
         
-        runAction(new PathFollowerWithVisionAction(path));			// drive forward
+        runAction(new PathFollowerAction(path));			// drive forward
         //runAction(new PathFollowerWithVisionAction(revPath));    	// drive reversed 
     }
 }

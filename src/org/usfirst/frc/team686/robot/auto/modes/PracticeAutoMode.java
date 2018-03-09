@@ -55,7 +55,7 @@ public class PracticeAutoMode extends AutoModeBase {
 		System.out.println(path.toString());
       //System.out.println(collisionPath.toString());
 		
-		runAction( new PathFollowerWithVisionAction(path) );
+		runAction( new PathFollowerAction(path) );
 		runAction(new ElevatorAction(ElevatorArmBarStateEnum.EXCHANGE));
 		//runAction( new ParallelAction(Arrays.asList(new Action[] {            //what do these do?
 				//new ElevatorAction(ElevatorArmBarStateEnum.EXCHANGE),     
