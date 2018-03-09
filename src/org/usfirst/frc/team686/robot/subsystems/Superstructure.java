@@ -139,7 +139,7 @@ public class Superstructure extends Subsystem {
 
 
 		
-	if (_intakeButton)
+		if (_intakeButton)
 		{
 			set(state, true);
 			if (_intakeButton != prevIntakeButton)
@@ -193,8 +193,6 @@ public class Superstructure extends Subsystem {
 				intakeLoop.grabberToggle();
 		}
 
-		// intake start/stop at ground state taken care of by ElevatorArmBar
-		
 		// grabber is always in and intake stopped when off the ground
 		if (state != ElevatorArmBarStateEnum.GROUND)
 		{

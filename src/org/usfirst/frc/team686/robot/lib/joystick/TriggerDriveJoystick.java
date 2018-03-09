@@ -24,7 +24,8 @@ public class TriggerDriveJoystick extends JoystickControlsBase
 	    
     	double throttle = mStick.getRawAxis(Constants.kXboxRTriggerAxis) - mStick.getRawAxis(Constants.kXboxLTriggerAxis);
         double turn     = mStick.getX();
-     		    
+        boolean isQuickTurn = mStick.getRawButton(Constants.kQuickTurnButton);
+    		    
 	    double moveValue   = Util.limit(throttle, 1.0);
 	    double rotateValue = Util.limit(turn,     1.0);
 	    double lMotorSpeed, rMotorSpeed;
@@ -44,6 +45,7 @@ public class TriggerDriveJoystick extends JoystickControlsBase
 	      }
 	    }
 	
+	    // normal trigger drive turning
 	    if (rotateValue > 0.0) {
 	      lMotorSpeed = moveValue;
 	      rMotorSpeed = moveValue-rotateValue*moveValue*2;
@@ -52,6 +54,12 @@ public class TriggerDriveJoystick extends JoystickControlsBase
 	      rMotorSpeed = moveValue;
 	    }
 	    
+	    // quick turning
+	    if (isQuickTurn)
+	    {
+		    lMotorSpeed = -rotateValue;
+		    rMotorSpeed = +rotateValue;
+	    }
 	    
 	    DriveCommand signal = new DriveCommand(lMotorSpeed, rMotorSpeed);
 	   	    

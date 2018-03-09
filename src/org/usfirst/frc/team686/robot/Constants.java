@@ -1,4 +1,4 @@
-package org.usfirst.frc.team686.robot;
+superstructurepackage org.usfirst.frc.team686.robot;
 
 import org.usfirst.frc.team686.robot.lib.util.ConstantsBase;
 
@@ -275,6 +275,7 @@ public class Constants extends ConstantsBase
 	public static int kElevatorManualUpButton	= kXboxButtonY;
 	public static int kElevatorManualDownButton	= kXboxButtonA;
 	public static int kGrabberButton 			= kXboxButtonX;
+	public static int kQuickTurnButton 			= kXboxButtonX;
 
 	
 	// Button Board Controls
