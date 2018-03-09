@@ -1,4 +1,4 @@
-superstructurepackage org.usfirst.frc.team686.robot;
+package org.usfirst.frc.team686.robot;
 
 import org.usfirst.frc.team686.robot.lib.util.ConstantsBase;
 

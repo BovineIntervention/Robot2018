@@ -20,7 +20,8 @@ public class TriggerDriveJoystick extends JoystickControlsBase
     
     public DriveCommand getDriveCommand()
     {
-	    boolean squaredInputs = false;
+	    boolean squaredTrigger = false;
+	    boolean squaredTurn    = false;
 	    
     	double throttle = mStick.getRawAxis(Constants.kXboxRTriggerAxis) - mStick.getRawAxis(Constants.kXboxLTriggerAxis);
         double turn     = mStick.getX();
@@ -30,7 +31,7 @@ public class TriggerDriveJoystick extends JoystickControlsBase
 	    double rotateValue = Util.limit(turn,     1.0);
 	    double lMotorSpeed, rMotorSpeed;
 	    
-	    if (squaredInputs) {
+	    if (squaredTrigger) {
 	      // square the inputs (while preserving the sign) to increase fine control
 	      // while permitting full power
 	      if (moveValue >= 0.0) {
@@ -38,6 +39,8 @@ public class TriggerDriveJoystick extends JoystickControlsBase
 	      } else {
 	        moveValue = -(moveValue * moveValue);
 	      }
+	    }
+	    if (squaredTurn) {
 	      if (rotateValue >= 0.0) {
 	        rotateValue = (rotateValue * rotateValue);
 	      } else {
@@ -54,7 +57,7 @@ public class TriggerDriveJoystick extends JoystickControlsBase
 	      rMotorSpeed = moveValue;
 	    }
 	    
-	    // quick turning
+	    // override normal trigger turning when quick turn button is pressed
 	    if (isQuickTurn)
 	    {
 		    lMotorSpeed = -rotateValue;
