@@ -199,9 +199,8 @@ public class SmartDashboardInteractions
     	switch(autoMode)
     	{
     	case POWER_UP:
-//    		return new PowerUpAutoMode(gameData, startDelay, startPose, priority, crossField);
-    		return new PracticeAuto(gameData, startDelay, startPose, priority, crossField);
-    		
+    		return new PowerUpAutoMode(gameData, startDelay, startPose, priority, crossField);
+     		
     	case DRIVE_STRAIGHT:
     		return new DriveStraightMode(144, false);
     		

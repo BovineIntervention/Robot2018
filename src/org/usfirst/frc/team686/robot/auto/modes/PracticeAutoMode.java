@@ -1,7 +1,5 @@
 package org.usfirst.frc.team686.robot.auto.modes;
 
-import java.util.Arrays;
-
 import org.usfirst.frc.team686.robot.Constants;
 import org.usfirst.frc.team686.robot.SmartDashboardInteractions.CrossFieldOption;
 import org.usfirst.frc.team686.robot.SmartDashboardInteractions.StartPositionOption;
@@ -14,13 +12,13 @@ import org.usfirst.frc.team686.robot.lib.util.PathSegment;
 import org.usfirst.frc.team686.robot.lib.util.Vector2d;
 import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar.ElevatorArmBarStateEnum;
 
-public class PracticeAuto extends AutoModeBase {
+public class PracticeAutoMode extends AutoModeBase {
 	
 	StartPositionOption startPosition;
 	char switchSide, scaleSide;
 	CrossFieldOption crossField;
 	
-	public PracticeAuto(StartPositionOption _startPosition, char _switchSide, char _scaleSide, CrossFieldOption _crossField)
+	public PracticeAutoMode(StartPositionOption _startPosition, char _switchSide, char _scaleSide, CrossFieldOption _crossField)
 	{
 		startPosition = _startPosition;   
 		switchSide = _switchSide;
@@ -28,12 +26,6 @@ public class PracticeAuto extends AutoModeBase {
 		crossField = _crossField;
 	}
 	
-
-	public PracticeAuto(String gameData, StartDelayOption startDelay, StartPositionOption startPose,
-			PriorityOption priority, CrossFieldOption crossField2) {
-		// TODO Auto-generated constructor stub
-	}
-
 
 	@Override
 	protected void routine() throws AutoModeEndedException {

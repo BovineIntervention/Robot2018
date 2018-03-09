@@ -64,6 +64,9 @@ public class PowerUpAutoMode extends AutoModeBase {
 		
 		autoMode = new StandStillMode();
 
+//		autoMode = new PracticeAuto(startPosition, switchSide, scaleSide, crossField);
+//    }
+
 		
 		// optional delay at start of autonomous
 		runAction( new WaitAction(startDelay.delaySec) );
