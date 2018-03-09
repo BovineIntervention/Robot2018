@@ -102,9 +102,9 @@ public class SmartDashboardInteractions
     enum AutoModeOption
     {
         POWER_UP("Power Up"),
+    	CROSS_THE_LINE("Cross the line"),
         STAND_STILL("Stand Still"),
-        DRIVE_STRAIGHT("Drive Straight"),
-    	PRACTICE_AUTO("Pick Up Cube");
+        PRACTICE_AUTO("Pick Up Cube");
     	
         public final String name;
 
@@ -163,8 +163,8 @@ public class SmartDashboardInteractions
        
         autoModeChooser = new SendableChooser<AutoModeOption>();
         autoModeChooser.addDefault(AutoModeOption.POWER_UP.name, AutoModeOption.POWER_UP);
+        autoModeChooser.addObject(AutoModeOption.CROSS_THE_LINE.name, AutoModeOption.CROSS_THE_LINE);
         autoModeChooser.addObject(AutoModeOption.STAND_STILL.name, AutoModeOption.STAND_STILL);
-        autoModeChooser.addObject(AutoModeOption.DRIVE_STRAIGHT.name, AutoModeOption.DRIVE_STRAIGHT);
         SmartDashboard.putData("Auto Mode", autoModeChooser);
     	
     	joystickModeChooser = new SendableChooser<JoystickOption>();
@@ -199,8 +199,8 @@ public class SmartDashboardInteractions
     	case POWER_UP:
     		return new PowerUpAutoMode(gameData, startDelay, startPose, priority, crossField);
      		
-    	case DRIVE_STRAIGHT:
-    		return new DriveStraightMode(144, false);
+    	case CROSS_THE_LINE:
+    		return new CrossTheLineMode(startDelay);
     		
     	case STAND_STILL:
 			return new StandStillMode();
