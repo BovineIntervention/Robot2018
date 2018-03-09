@@ -34,6 +34,7 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 
 		System.out.println("STARTING AUTOMODE: Center to Switch");
 		
+		double velocity = 48;
 		PathSegment.Options pathOptions	= new PathSegment.Options(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, Constants.kPathFollowingLookahead, false);
 		PathSegment.Options collisionOptions = new PathSegment.Options(Constants.kCollisionVel, Constants.kCollisionAccel, Constants.kPathFollowingLookahead, false);
 		

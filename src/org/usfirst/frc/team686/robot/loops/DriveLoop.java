@@ -119,18 +119,16 @@ public class DriveLoop implements Loop
 		switch (Constants.kRobotSelection)
 		{
 		case PRACTICE_BOT:
-			System.out.println("Practice Bot: 1 TalonSRX slaves per side");
-            lMotorSlaves.add(new TalonSRX(Constants.kLeftMotorSlave1TalonId));
-//	        lMotorSlaves.add(new TalonSRX(Constants.kLeftMotorSlave2TalonId));
-	        rMotorSlaves.add(new TalonSRX(Constants.kRightMotorSlave1TalonId));
-//	        rMotorSlaves.add(new TalonSRX(Constants.kRightMotorSlave2TalonId));
+			System.out.println("Practice Bot: 1 VictorSPX slave per side");
+			lMotorSlaves.add(new VictorSPX(Constants.kLeftMotorSlave1TalonId));
+	        rMotorSlaves.add(new VictorSPX(Constants.kRightMotorSlave1TalonId));
 	        break;
 			
 		case COMPETITION_BOT:
 		default:
 			System.out.println("Competition Bot: 1 VictorSPX slave per side");
 	        lMotorSlaves.add(new VictorSPX(Constants.kLeftMotorSlave1TalonId));
-	        rMotorSlaves.add(new VictorSPX(Constants.kRightMotorSlave1TalonId));
+	        rMotorSlaves.add(new VictorSPX(Constants.kRightMotorSlave1TalonId));			
 	        break;	
 		}
 		

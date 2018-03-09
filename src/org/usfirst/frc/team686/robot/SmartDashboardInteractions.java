@@ -103,7 +103,9 @@ public class SmartDashboardInteractions
     {
         POWER_UP("Power Up"),
         STAND_STILL("Stand Still"),
-        DRIVE_STRAIGHT("Drive Straight");
+        DRIVE_STRAIGHT("Drive Straight"),
+        ELEVATOR_TEST("Elevator Test"),
+    	PRACTICE_AUTO("Pick Up Cube");
     	
         public final String name;
 
@@ -164,11 +166,12 @@ public class SmartDashboardInteractions
         autoModeChooser.addDefault(AutoModeOption.POWER_UP.name, AutoModeOption.POWER_UP);
         autoModeChooser.addObject(AutoModeOption.STAND_STILL.name, AutoModeOption.STAND_STILL);
         autoModeChooser.addObject(AutoModeOption.DRIVE_STRAIGHT.name, AutoModeOption.DRIVE_STRAIGHT);
+        autoModeChooser.addObject(AutoModeOption.ELEVATOR_TEST.name, AutoModeOption.ELEVATOR_TEST);
         SmartDashboard.putData("Auto Mode", autoModeChooser);
     	
     	joystickModeChooser = new SendableChooser<JoystickOption>();
-    	joystickModeChooser.addDefault(JoystickOption.ARCADE_DRIVE.name,        JoystickOption.ARCADE_DRIVE);
-    	joystickModeChooser.addObject(JoystickOption.TRIGGER_DRIVE.name,        JoystickOption.TRIGGER_DRIVE);
+    	joystickModeChooser.addObject(JoystickOption.ARCADE_DRIVE.name,        JoystickOption.ARCADE_DRIVE);
+    	joystickModeChooser.addDefault(JoystickOption.TRIGGER_DRIVE.name,        JoystickOption.TRIGGER_DRIVE);
     	joystickModeChooser.addObject(JoystickOption.TANK_DRIVE.name, 	      JoystickOption.TANK_DRIVE);
      	joystickModeChooser.addObject(JoystickOption.CHEESY_ARCADE_DRIVE.name,  JoystickOption.CHEESY_ARCADE_DRIVE);
     	joystickModeChooser.addObject(JoystickOption.CHEESY_TRIGGER_DRIVE.name, JoystickOption.CHEESY_TRIGGER_DRIVE);
@@ -196,13 +199,17 @@ public class SmartDashboardInteractions
     	switch(autoMode)
     	{
     	case POWER_UP:
-    		return new PowerUpAutoMode(gameData, startDelay, startPose, priority, crossField);
+//    		return new PowerUpAutoMode(gameData, startDelay, startPose, priority, crossField);
+    		return new PracticeAuto(gameData, startDelay, startPose, priority, crossField);
     		
     	case DRIVE_STRAIGHT:
-    		return new DriveStraightMode(24, false);
+    		return new DriveStraightMode(144, false);
     		
     	case STAND_STILL:
 			return new StandStillMode();
+			
+    	case ELEVATOR_TEST:
+			return new ElevatorTestMode();
 			
     	default:
             System.out.println("ERROR: unexpected auto mode: " + autoMode);

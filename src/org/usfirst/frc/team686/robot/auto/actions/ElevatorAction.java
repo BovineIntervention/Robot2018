@@ -4,6 +4,7 @@ import org.usfirst.frc.team686.robot.Constants;
 import org.usfirst.frc.team686.robot.Constants.RobotSelectionEnum;
 import org.usfirst.frc.team686.robot.command_status.ElevatorState;
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
+import org.usfirst.frc.team686.robot.loops.ElevatorLoop;
 import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar;
 import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar.ElevatorArmBarStateEnum;
 
@@ -39,7 +40,7 @@ public class ElevatorAction implements Action {
 		
 		mStartTime = Timer.getFPGATimestamp();
 		elevatorArmBar.set(targetState, extended);
-		targetPosition = elevatorState.getTrajectoryTargetInches();
+		targetPosition = elevatorArmBar.get(); 
 		actualPosition = elevatorState.getPositionInches();
 	}
 	

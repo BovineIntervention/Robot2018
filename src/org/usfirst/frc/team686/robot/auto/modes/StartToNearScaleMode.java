@@ -49,7 +49,7 @@ public class StartToNearScaleMode extends AutoModeBase {
 
 		Vector2d turnToScalePosition = new Vector2d(205, 130);
 				
-		Vector2d scaleStopPosition = new Vector2d(300 - (Constants.kCenterToFrontBumper/Math.sqrt(2)) - 6, (FieldDimensions.kScaleLengthY/2) + (Constants.kCenterToFrontBumper/Math.sqrt(2)));
+		Vector2d scaleStopPosition = new Vector2d(300 - (Constants.kCenterToFrontBumper/Math.sqrt(2)) - 18, (FieldDimensions.kScaleLengthY/2) + (Constants.kCenterToFrontBumper/Math.sqrt(2)));
 
 		if (startPosition == StartPositionOption.RIGHT_START) {
 			centerStartTurnPosition.setY(-centerStartTurnPosition.getY());

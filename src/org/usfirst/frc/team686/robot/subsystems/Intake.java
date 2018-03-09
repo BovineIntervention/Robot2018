@@ -25,13 +25,16 @@ public class Intake extends Subsystem {
 
 	public void processInputs(boolean _newIntakeButton, boolean _newOuttakeButon, boolean _newGrabberButton)
 	{
-		if (_newOuttakeButon != outtakeButton)
+		//if (_newOuttakeButon != outtakeButton)
 		{
 			outtakeButton = _newOuttakeButon;
 			if (outtakeButton)
 				intakeLoop.startOuttake();
 			else
-				intakeLoop.stopOuttake();
+			{
+				if (!_newIntakeButton)
+					intakeLoop.stopOuttake();
+			}
 		}
 
 		if (_newGrabberButton != grabberButton)

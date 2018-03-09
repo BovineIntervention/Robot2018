@@ -100,8 +100,8 @@ public class Constants extends ConstantsBase
     public static double kCollisionVel 			= 24;
     public static double kCollisionAccelTime = 0.5;	// sec to reach max velocity
     public static double kCollisionAccel 		= kCollisionVel / kCollisionAccelTime;
-    public static double kCollisionJerkThreshold 	= 0.7;		// maximum JerkY was 0.9 for a 24 inch/sec collision into wall (<0.1 when driving normal)
-    public static double kCollisionCurrentThreshold = 30;		// threshold to detect stall current
+    public static double kCollisionJerkThreshold 	= 0.9;		// maximum JerkY was 0.9 for a 24 inch/sec collision into wall (<0.1 when driving normal)
+    public static double kCollisionCurrentThreshold = 20;		// threshold to detect stall current
     
     // Vision constants
     public static double kCameraPoseX ;	// camera location with respect to robot center of rotation, +X axis is in direction of travel
@@ -139,7 +139,7 @@ public class Constants extends ConstantsBase
     public static double kCubeScaleHeightHigh = kScaleHeightHigh + 1*kCubeHeight + kCubeClearance;
     public static double kCubeScaleHeightMed = 	kScaleHeightMed  + 1*kCubeHeight + kCubeClearance;
     public static double kCubeScaleHeightLow = 	kScaleHeightLow  + 1*kCubeHeight + kCubeClearance;
-    public static double kCubeSwitchHeight =	kSwitchHeight                    + kCubeClearance; 		
+    public static double kCubeSwitchHeight =	kSwitchHeight                    + kCubeClearance + 6; //to raise the arm a little higher		
     public static double kCubeExchangeHeight = 	kExchangeHeight; 
     public static double kCubeGroundHeight = 	kGroundHeight;
     
@@ -176,14 +176,14 @@ public class Constants extends ConstantsBase
     public static double kElevatorManualOutput = 0.5;
     public static double kElevatorMotorStallCurrentThreshold = 15.0;	// current at which we will assume the limit switch didn't catch it and we are stalled
     
-    public static double kDriveScaleFactorAtMaxElevatorHeight = 0.25;    
+    public static double kDriveScaleFactorAtMaxElevatorHeight = 0.5;    
     
     // ARM BAR
 	// absolute encoder values (to be used in place of limit switches)
     public static double kArmBarLength = 14.0;
     
     public static double kArmBarZeroingVelocity =	30.0;	// in degrees per second
-    public static double kArmBarVelocity = 		   250.0;	// in degrees per second
+    public static double kArmBarVelocity = 		   180.0;//250.0;	// in degrees per second
     
 	public static double kArmBarQuadEncoderGain = 81.0 * 2.0;			// two 9:1 gear stages plus a 24:12 tooth reduction after the encoder 
 	public static double kArmBarQuadEncoderUnitsPerRev = 4096;
@@ -221,10 +221,10 @@ public class Constants extends ConstantsBase
     public static double kIntakeRPM = 1200;
     public static double kIntakeSpeed = 0.8;
     public static double kIntakeHoldSpeed = 0.2;	// apply some force to keep in    
-    public static double kOuttakeSpeed = -1.0;		// full speed reverse
+    public static double kOuttakeSpeed = -0.8;		// full speed reverse
     
-    public static boolean kIntakeLeftMotorInverted = true;
-    public static boolean kIntakeRightMotorInverted = true;
+    public static boolean kIntakeLeftMotorInverted;
+    public static boolean kIntakeRightMotorInverted;
     
     // Do not change anything after this line!
     
@@ -325,6 +325,7 @@ public class Constants extends ConstantsBase
     
     public Constants()
     {
+//        kRobotSelection = RobotSelectionEnum.COMPETITION_BOT;	// select which robot we are building code for (TODO: make this automatic?)
         kRobotSelection = RobotSelectionEnum.PRACTICE_BOT;	// select which robot we are building code for (TODO: make this automatic?)
     	
     	// place robot-specific constants here
@@ -352,6 +353,10 @@ public class Constants extends ConstantsBase
     		    // CONTROL LOOP GAINS
     		    double kNominalEncoderPulsePer100ms = 85;		// velocity at a nominal throttle (measured using NI web interface)
     		    double kNominalPercentOutput 		 = 0.4447;	// percent output of motor at above throttle (using NI web interface)
+    		    
+    		    
+    		    kIntakeLeftMotorInverted = true;
+    		     kIntakeRightMotorInverted = false;
     		    
     		    kDriveVelocityKp = 20.0;
     		    kDriveVelocityKi = 0.01;
@@ -436,6 +441,11 @@ public class Constants extends ConstantsBase
     		    
     		    
     		    
+    		    kIntakeLeftMotorInverted = false;
+    		    kIntakeRightMotorInverted = true;
+
+System.out.printf("PRACTICE_BOT: kIntakeLeftMotorInverted = %b (should be false)\n", kIntakeLeftMotorInverted);    		    
+    		    
     		    kDriveVelocityKp = 2.0;
     		    kDriveVelocityKi = 0.001;
     		    kDriveVelocityKd = 100.0;
@@ -501,7 +511,7 @@ public class Constants extends ConstantsBase
 	    kQuadEncoderUnitsPerRev = (int)(4*kQuadEncoderCodesPerRev / kQuadEncoderGain);    
 	    
 	    // Path following constants
-	    kPathFollowingMaxVel    = 24.0;//72.0; // inches/sec  		
+	    kPathFollowingMaxVel    = 72.0; // inches/sec  		
 	    kPathFollowingAccelTime = 0.5;
 	    kPathFollowingMaxAccel  = kPathFollowingMaxVel / kPathFollowingAccelTime; // inches/sec^2	 
 	    kPathFollowingLookahead = 24.0; // inches

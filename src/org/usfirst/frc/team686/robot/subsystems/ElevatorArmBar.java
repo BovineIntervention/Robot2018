@@ -24,6 +24,7 @@ public class ElevatorArmBar extends Subsystem {
 		START_OF_MATCH(	Constants.kCubeGroundHeight, 		Constants.kArmBarUpAngleDeg, 	Constants.kArmBarUpAngleDeg),	// needed for elevator / armbar limit switch calibration
 		GROUND(			Constants.kCubeGroundHeight, 		Constants.kArmBarUpAngleDeg, 	Constants.kArmBarDownAngleDeg),
 		EXCHANGE(		Constants.kCubeExchangeHeight, 		Constants.kArmBarDownAngleDeg, 	Constants.kArmBarDownAngleDeg),
+//		EXCHANGE(		Constants.kCubeExchangeHeight, 		-25, 	-25),
 		SWITCH(			Constants.kCubeSwitchHeight, 		Constants.kArmBarUpAngleDeg, 	Constants.kArmBarUpAngleDeg),
 		SCALE_LOW(		Constants.kCubeScaleHeightLow, 		Constants.kArmBarUpAngleDeg, 	Constants.kArmBarUpAngleDeg),
 		SCALE_MED(		Constants.kCubeScaleHeightMed, 		Constants.kArmBarUpAngleDeg, 	Constants.kArmBarUpAngleDeg),
@@ -153,20 +154,36 @@ public class ElevatorArmBar extends Subsystem {
 				intake.grabberOut();
 				intake.startIntake();
 			}
-			else
+			prevIntakeButton = _intakeButton;
+		}
+*/
+		
+		if (_intakeButton)
+		{
+			set(state, true);
+			if (_intakeButton != prevIntakeButton)
 			{
-				set(state, false);
+				intake.grabberIn();
+				intake.startIntake();
+			}
+		}
+		else
+		{
+			set(state, false);
+			if (_intakeButton != prevIntakeButton)
+			{			
 				intake.grabberIn();
 				intake.startHold();
 			}
-		} 
-
-
+		}
+		prevIntakeButton = _intakeButton;
+		
+		
 		// grabber is always in and intake stopped when off the ground
 		if (state != ElevatorArmBarStateEnum.GROUND)
 		{
 			intake.grabberIn();
-			intake.startHold();
+			//intake.stopIntake();
 		}		
 	}
 	
@@ -207,6 +224,11 @@ public class ElevatorArmBar extends Subsystem {
 		}
 	}
 	
+	public double get()
+	{
+		return elevatorHeight;
+	}
+
 	
 	private double calcElevatorHeight(double _bottomOfCubeHeight, double _armBarAngleDeg)
 	{
