@@ -325,15 +325,15 @@ public class Robot extends IterativeRobot {
 					controls.getButton(Constants.kGrabberButton));
 						
 			// turn-to-angle controls (assumes that AutoModeExectuer is already set to PointTurnAutoMode)
-			int pointTurnDirection = buttonBoard.getPOV();
-			if (pointTurnDirection >= 0 && (pointTurnDirection != prevButtonBoardDirection))
-			{
-				System.out.println(pointTurnDirection);
-				pointTurnAutoMode.setHeading(-pointTurnDirection);	// joystick and robot directions are opposites of each other
-				if (!autoModeExecuter.getAutoMode().isActive())
-					autoModeExecuter.start();
-			}
-			prevButtonBoardDirection = pointTurnDirection;
+//			int pointTurnDirection = buttonBoard.getPOV();
+//			if (pointTurnDirection >= 0 && (pointTurnDirection != prevButtonBoardDirection))
+//			{
+//				System.out.println(pointTurnDirection);
+//				pointTurnAutoMode.setHeading(-pointTurnDirection);	// joystick and robot directions are opposites of each other
+//				if (!autoModeExecuter.getAutoMode().isActive())
+//					autoModeExecuter.start();
+//			}
+//			prevButtonBoardDirection = pointTurnDirection;
 				
 			// drive controls
 			if (!autoModeExecuter.getAutoMode().isActive())	// ignore joystick when doing auto turns
