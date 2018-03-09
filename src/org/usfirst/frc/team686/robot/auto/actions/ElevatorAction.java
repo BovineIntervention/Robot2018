@@ -40,7 +40,7 @@ public class ElevatorAction implements Action {
 		
 		mStartTime = Timer.getFPGATimestamp();
 		elevatorArmBar.set(targetState, extended);
-		targetPosition = ElevatorLoop.getInstance().getTarget(); 
+		targetPosition = elevatorArmBar.get(); 
 		actualPosition = elevatorState.getPositionInches();
 	}
 	

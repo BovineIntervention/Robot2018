@@ -35,13 +35,13 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 		System.out.println("STARTING AUTOMODE: Center to Switch");
 		
 		double velocity = 48;
-		PathSegment.Options pathOptions	= new PathSegment.Options(velocity, Constants.kPathFollowingMaxAccel, Constants.kPathFollowingLookahead, false);
+		PathSegment.Options pathOptions	= new PathSegment.Options(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, Constants.kPathFollowingLookahead, false);
 		PathSegment.Options collisionOptions = new PathSegment.Options(Constants.kCollisionVel, Constants.kCollisionAccel, Constants.kPathFollowingLookahead, false);
 		
 		Vector2d initialPosition = startPosition.initialPose.getPosition();
-		Vector2d switchStopPosition = 	  new Vector2d(140 - Constants.kCenterToFrontBumper, 72);	// 58 is center of switch platform		
-		Vector2d turnPosition = 		  new Vector2d( 60, 72);
-		Vector2d startCollisionPosition = new Vector2d(100, 72);
+		Vector2d switchStopPosition = 	  new Vector2d(140 - Constants.kCenterToFrontBumper, 58);	// 58 is center of switch platform		
+		Vector2d turnPosition = 		  new Vector2d( 80, 58);
+		Vector2d startCollisionPosition = new Vector2d(100, 58);
 		
 		if (switchSide == 'R') {
 			switchStopPosition.setY(-switchStopPosition.getY());
@@ -100,6 +100,7 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 		runAction( new InterruptableAction( new CollisionDetectionAction(), 
 				   new PathFollowerWithVisionAction(intakeCubePath)) );		// close in on cube
 		runAction( new PickUpCubeAction() );								// close grabber
+	
 	}
 
 }
