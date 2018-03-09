@@ -9,7 +9,7 @@ public class OuttakeAction implements Action {
 	Superstructure superstructure = Superstructure.getInstance();
 
 
-	private double mTimeToOuttake = 0.5;
+	private double mTimeToOuttake = 0.25;
 	private double mStartTime;
 	private boolean finished;
 	

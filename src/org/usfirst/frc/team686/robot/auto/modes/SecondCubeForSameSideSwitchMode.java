@@ -15,26 +15,33 @@ public class SecondCubeForSameSideSwitchMode {
 	public static SeriesAction getActions(Vector2d currentPosition, char switchSide, char scaleSide)
 	{
 		// define positions, angles
+		Vector2d backupPosition = 	 	 new Vector2d(250, 150);
 		Vector2d slowDownPosition = 	 new Vector2d(224 + Constants.kCenterToFrontBumper, 70);
 		Vector2d closeIntakePosition = 	 new Vector2d(212 + Constants.kCenterToFrontBumper, 70);
 		Vector2d stopPosition = 		 new Vector2d(196 + Constants.kCenterToFrontBumper, 70);
 
 		if (switchSide == 'R') {
+			backupPosition.setY(-backupPosition.getY());
 			slowDownPosition.setY(-slowDownPosition.getY());
 			closeIntakePosition.setY(-closeIntakePosition.getY());
 			stopPosition.setY(-stopPosition.getY());
 		}
 
-		double turnAroundHeadingDeg = currentPosition.angle(slowDownPosition) * Vector2d.radiansToDegrees;
+//		double turnAroundHeadingDeg = currentPosition.angle(slowDownPosition) * Vector2d.radiansToDegrees;
 		
 
 		// define paths
 		PathSegment.Options pathOptions	= new PathSegment.Options(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, Constants.kPathFollowingLookahead, false);
 		PathSegment.Options slowDownOptions = new PathSegment.Options(Constants.kCollisionVel, Constants.kCollisionAccel, Constants.kPathFollowingLookahead, false);
 		PathSegment.Options collisionOptions = new PathSegment.Options(Constants.kCollisionVel, Constants.kCollisionAccel, Constants.kPathFollowingLookahead, false);
+
+		Path backupPath = new Path();	// final velocity of this path will be velocity required by next path
+		backupPath.add(new Waypoint(currentPosition, pathOptions));
+		backupPath.add(new Waypoint(backupPosition, pathOptions));		
+		backupPath.setReverseDirection();
 		
 		Path toCubePath = new Path(slowDownOptions.getMaxSpeed());	// final velocity of this path will be velocity required by next path
-		toCubePath.add(new Waypoint(currentPosition, pathOptions));
+		toCubePath.add(new Waypoint(backupPosition, pathOptions));
 		toCubePath.add(new Waypoint(slowDownPosition, pathOptions));
 
 		Path intakePath = new Path(collisionOptions.getMaxSpeed());	// final velocity of this path will be velocity required by next path
@@ -48,7 +55,8 @@ public class SecondCubeForSameSideSwitchMode {
 		
 		// display paths for debug
 		System.out.println("SameSideSwitchSecondCubeMode path");
-		System.out.printf("Turnaround heading: %.1f deg\n", turnAroundHeadingDeg);
+//		System.out.printf("Turnaround heading: %.1f deg\n", turnAroundHeadingDeg);
+		System.out.println(backupPath.toString());
 		System.out.println(toCubePath.toString());
 		System.out.println(intakePath.toString());
 		System.out.println(collisionPath.toString());
@@ -57,13 +65,14 @@ public class SecondCubeForSameSideSwitchMode {
 		// build sequence
 		SeriesAction actions = new SeriesAction();
 		
-		actions.add( new ElevatorAction(ElevatorArmBarStateEnum.GROUND) );		// drop elevator (if not already done)
-		actions.add( new PointTurnAction(turnAroundHeadingDeg) );					// turn towards cube at end of switch
 		actions.add( new ParallelAction(Arrays.asList(new Action[] {
-						new IntakeStartAction(),								// turn on intake
-						new PathFollowerAction(toCubePath) })));		// close in on cube
+				new ElevatorAction(ElevatorArmBarStateEnum.GROUND),				// drop elevator (if not already done
+				new PathFollowerAction(backupPath) })));						// backup towards wall
+		
+		actions.add( new IntakeStartAction() );									// turn on intake
+		actions.add( new PathFollowerAction(toCubePath) );						// quickly close in on cube
 		actions.add( new InterruptableAction( new CollisionDetectionAction(), 
-				       new PathFollowerAction(intakePath)) );			// close in on cube
+				       new PathFollowerAction(intakePath)) );					// slowly close in on cube
 		actions.add( new PickUpCubeAction() );									// close grabber
 		
 		actions.add( new ElevatorAction(ElevatorArmBarStateEnum.SWITCH) );		// raise four bar to switch height
