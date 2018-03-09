@@ -5,8 +5,8 @@ import org.usfirst.frc.team686.robot.Constants.RobotSelectionEnum;
 import org.usfirst.frc.team686.robot.command_status.ElevatorState;
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
 import org.usfirst.frc.team686.robot.loops.ElevatorLoop;
-import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar;
-import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar.ElevatorArmBarStateEnum;
+import org.usfirst.frc.team686.robot.subsystems.Superstructure;
+import org.usfirst.frc.team686.robot.subsystems.Superstructure.ElevatorArmBarStateEnum;
 
 import edu.wpi.first.wpilibj.Timer;
 
@@ -22,7 +22,7 @@ public class ElevatorAction implements Action {
 	private double targetPosition;
 	private boolean extended = false;
 	
-	ElevatorArmBar elevatorArmBar = ElevatorArmBar.getInstance();
+	Superstructure elevatorArmBar = Superstructure.getInstance();
 	ElevatorState elevatorState = ElevatorState.getInstance();
 	
 	public ElevatorAction(ElevatorArmBarStateEnum _targetState) {

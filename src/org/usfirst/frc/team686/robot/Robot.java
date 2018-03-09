@@ -10,9 +10,8 @@ import org.usfirst.frc.team686.robot.lib.joystick.ArcadeDriveJoystick;
 import org.usfirst.frc.team686.robot.lib.joystick.ButtonBoard;
 import org.usfirst.frc.team686.robot.lib.joystick.JoystickControlsBase;
 import org.usfirst.frc.team686.robot.subsystems.Drive;
-import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar;
-import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar.ElevatorArmBarStateEnum;
-import org.usfirst.frc.team686.robot.subsystems.Intake;
+import org.usfirst.frc.team686.robot.subsystems.Superstructure;
+import org.usfirst.frc.team686.robot.subsystems.Superstructure.ElevatorArmBarStateEnum;
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
 import org.usfirst.frc.team686.robot.command_status.DriveCommand;
 
@@ -48,9 +47,8 @@ public class Robot extends IterativeRobot {
 
 	RobotState robotState = RobotState.getInstance();
 	Drive drive = Drive.getInstance();
-	ElevatorArmBar elevatorArmBar = ElevatorArmBar.getInstance();
+	Superstructure elevatorArmBar = Superstructure.getInstance();
 	ElevatorState elevatorState = ElevatorState.getInstance();
-	Intake intake = Intake.getInstance();
 	
 	AutoModeExecuter autoModeExecuter = null;
 	
@@ -108,8 +106,7 @@ public class Robot extends IterativeRobot {
     		robotLogger.register(Drive.getInstance().getLogger());
     		robotLogger.register(drive.getCommand().getLogger());
     		robotLogger.register(DriveState.getInstance().getLogger());
-    		robotLogger.register(ElevatorArmBar.getInstance().getLogger());
-    		robotLogger.register(Intake.getInstance().getLogger());
+    		robotLogger.register(Superstructure.getInstance().getLogger());
     		robotLogger.register(RobotState.getInstance().getLogger());
     		
     		setInitialPose(new Pose());
@@ -288,8 +285,8 @@ public class Robot extends IterativeRobot {
 			drive.setOpenLoop(DriveCommand.COAST());
 			
 			elevatorArmBar.set(ElevatorArmBarStateEnum.GROUND, false);	// prepare to intake during teleop
-			intake.stopIntake();
-			intake.grabberIn();
+			elevatorArmBar.stopIntake();
+			elevatorArmBar.grabberIn();
 		} 
 		catch (Throwable t) 
 		{
@@ -311,6 +308,7 @@ public class Robot extends IterativeRobot {
 					controls.getButton(Constants.kElevatorManualDownButton),
 					controls.getButton(Constants.kIntakeButton),
 					controls.getButton(Constants.kOuttakeButton),
+					false, // controls.getButton(Constants.kGrabberButton),	// replace grabber toggle button with quick turn button
 					buttonBoard.getButton(Constants.kElevatorGroundButton),
 					buttonBoard.getButton(Constants.kElevatorExchangeButton),
 					buttonBoard.getButton(Constants.kElevatorSwitchButton),
@@ -318,12 +316,6 @@ public class Robot extends IterativeRobot {
 					buttonBoard.getButton(Constants.kElevatorScaleMedButton),
 					buttonBoard.getButton(Constants.kElevatorScaleHighButton));
 								
-			// intake controls
-			intake.processInputs(
-					controls.getButton(Constants.kIntakeButton), 
-					controls.getButton(Constants.kOuttakeButton), 
-					controls.getButton(Constants.kGrabberButton));
-						
 			// turn-to-angle controls (assumes that AutoModeExectuer is already set to PointTurnAutoMode)
 //			int pointTurnDirection = buttonBoard.getPOV();
 //			if (pointTurnDirection >= 0 && (pointTurnDirection != prevButtonBoardDirection))

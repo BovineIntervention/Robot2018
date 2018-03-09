@@ -1,18 +1,17 @@
 package org.usfirst.frc.team686.robot.auto.actions;
 
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
-import org.usfirst.frc.team686.robot.subsystems.Intake;
+import org.usfirst.frc.team686.robot.subsystems.Superstructure;
 
 import edu.wpi.first.wpilibj.Timer;
 
 public class OuttakeAction implements Action {
+	Superstructure superstructure = Superstructure.getInstance();
 
 
 	private double mTimeToOuttake = 0.5;
 	private double mStartTime;
 	private boolean finished;
-
-	Intake intake = Intake.getInstance();
 	
 	public OuttakeAction() {
 		finished = false;
@@ -33,9 +32,9 @@ public class OuttakeAction implements Action {
 	public void update() {
 		
 		finished = (Timer.getFPGATimestamp() - mStartTime) >= mTimeToOuttake;
-		intake.startOuttake();
+		superstructure.startOuttake();
 		if (finished)
-			intake.stopOuttake();
+			superstructure.stopOuttake();
 		
 	}
 

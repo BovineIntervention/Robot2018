@@ -1,16 +1,14 @@
 package org.usfirst.frc.team686.robot.auto.actions;
 
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
-import org.usfirst.frc.team686.robot.subsystems.Intake;
 
 import edu.wpi.first.wpilibj.Timer;
 
-import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar;
-import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar.ElevatorArmBarStateEnum;
+import org.usfirst.frc.team686.robot.subsystems.Superstructure;
+import org.usfirst.frc.team686.robot.subsystems.Superstructure.ElevatorArmBarStateEnum;
 
 public class PickUpCubeAction implements Action {
-	ElevatorArmBar elevatorArmBar = ElevatorArmBar.getInstance();
-	Intake intake = Intake.getInstance();
+	Superstructure superstructure = Superstructure.getInstance();
 	private boolean finished;
 	double startTime = 0.0;
 	double cubeCollectionTime = 0.5;
@@ -23,8 +21,8 @@ public class PickUpCubeAction implements Action {
 	@Override
 	public void start() 
 	{
-		intake.grabberIn();
-		intake.startIntake();
+		superstructure.grabberIn();
+		superstructure.startIntake();
 		startTime = Timer.getFPGATimestamp();
 	}
 
@@ -41,9 +39,9 @@ public class PickUpCubeAction implements Action {
 		double elapsedTime = Timer.getFPGATimestamp() - startTime;
 		if (elapsedTime >= cubeCollectionTime)
 		{
-			intake.startHold();
+			superstructure.startHold();
 			boolean extended = false;
-			elevatorArmBar.set(ElevatorArmBarStateEnum.GROUND, extended);	// return to retracted position
+			superstructure.set(ElevatorArmBarStateEnum.GROUND, extended);	// return to retracted position
 			finished = true;
 		}
 	}

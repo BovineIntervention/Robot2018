@@ -1,13 +1,11 @@
 package org.usfirst.frc.team686.robot.auto.actions;
 
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
-import org.usfirst.frc.team686.robot.subsystems.Intake;
-import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar;
-import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar.ElevatorArmBarStateEnum;
+import org.usfirst.frc.team686.robot.subsystems.Superstructure;
+import org.usfirst.frc.team686.robot.subsystems.Superstructure.ElevatorArmBarStateEnum;
 
 public class IntakeStartAction implements Action {
-	ElevatorArmBar elevatorArmBar = ElevatorArmBar.getInstance();
-	Intake intake = Intake.getInstance();
+	Superstructure superstructure = Superstructure.getInstance();
 	private boolean finished;
 
 	public IntakeStartAction() {
@@ -19,9 +17,9 @@ public class IntakeStartAction implements Action {
 	public void start() 
 	{
 		boolean extended = true;
-		elevatorArmBar.set(ElevatorArmBarStateEnum.GROUND, extended);
-		intake.grabberOut();
-		intake.startIntake();
+		superstructure.set(ElevatorArmBarStateEnum.GROUND, extended);
+//		superstructure.grabberOut();
+		superstructure.startIntake();
 		finished = true;
 	}
 

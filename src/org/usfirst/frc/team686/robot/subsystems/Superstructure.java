@@ -4,15 +4,19 @@ import org.usfirst.frc.team686.robot.Constants;
 import org.usfirst.frc.team686.robot.Constants.RobotSelectionEnum;
 import org.usfirst.frc.team686.robot.command_status.ArmBarState;
 import org.usfirst.frc.team686.robot.command_status.ElevatorState;
+import org.usfirst.frc.team686.robot.command_status.IntakeState;
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
 import org.usfirst.frc.team686.robot.loops.ArmBarLoop;
 import org.usfirst.frc.team686.robot.loops.ElevatorLoop;
-import org.usfirst.frc.team686.robot.subsystems.ElevatorArmBar.ElevatorArmBarStateEnum;
+import org.usfirst.frc.team686.robot.loops.IntakeLoop;
+import org.usfirst.frc.team686.robot.subsystems.Superstructure.ElevatorArmBarStateEnum;
 
-public class ElevatorArmBar extends Subsystem {
+import edu.wpi.first.wpilibj.Timer;
+
+public class Superstructure extends Subsystem {
 	
-	private static ElevatorArmBar instance = new ElevatorArmBar();
-	public static ElevatorArmBar getInstance() { return instance; }
+	private static Superstructure instance = new Superstructure();
+	public static Superstructure getInstance() { return instance; }
 	
 	public enum ManualAutoStateEnum { MANUAL, AUTO };
 	ManualAutoStateEnum manualAutoState = ManualAutoStateEnum.AUTO; 
@@ -46,20 +50,33 @@ public class ElevatorArmBar extends Subsystem {
 	
 	public ElevatorLoop elevatorLoop;
 	public ArmBarLoop armBarLoop;
+	public IntakeLoop intakeLoop;
 
 	boolean extended = false;
 	double armBarAngle = 0.0;
 	double elevatorHeight = 0.0;
 	
-	Intake intake = Intake.getInstance();
+	
+	public boolean intakeButton = false;
+	public boolean outtakeButton = false;
+	public boolean grabberButton = false;
+	
+	
 	boolean prevIntakeButton = false;
 	boolean intakeToggle = false;
 	
-	private ElevatorArmBar()
+	boolean keepIntaking = false;
+	final double keepIntakingPeriod = 0.25;
+	double keepIntakingStartTime;
+	
+	
+	
+	private Superstructure()
 	{
 		if (Constants.kRobotSelection == RobotSelectionEnum.COMPETITION_BOT)		 	
 			elevatorLoop = ElevatorLoop.getInstance();
 		armBarLoop = ArmBarLoop.getInstance();
+		intakeLoop = IntakeLoop.getInstance();
 
 		disable();
 		state = ElevatorArmBarStateEnum.START_OF_MATCH;
@@ -85,7 +102,7 @@ public class ElevatorArmBar extends Subsystem {
 
 	
 	// elevator controls
-	public void processInputs( boolean _manualUpButton, boolean _manualDownButton, boolean _intakeButton, boolean _outtakeButton,
+	public void processInputs( boolean _manualUpButton, boolean _manualDownButton, boolean _intakeButton, boolean _outtakeButton, boolean _grabberButton,
 			boolean _groundButton, boolean _exchangeButton, boolean _switchButton, boolean _scaleLowButton, boolean _scaleMedButton, boolean _scaleHighButton)
 	{
 		// manual / auto state machine
@@ -120,63 +137,72 @@ public class ElevatorArmBar extends Subsystem {
 			if (_scaleHighButton) 	{ set(ElevatorArmBarStateEnum.SCALE_HIGH, extended); }
 		}
 
-		boolean john_wants_intake_toggle = false;
+
 		
-		if (john_wants_intake_toggle)
+	if (_intakeButton)
 		{
+			set(state, true);
 			if (_intakeButton != prevIntakeButton)
 			{
-				if (_intakeButton && state == ElevatorArmBarStateEnum.GROUND)
-				{
-					intakeToggle = !intakeToggle;
-					if (intakeToggle)
-					{
-						set(state, true);
-						intake.grabberOut();
-						intake.startIntake();
-					}
-					else
-					{
-						set(state, false);
-						intake.grabberIn();
-						intake.startHold();
-					}
-				}
-				prevIntakeButton = _intakeButton;
-			} 
+				intakeLoop.grabberIn();
+				intakeLoop.startIntake();
+			}
 		}
 		else
 		{
-			// nope -- john wants intake button to be held down
-		
-			if (_intakeButton)
-			{
-				set(state, true);
-				if (_intakeButton != prevIntakeButton)
-				{
-					intake.grabberIn();
-					intake.startIntake();
-				}
+			set(state, false);
+			if (_intakeButton != prevIntakeButton)
+			{			
+				intakeLoop.grabberIn();
+				keepIntaking = true;
+				keepIntakingStartTime = Timer.getFPGATimestamp();
 			}
-			else
-			{
-				set(state, false);
-				if (_intakeButton != prevIntakeButton)
-				{			
-					intake.grabberIn();
-					intake.startHold();
-				}
-			}
-			prevIntakeButton = _intakeButton;
-			
-			
-			// grabber is always in and intake stopped when off the ground
-			if (state != ElevatorArmBarStateEnum.GROUND)
-			{
-				intake.grabberIn();
-			}	
 		}
+		prevIntakeButton = _intakeButton;
+
+		
+		// code to keep intake wheels running an extra little bit after intake button is released
+		// hopefully to ensure a better grip
+		if (keepIntaking)
+		{
+			double elapsedTime = Timer.getFPGATimestamp() - keepIntakingStartTime;
+			if (elapsedTime >= keepIntakingPeriod) {
+				intakeLoop.startHold();
+				keepIntaking = false;
+			}
+		}
+		
+		
+		
+		// outtake button is held down to outtake
+		outtakeButton = _outtakeButton;
+		if (outtakeButton)
+			intakeLoop.startOuttake();
+		else
+		{
+			if (!_intakeButton)
+				intakeLoop.stopOuttake();
+		}
+
+		
+		// grabber button toggles the position of the grabber
+		if (_grabberButton != grabberButton)
+		{
+			grabberButton = _grabberButton;
+			if (grabberButton)
+				intakeLoop.grabberToggle();
+		}
+
+		// intake start/stop at ground state taken care of by ElevatorArmBar
+		
+		// grabber is always in and intake stopped when off the ground
+		if (state != ElevatorArmBarStateEnum.GROUND)
+		{
+			intakeLoop.grabberIn();
+		}	
 	}
+
+	
 	
 	
 	public void set(ElevatorArmBarStateEnum _newState, boolean _extended)
@@ -233,13 +259,26 @@ public class ElevatorArmBar extends Subsystem {
 									 Constants.kArmBarLength * Math.sin(Constants.kArmBarDownAngleDeg * Math.PI / 180.0);
 	}
 
+	
+	  public void startIntake(){ intakeLoop.startIntake(); }
+	  public void stopIntake(){ intakeLoop.stopOuttake(); }
+	  public void startHold(){ intakeLoop.startHold(); }
+	 
+	  public void startOuttake(){ intakeLoop.startOuttake(); }
+	  public void stopOuttake(){ intakeLoop.stopOuttake(); }
+	 
+	  public void grabberIn() { intakeLoop.grabberIn();  }
+	  public void grabberOut() { intakeLoop.grabberOut(); }
+	  public void grabberToggle() { intakeLoop.grabberToggle(); }
+	 	
+	  
 	@Override
 	public void stop()
 	{
 		armBarLoop.stop();
 		if (Constants.kRobotSelection == RobotSelectionEnum.COMPETITION_BOT)		 	
 			elevatorLoop.stop();
-		intake.stop();
+		intakeLoop.stop();
 	}
 
 	@Override
@@ -259,6 +298,7 @@ public class ElevatorArmBar extends Subsystem {
 			ArmBarState.getInstance().getLogger().log();
 			if (Constants.kRobotSelection == RobotSelectionEnum.COMPETITION_BOT)		 	
 				ElevatorState.getInstance().getLogger().log();
+			IntakeState.getInstance().getLogger().log();
         }
         
     };
