@@ -148,43 +148,34 @@ public class ElevatorArmBar extends Subsystem {
 		else
 		{
 			// nope -- john wants intake button to be held down
+		
 			if (_intakeButton)
 			{
 				set(state, true);
-				intake.grabberOut();
-				intake.startIntake();
+				if (_intakeButton != prevIntakeButton)
+				{
+					intake.grabberIn();
+					intake.startIntake();
+				}
+			}
+			else
+			{
+				set(state, false);
+				if (_intakeButton != prevIntakeButton)
+				{			
+					intake.grabberIn();
+					intake.startHold();
+				}
 			}
 			prevIntakeButton = _intakeButton;
-		}
-*/
-		
-		if (_intakeButton)
-		{
-			set(state, true);
-			if (_intakeButton != prevIntakeButton)
+			
+			
+			// grabber is always in and intake stopped when off the ground
+			if (state != ElevatorArmBarStateEnum.GROUND)
 			{
 				intake.grabberIn();
-				intake.startIntake();
-			}
+			}	
 		}
-		else
-		{
-			set(state, false);
-			if (_intakeButton != prevIntakeButton)
-			{			
-				intake.grabberIn();
-				intake.startHold();
-			}
-		}
-		prevIntakeButton = _intakeButton;
-		
-		
-		// grabber is always in and intake stopped when off the ground
-		if (state != ElevatorArmBarStateEnum.GROUND)
-		{
-			intake.grabberIn();
-			//intake.stopIntake();
-		}		
 	}
 	
 	
