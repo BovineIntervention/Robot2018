@@ -18,7 +18,13 @@ public class IntakeState {
 	private Value solenoidValue;
 	
 	
-	public IntakeState() {}
+	public IntakeState() {
+		lVelocity = 0.0;
+		rVelocity = 0.0;
+		lMotorCurrent = 0.0;
+		rMotorCurrent = 0.0;
+		solenoidValue = Value.kOff;
+	}
 	
 
 	public synchronized double getLeftVelocity(){

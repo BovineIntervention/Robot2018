@@ -60,8 +60,8 @@ public class TriggerDriveJoystick extends JoystickControlsBase
 	    // override normal trigger turning when quick turn button is pressed
 	    if (isQuickTurn)
 	    {
-		    lMotorSpeed = -rotateValue;
-		    rMotorSpeed = +rotateValue;
+		    lMotorSpeed = +rotateValue;
+		    rMotorSpeed = -rotateValue;
 	    }
 	    
 	    DriveCommand signal = new DriveCommand(lMotorSpeed, rMotorSpeed);

@@ -342,7 +342,7 @@ public class Path
     
     public String toString()
     {
-    	String str = "";
+    	String str = String.format("***Path*** lookaheadDist = %.1f, finalSpeed = %.1f, reversed = %b\n", lookaheadDistance, finalSpeed, reverseDirection); 
         for (int i=0; i<segments.size(); i++) 
             str += String.format("Segment %2d: %s\n", i, segments.get(i).toString());
         return str;

@@ -42,7 +42,8 @@ public class StartToNearScaleMode extends AutoModeBase {
 	protected void routine() throws AutoModeEndedException {
 
 		PathSegment.Options pathOptions	= new PathSegment.Options(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, 48, false);
-		
+		PathSegment.Options slowPathOptions	= new PathSegment.Options(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, 24, false);
+
 		Vector2d initialPosition = startPosition.initialPose.getPosition();
 		
 		Vector2d centerStartTurnPosition = new Vector2d(140, 130);	// needed if starting from center to avoid clipping switch
@@ -61,7 +62,7 @@ public class StartToNearScaleMode extends AutoModeBase {
 		path.add(new Waypoint(initialPosition, pathOptions));
 		path.add(new Waypoint(centerStartTurnPosition, pathOptions));
 		path.add(new Waypoint(turnToScalePosition, pathOptions));
-		path.add(new Waypoint(scaleStopPosition, pathOptions));
+		path.add(new Waypoint(scaleStopPosition, slowPathOptions));
 		
 		System.out.println("SideStartToNearScaleMode path");
 		System.out.println(path.toString());
@@ -73,7 +74,7 @@ public class StartToNearScaleMode extends AutoModeBase {
 		runAction( new ElevatorAction(ElevatorArmBarStateEnum.GROUND) );
 
 		
-		
+		/*
 		// go after second cube
 		SeriesAction secondCubeActions;
 		
@@ -83,7 +84,7 @@ public class StartToNearScaleMode extends AutoModeBase {
 			secondCubeActions = SecondCubeForScaleMode.getActions(scaleStopPosition, switchSide, scaleSide);
 		
 		runAction( secondCubeActions );
-		
+		*/
 	}
 
 }
