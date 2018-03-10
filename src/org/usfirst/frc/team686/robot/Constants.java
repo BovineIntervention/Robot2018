@@ -183,7 +183,7 @@ public class Constants extends ConstantsBase
     public static double kArmBarLength = 14.0;
     
     public static double kArmBarZeroingVelocity =	30.0;	// in degrees per second
-    public static double kArmBarVelocity = 		   180.0;//250.0;	// in degrees per second
+    public static double kArmBarVelocity = 		   250.0;//180.0;//250.0;	// in degrees per second
     
 	public static double kArmBarQuadEncoderGain = 81.0 * 2.0;			// two 9:1 gear stages plus a 24:12 tooth reduction after the encoder 
 	public static double kArmBarQuadEncoderUnitsPerRev = 4096;
@@ -195,7 +195,7 @@ public class Constants extends ConstantsBase
     
     public static double kArmBarUpAngleDeg =    86.6;	// at upper limit
     public static double kArmBarFlatAngleDeg = 	 0.0;	
-    public static double kArmBarDownAngleDeg = -30.0; 	// at lower limit
+    public static double kArmBarDownAngleDeg = -25.0;//-30.0; 	// at lower limit
 
 	
 	public static double kArmBarKf = 0.0;
@@ -206,9 +206,9 @@ public class Constants extends ConstantsBase
 	public static double kMaxArmBarVoltage = 12.0;	// may be less than 12V battery voltage when testing	
 	public static double kArmBarMotorStallCurrentThreshold = 10.0;	// current at which we will assume the limit switch didn't catch it and we are stalled
 
-	public static int kArmBarPeakCurrentLimit = 20;	// current at which current limit is activated
+	public static int kArmBarPeakCurrentLimit = 30;	// current at which current limit is activated
 	public static int kArmBarPeakCurrentDuration = 200;	// duration at which current limit is activated
-	public static int kArmBarContinuousCurrentLimit = 10;	// limit to this value when current limit is activated
+	public static int kArmBarContinuousCurrentLimit = 20;	// limit to this value when current limit is activated
 	
     // CUBE HEIGHT
     public static double kCubeGrabHeight = 8.5;		// inches above ground where cube is grabbed
@@ -225,6 +225,8 @@ public class Constants extends ConstantsBase
     
     public static boolean kIntakeLeftMotorInverted;
     public static boolean kIntakeRightMotorInverted;
+    
+    public static int kProximitySensor1Port = 0;    
     
     // Do not change anything after this line!
     
@@ -516,7 +518,7 @@ System.out.printf("PRACTICE_BOT: kIntakeLeftMotorInverted = %b (should be false)
 	    kPathFollowingAccelTime = 0.5;
 	    kPathFollowingMaxAccel  = kPathFollowingMaxVel / kPathFollowingAccelTime; // inches/sec^2	 
 	    kPathFollowingLookahead = 24.0; // inches
-	    kPathFollowingCompletionTolerance = 1.0; 
+	    kPathFollowingCompletionTolerance = 4.0; 
 	    
 	    // Vision constants
 	    kCameraPoseX     = +7.25;	// camera location with respect to robot center of rotation, +X axis is in direction of travel

@@ -104,7 +104,8 @@ public class SmartDashboardInteractions
         POWER_UP("Power Up"),
     	CROSS_THE_LINE("Cross the line"),
         STAND_STILL("Stand Still"),
-        PRACTICE_AUTO("Pick Up Cube");
+        PRACTICE_AUTO("Pick Up Cube"),
+        BACKUP_TEST("BackupTest");
     	
         public final String name;
 
@@ -165,6 +166,7 @@ public class SmartDashboardInteractions
         autoModeChooser.addDefault(AutoModeOption.POWER_UP.name, AutoModeOption.POWER_UP);
         autoModeChooser.addObject(AutoModeOption.CROSS_THE_LINE.name, AutoModeOption.CROSS_THE_LINE);
         autoModeChooser.addObject(AutoModeOption.STAND_STILL.name, AutoModeOption.STAND_STILL);
+        autoModeChooser.addObject(AutoModeOption.BACKUP_TEST.name, AutoModeOption.BACKUP_TEST);
         SmartDashboard.putData("Auto Mode", autoModeChooser);
     	
     	joystickModeChooser = new SendableChooser<JoystickOption>();
@@ -204,6 +206,9 @@ public class SmartDashboardInteractions
     		
     	case STAND_STILL:
 			return new StandStillMode();
+			
+    	case BACKUP_TEST:
+			return new BackupTestMode();
 			
     	default:
             System.out.println("ERROR: unexpected auto mode: " + autoMode);

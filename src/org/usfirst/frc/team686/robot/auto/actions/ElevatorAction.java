@@ -61,9 +61,12 @@ public class ElevatorAction implements Action {
 		else
 		{
 			// delay to simulate elevator movement
-			if ((Timer.getFPGATimestamp() - mStartTime) <= mTargetTime)
+			if ((Timer.getFPGATimestamp() - mStartTime) >= mTargetTime)
 				finished = true;
 		}
+		
+		if (finished)
+			System.out.println("ElevatorAction Finished");
 		
 		return finished;
 	}

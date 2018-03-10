@@ -19,9 +19,9 @@ public class InterruptableAction implements Action
 	private final Action mInterruptingAction;
 	private final Action mAction;
     
-    public InterruptableAction(Action interruptingActions, Action actions) 
+    public InterruptableAction(Action interruptingAction, Action actions) 
     {
-    	mInterruptingAction = interruptingActions;
+    	mInterruptingAction = interruptingAction;
     	mAction = actions;
     }
 
@@ -43,6 +43,10 @@ public class InterruptableAction implements Action
     public boolean isFinished() 
     {
     	boolean finished = (mInterruptingAction.isFinished()) || (mAction.isFinished()); 
+
+		if (finished)
+			System.out.println("InterruptableAction Finished");
+    	
         return finished;
     }
 
@@ -58,8 +62,8 @@ public class InterruptableAction implements Action
         @Override
         public void log()
         {
-        	mInterruptingAction.getLogger().log();
         	mAction.getLogger().log();
+        	mInterruptingAction.getLogger().log();
 	    }
     };
 	

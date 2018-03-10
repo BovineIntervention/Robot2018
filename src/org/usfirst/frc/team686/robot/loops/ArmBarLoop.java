@@ -6,9 +6,6 @@ import org.usfirst.frc.team686.robot.lib.util.Util;
 
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Timer;
 
 public class ArmBarLoop implements Loop
@@ -28,7 +25,6 @@ public class ArmBarLoop implements Loop
 	private ArmBarState armBarState = ArmBarState.getInstance();
 	
 	public boolean enable = false;
-	public boolean forceDisable = false;
 	
 	public double position;
 	public double target;
@@ -65,32 +61,12 @@ public class ArmBarLoop implements Loop
 		
 		
 		// Configure Encoder
-		// first, find the current absolute encoder values
 		talon.setSensorPhase(true);
 		talon.setInverted(true);
 
-		talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, Constants.kTalonPidIdx, Constants.kTalonTimeoutMs);	
-		int absoluteEncoderValue = talon.getSensorCollection().getPulseWidthPosition();
-
-		// set relative position to absolute position
-		talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kTalonPidIdx, Constants.kTalonTimeoutMs);	// configure for closed-loop PID
-		talon.setSelectedSensorPosition( absoluteEncoderValue, Constants.kTalonPidIdx, Constants.kTalonTimeoutMs);
-		
-		// set soft limits
+		// set soft limits (will not be valid until calibration completes)
 		talon.configForwardSoftLimitThreshold( Constants.kArmBarEncoderLimitUp,   Constants.kTalonTimeoutMs);
 		talon.configReverseSoftLimitThreshold( Constants.kArmBarEncoderLimitDown, Constants.kTalonTimeoutMs);
-		talon.configForwardSoftLimitEnable(true, Constants.kTalonTimeoutMs);
-		talon.configReverseSoftLimitEnable(true, Constants.kTalonTimeoutMs);
-		talon.overrideLimitSwitchesEnable(true);	// enable soft limit switches
-		
-		int relativeEncoderValue = talon.getSelectedSensorPosition(Constants.kTalonPidIdx);
-		if ((relativeEncoderValue > Constants.kArmBarEncoderLimitUp) || (relativeEncoderValue < Constants.kArmBarEncoderLimitDown))
-		{
-			forceDisable = true;
-			String errorString = String.format("Four Bar relative encoder reading of %d not within absolute encoder limits (%d, %d).  Forcing arm bar to disabled", relativeEncoderValue, Constants.kArmBarEncoderLimitDown, Constants.kArmBarEncoderLimitUp);
-			System.out.println(errorString);
-			DriverStation.reportError(errorString, false);
-		}
 		
 		disable();
 	}
@@ -98,17 +74,8 @@ public class ArmBarLoop implements Loop
 
 	public void enable()
 	{
-		if (forceDisable)
-		{
-			// if relativePosition is not within absolute position limits, do not trust it
-			// disable four bar to avoid damage
-			enable = false;
-		}
-		else
-		{
-			enable = true; 
-			System.out.println("ArmBarLoop enable");
-		}
+		enable = true; 
+		System.out.println("ArmBarLoop enable");
 	}
 	
 	public void disable()
@@ -135,11 +102,11 @@ public class ArmBarLoop implements Loop
 		double maxZeroingTime = Constants.kElevatorMaxHeightLimit / Constants.kElevatorZeroingVelocity + 2.0;
 		
 		if (armBarState.isLimitSwitchTriggered())
-			System.out.println("LIMIT SWITCH TRIGGERED");
+			System.out.println("ArmBar LimitSwitchDuring Zerong: LIMIT SWITCH TRIGGERED");
 		if (armBarState.getMotorCurrent() > Constants.kArmBarMotorStallCurrentThreshold)
-			System.out.println("MOTOR CURRENT > THRESHOLD: " + armBarState.getMotorCurrent());
+			System.out.println("ArmBar LimitSwitchDuring Zerong: MOTOR CURRENT > THRESHOLD: " + armBarState.getMotorCurrent());
 		if (elapsedZeroingTime > maxZeroingTime)
-			System.out.println("ELAPSED ZEROING TIME");
+			System.out.println("ArmBar LimitSwitchDuring Zerong: ELAPSED ZEROING TIME");
 		
 		return (armBarState.isLimitSwitchTriggered() || 
 				(armBarState.getMotorCurrent() > Constants.kArmBarMotorStallCurrentThreshold) ||
@@ -151,8 +118,6 @@ public class ArmBarLoop implements Loop
 	public void onStart() {
 		state = ArmBarStateEnum.UNINITIALIZED;
 		nextState = ArmBarStateEnum.UNINITIALIZED;
-		
-		forceDisable = false;		
 	}
 
 	@Override
@@ -261,7 +226,6 @@ public class ArmBarLoop implements Loop
 		
 		if (limitSwitchTriggered)
 		{
-			System.out.println("LIMITSWITCHTRIGGERED");
 			voltage = Math.min(voltage, 0.0);	// do not let elevator continue up when at limit switch		
 		}
 		

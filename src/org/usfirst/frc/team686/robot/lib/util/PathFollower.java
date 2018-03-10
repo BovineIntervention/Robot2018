@@ -27,7 +27,6 @@ public class PathFollower
 	public enum PathVisionState { PATH_FOLLOWING, VISION };
 	
 	public PathVisionState state;
-	boolean reversed;	// always false when vision is enabled.  kept so that path follower code can still be used without vision
 	
 	public Drive drive = Drive.getInstance();
 	public RobotState robotState = RobotState.getInstance();
@@ -127,7 +126,6 @@ imageTimestamp = currentTime - Constants.kCameraLatencySeconds;		// remove camer
 		double maxSpeed = 0;
 		double maxAccel = 0;
 		
-		reversed = path.getReverseDirection();
 		boolean visionEnabledSegment = path.getSegmentVisionEnable(); 
 		if (visionEnabledSegment)
 			visionDrive(_currentTime, _currentPose, _previousPose, _imageTimestamp, _normalizedTargetX, _normalizedTargetWidth);
@@ -151,7 +149,7 @@ imageTimestamp = currentTime - Constants.kCameraLatencySeconds;		// remove camer
 		
 		speedControl(_currentTime, remainingDistance, finalSpeed, maxSpeed, maxAccel);
 
-		if (reversed)
+		if (path.getReverseDirection())
 		{
 			speed = -speed;
 			curvature = -curvature;	// TODO: simplify by removing this, and removing flipping heading 180 degrees below?
@@ -181,9 +179,9 @@ imageTimestamp = currentTime - Constants.kCameraLatencySeconds;		// remove camer
 		// Find arc to travel to Lookahead Point
 		//---------------------------------------------------
 		Vector2d robotToTarget = lookaheadPoint.sub(_currentPose.getPosition());
-		double lookaheadDist = robotToTarget.length();
+		lookaheadDist = robotToTarget.length();
 		headingToTarget = robotToTarget.angle() - _currentPose.getHeading();
-		if (reversed)
+		if (path.getReverseDirection())
 			headingToTarget -= Math.PI;	// flip robot around
 		
 		curvature = 2 * Math.sin(headingToTarget) / lookaheadDist;
@@ -251,6 +249,9 @@ imageTimestamp = currentTime - Constants.kCameraLatencySeconds;		// remove camer
 	{
 		//---------------------------------------------------
 		// Apply speed control
+		// Note: speed will always be positive in this function
+		// it will be made negative before applying to motors
+		// if path is reversed
 		//---------------------------------------------------
 		speed = _maxSpeed;
 		
@@ -267,13 +268,13 @@ imageTimestamp = currentTime - Constants.kCameraLatencySeconds;		// remove camer
 		// vf^2 = v^2 + 2*a*d   Solve for v, configured vf, a, and measured d
 		double stoppingDistance = _remainingDistance;
 		double maxBrakingSpeed = Math.sqrt(_finalSpeed * _finalSpeed + 2.0 * _maxAccel * stoppingDistance);
-		if (Math.abs(speed) > maxBrakingSpeed)
-			speed = Math.signum(speed) * maxBrakingSpeed;
+		if (speed > maxBrakingSpeed)
+			speed = maxBrakingSpeed;
 
 		// apply minimum velocity limit (Talons can't track low speeds well)
 		final double kMinSpeed = 4.0;
-		if (Math.abs(speed) < kMinSpeed) 
-			speed = Math.signum(speed) * kMinSpeed;
+		if (speed < kMinSpeed)
+			speed = kMinSpeed;
 
 		// store for next time through loop	
 		prevTime = _currentTime;
@@ -290,7 +291,7 @@ imageTimestamp = currentTime - Constants.kCameraLatencySeconds;		// remove camer
     	else
     		done = (remainingDistance <= Constants.kVisionCompletionTolerance);
     	
-    	return done;
+     	return done;
     }
 
     public void done() 
@@ -324,7 +325,7 @@ imageTimestamp = currentTime - Constants.kCameraLatencySeconds;		// remove camer
     		put("PathVision/normalizedTargetX", visionStatus.getNormalizedTargetX() );
     		put("PathVision/normalizedTargetWidth", visionStatus.getNormalizedTargetWidth() );
             
-			put("PathVision/reversed", reversed);
+			put("PathVision/reversed", path.getReverseDirection());
 			put("PathVision/state", state.toString());
 
 			put("PathVision/segmentStartX", path.getSegmentStart().getX());
@@ -354,8 +355,8 @@ imageTimestamp = currentTime - Constants.kCameraLatencySeconds;		// remove camer
 			
 			put("PathVision/speed", 	speed);
 			put("PathVision/curvature", curvature );
-//			put("PathVision/lSpeed", 	wheelSpeed.left);
-	//		put("PathVision/rSpeed", 	wheelSpeed.right);
+			put("PathVision/lSpeed", 	wheelSpeed.left);
+			put("PathVision/rSpeed", 	wheelSpeed.right);
 			
         }
     };

@@ -55,6 +55,8 @@ public class SideStartToFarScaleMode extends AutoModeBase {
 
 		if (crossField == CrossFieldOption.YES)
 		{
+		
+//TODO: add arc to smooth steering???			
 			
 			Path path = new Path(Constants.kCollisionVel);	// final velocity of this path will be collisionVelocity required by next path
 			path.add(new Waypoint(initialPosition, pathOptions));

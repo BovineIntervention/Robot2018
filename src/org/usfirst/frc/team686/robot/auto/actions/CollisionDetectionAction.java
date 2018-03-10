@@ -85,7 +85,7 @@ public class CollisionDetectionAction implements Action
         @Override
         public void log()
         {
-    		put("AutoAction", "CollisionDetectionAction" );
+    		put("AutoAction/AutoAction", "CollisionDetectionAction" );
    			put("CollisionDetectionAction/JerkX", jerkX );
    			put("CollisionDetectionAction/JerkY", jerkY );
    			put("CollisionDetectionAction/JerkThresh", Constants.kCollisionJerkThreshold );

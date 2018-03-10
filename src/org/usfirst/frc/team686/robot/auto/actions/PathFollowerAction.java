@@ -1,5 +1,6 @@
 package org.usfirst.frc.team686.robot.auto.actions;
 
+import org.usfirst.frc.team686.robot.command_status.RobotState;
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
 import org.usfirst.frc.team686.robot.lib.util.Path;
 import org.usfirst.frc.team686.robot.lib.util.PathFollower;
@@ -27,7 +28,7 @@ public class PathFollowerAction implements Action
     @Override
     public void start() 
     {
-		System.out.println("Starting PathFollowerWithVisionAction");
+		System.out.println("PathFollowerAction.start(), pose = " + RobotState.getInstance().getLatestFieldToVehicle().toString());
 		driveCtrl.start();
     }
 
@@ -42,14 +43,18 @@ public class PathFollowerAction implements Action
     @Override
     public boolean isFinished() 
     {
+    	boolean finished = driveCtrl.isFinished();
     	
-    	return driveCtrl.isFinished();
+//		if (finished)
+//			System.out.println("InterruptableAction Finished");
+	
+    	return finished;
     }
 
     @Override
     public void done() 
     {
-		System.out.println("Finished PathFollowerWithVisionAction");
+		System.out.println("PathFollowerAction.done(),  pose = " + RobotState.getInstance().getLatestFieldToVehicle().toString());
 		// cleanup code, if any
 		driveCtrl.done();
     }

@@ -34,14 +34,13 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 
 		System.out.println("STARTING AUTOMODE: Center to Switch");
 		
-		double velocity = 48;
-		PathSegment.Options pathOptions	= new PathSegment.Options(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, Constants.kPathFollowingLookahead, false);
+		PathSegment.Options pathOptions	= new PathSegment.Options(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, 48, false);
 		PathSegment.Options collisionOptions = new PathSegment.Options(Constants.kCollisionVel, Constants.kCollisionAccel, Constants.kPathFollowingLookahead, false);
 		
 		Vector2d initialPosition = startPosition.initialPose.getPosition();
-		Vector2d switchStopPosition = 	  new Vector2d(140 - Constants.kCenterToFrontBumper, 58);	// 58 is center of switch platform		
-		Vector2d turnPosition = 		  new Vector2d( 80, 58);
-		Vector2d startCollisionPosition = new Vector2d(100, 58);
+		Vector2d switchStopPosition = 	  new Vector2d(146 - Constants.kCenterToFrontBumper, 58);	// 58 is center of switch platform		
+		Vector2d turnPosition = 		  new Vector2d( 80, 64);
+		Vector2d startCollisionPosition = new Vector2d(100, 64);
 		
 		if (switchSide == 'R') {
 			switchStopPosition.setY(-switchStopPosition.getY());
@@ -65,7 +64,9 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 		runAction( new PathFollowerAction(path) );						// drive towards switch
 		runAction( new ParallelAction(Arrays.asList(new Action[] {
 				new ElevatorAction(ElevatorArmBarStateEnum.SWITCH),		// raise elevator
-				new InterruptableAction(new CollisionDetectionAction(),	// crash into switch
+//				new InterruptableAction(new CollisionDetectionAction(),	// crash into switch
+//				new PathFollowerAction(collisionPath))
+				new InterruptableAction(new CrossXAction(140 - Constants.kCenterToFrontBumper),	// crash into switch
 				new PathFollowerAction(collisionPath))
 		})));
 		runAction( new OuttakeAction() );								// shoot!
@@ -77,9 +78,9 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 		
 		// Pick up a 2nd cube from the pile
 		
-		Vector2d backupPosition = 		new Vector2d(36, 0);
-		Vector2d cubePickupPosition = 	new Vector2d(98 - Constants.kCenterToFrontBumper, 0);	
-		Vector2d startIntakePosition =	cubePickupPosition.sub(new Vector2d(18,0));
+		Vector2d backupPosition = 		new Vector2d(24, 0);
+		Vector2d cubePickupPosition = 	new Vector2d(140 - 3*13 - Constants.kCenterToFrontBumper +  3, 0);	// plow into pile an extra 3"
+		Vector2d startIntakePosition =	new Vector2d(140 - 3*13 - Constants.kCenterToFrontBumper - 12, 0);	// start looking for cube 12" early
 		
 		Path backupPath = new Path();
 		backupPath.add(new Waypoint(switchStopPosition, pathOptions));	// where we finished 
@@ -100,9 +101,9 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 		System.out.println(intakeCubePath.toString());
 		
 		runAction( new PathFollowerAction(backupPath) );			// backup
-		runAction( new PathFollowerAction(approachCubePath) );		// approach cube
 		runAction( new IntakeStartAction() );						// turn on intake
-		runAction( new InterruptableAction( new CollisionDetectionAction(), 
+		runAction( new PathFollowerAction(approachCubePath) );		// approach cube
+		runAction( new InterruptableAction( new CubeDetectionAction(), 
 				   new PathFollowerAction(intakeCubePath)) );		// close in on cube
 		runAction( new PickUpCubeAction() );						// close grabber
 
@@ -111,29 +112,35 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 		// score 2nd cube on switch
 		
 		// redo path to start at cubePickupPosition
-		backupPath = new Path();
-		backupPath.add(new Waypoint(cubePickupPosition, pathOptions));	
-		backupPath.add(new Waypoint(backupPosition, pathOptions));
-		backupPath.setReverseDirection();
+		Path backupPath2 = new Path();
+		backupPath2.add(new Waypoint(cubePickupPosition, pathOptions));	
+		backupPath2.add(new Waypoint(backupPosition, pathOptions));
+		backupPath2.setReverseDirection();
 
-		path = new Path(Constants.kCollisionVel);	// final velocity of this path will be collisionVelocity required by next path
-		path.add(new Waypoint(backupPosition, pathOptions));
-		path.add(new Waypoint(turnPosition, pathOptions));
-		path.add(new Waypoint(startCollisionPosition, pathOptions));
+		Path path2 = new Path(Constants.kCollisionVel);	// final velocity of this path will be collisionVelocity required by next path
+		path2.add(new Waypoint(backupPosition, pathOptions));
+		path2.add(new Waypoint(turnPosition, pathOptions));
+		path2.add(new Waypoint(startCollisionPosition, pathOptions));
+		
+		Path collisionPath2 = new Path();	// final velocity of this path will be 0
+		collisionPath2.add(new Waypoint(startCollisionPosition, collisionOptions));
+		collisionPath2.add(new Waypoint(switchStopPosition, collisionOptions));
 		
 		System.out.println("CenterStartToSwitchMode 2nd Cube Score");
-		System.out.println(backupPath.toString());
-		System.out.println(path.toString());
-		System.out.println(collisionPath.toString());
+		System.out.println(backupPath2.toString());
+		System.out.println(path2.toString());
+		System.out.println(collisionPath2.toString());
 		
 		
 		// repeat cube scoring actions
-		runAction( new PathFollowerAction(backupPath) );				// backup
-		runAction( new PathFollowerAction(path) );						// approach switch						
+		runAction( new PathFollowerAction(backupPath2) );				// backup
+		runAction( new PathFollowerAction(path2) );						// approach switch						
 		runAction( new ParallelAction(Arrays.asList(new Action[] {
 				new ElevatorAction(ElevatorArmBarStateEnum.SWITCH),		// raise elevator
-				new InterruptableAction(new CollisionDetectionAction(),	// crash into switch
-				new PathFollowerAction(collisionPath))
+//				new InterruptableAction(new CollisionDetectionAction(),	// crash into switch
+//				new PathFollowerAction(collisionPath2))
+				new InterruptableAction(new CrossXAction(140 - Constants.kCenterToFrontBumper),	// crash into switch
+				new PathFollowerAction(collisionPath2))
 		})));
 		runAction( new OuttakeAction() );								// shoot!
 		
