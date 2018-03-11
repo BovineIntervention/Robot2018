@@ -52,7 +52,12 @@ public class SideStartToFarSwitchMode extends AutoModeBase {
 		
 		// drive straight until we are between the switch and platform
 		Vector2d turnPosition = new Vector2d(255, 116);
-
+		Vector2d turnCenter = new Vector2d(215, 76);	// 15 inches beyond desired path
+		double turnRadius = 40.0;
+		double turnAngleStart = +90.0;
+		double turnAngleEnd   = -20.0;					// extra 20 degrees brings us back to x=240"
+		double turnAngleStep  = -10.0;
+		
 		// switch corner
 		Vector2d switchStopPosition = new Vector2d(178 + Constants.kCenterToFrontBumper/Math.sqrt(2), -71 - Constants.kCenterToFrontBumper/Math.sqrt(2));
 
@@ -64,6 +69,9 @@ public class SideStartToFarSwitchMode extends AutoModeBase {
 		
 		if (startPosition == StartPositionOption.RIGHT_START) {
 			turnPosition.setY(-turnPosition.getY());
+			turnAngleStart = -turnAngleStart;
+			turnAngleEnd = -turnAngleEnd;
+			turnAngleStep = -turnAngleStep;
 		    turnAroundPosition.setY(-turnAroundPosition.getY());     
 		    startCollisionPosition.setY(-startCollisionPosition.getY());
 		    switchStopPosition.setY(-switchStopPosition.getY());
@@ -74,7 +82,13 @@ public class SideStartToFarSwitchMode extends AutoModeBase {
 		{
 			Path path = new Path(collisionOptions.getMaxSpeed());
 			path.add(new Waypoint(initialPosition, pathOptions));
-			path.add(new Waypoint(turnPosition, pathOptions));
+//			path.add(new Waypoint(turnPosition, pathOptions));
+			// try a more continuous arc instead of a hard turn
+			for (double turnAngle = turnAngleStart; turnAngle >= turnAngleEnd; turnAngle += turnAngleStep)
+			{
+				Vector2d turnPoint = turnCenter.add(Vector2d.magnitudeAngle(turnRadius, turnAngle*Vector2d.degreesToRadians));
+				path.add(new Waypoint(turnPoint, pathOptions));
+			}
 			path.add(new Waypoint(turnAroundPosition, backOptions));
 			path.add(new Waypoint(startCollisionPosition, tightTurnOptions));
 			
