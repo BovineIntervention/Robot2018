@@ -41,44 +41,75 @@ public class SideStartToFarScaleMode extends AutoModeBase {
 	protected void routine() throws AutoModeEndedException 
 	{
 		PathSegment.Options pathOptions	= new PathSegment.Options(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, 48, false);
+		PathSegment.Options slowPathOptions	= new PathSegment.Options(Constants.kCollisionVel, Constants.kCollisionAccel, Constants.kPathFollowingLookahead, false);
 		
-		Vector2d initialPosition 	= startPosition.initialPose.getPosition();
-		Vector2d turnPosition1 		= new Vector2d(240, 132 - Constants.kCenterToSideBumper);
-		Vector2d turnPosition2 		= new Vector2d(240, -90);
-		Vector2d shootPosition 		= new Vector2d(282 - Constants.kCenterToFrontBumper, -78);
+		Vector2d initialPosition 		= startPosition.initialPose.getPosition();
+//		Vector2d turnPosition1 			= new Vector2d(240, 132 - Constants.kCenterToSideBumper);
+		Vector2d farTurnPosition		= new Vector2d(240, -90);
+		Vector2d shootPosition 			= new Vector2d(290 - Constants.kCenterToFrontBumper, -78);
+		Vector2d startElevatorPosition =   shootPosition.add(Vector2d.magnitudeAngle(12.0, 180 * Vector2d.degreesToRadians));
+	
+		// drive straight until we are between the switch and platform
+		Vector2d turnPosition = new Vector2d(255, 116);
+		Vector2d turnCenter = new Vector2d(215, 76);	// 15 inches beyond desired path
+		double turnRadius = 40.0;
+		double turnAngleStart = +90.0;
+		double turnAngleEnd   = -20.0;					// extra 20 degrees brings us back to x=240"
+		double turnAngleStep  = -10.0;
+		
 		
 		if (startPosition == StartPositionOption.RIGHT_START) {
-			turnPosition1.setY(-turnPosition1.getY());
-			turnPosition2.setY(-turnPosition2.getY());
+			turnPosition.setY(-turnPosition.getY());
+			turnAngleStart = -turnAngleStart;
+			turnAngleEnd = -turnAngleEnd;
+			turnAngleStep = -turnAngleStep;
+//			turnPosition1.setY(-turnPosition1.getY());
+			farTurnPosition.setY(-farTurnPosition.getY());
 			shootPosition.setY(-shootPosition.getY());
 		}
 
 		if (crossField == CrossFieldOption.YES)
 		{
-		
-//TODO: add arc to smooth steering???			
-			
-			Path path = new Path(Constants.kCollisionVel);	// final velocity of this path will be collisionVelocity required by next path
+			Path path = new Path(slowPathOptions.getMaxSpeed());	// final velocity of this path will be collisionVelocity required by next path
 			path.add(new Waypoint(initialPosition, pathOptions));
-			path.add(new Waypoint(turnPosition1,   pathOptions));
-			path.add(new Waypoint(turnPosition2,   pathOptions));
-			path.add(new Waypoint(shootPosition,   pathOptions));
+//			path.add(new Waypoint(turnPosition1,   pathOptions));
+			for (double turnAngle = turnAngleStart; turnAngle >= turnAngleEnd; turnAngle += turnAngleStep)
+			{
+				Vector2d turnPoint = turnCenter.add(Vector2d.magnitudeAngle(turnRadius, turnAngle*Vector2d.degreesToRadians));
+				path.add(new Waypoint(turnPoint, pathOptions));
+			}
+			path.add(new Waypoint(farTurnPosition,   pathOptions));
+			path.add(new Waypoint(startElevatorPosition,     pathOptions));
+			
+			Path approachPath = new Path();
+			approachPath.add(new Waypoint(startElevatorPosition, slowPathOptions));
+			approachPath.add(new Waypoint(shootPosition,         slowPathOptions));
 			
 			System.out.println("SideStartToFarScaleMode path");
 			System.out.println(path.toString());
+			System.out.println(approachPath.toString());
 		
 			runAction( new PathFollowerAction(path) );
-			runAction( new ElevatorAction(ElevatorArmBarStateEnum.SCALE_HIGH) );
+
+			runAction( new PathFollowerAction(path) );
+			runAction( new ParallelAction(Arrays.asList(new Action[] {
+					new ElevatorAction(ElevatorArmBarStateEnum.SCALE_HIGH),		// raise elevator
+					new PathFollowerAction(approachPath)
+			})));
 			runAction( new OuttakeAction() );
 			runAction( new ElevatorAction(ElevatorArmBarStateEnum.GROUND) );
+
+		
 		}
 		else
 		{
 			// just cross line if everything is on the other side, and we don't want to interfere with a partner
 			
+			Vector2d stopPosition = new Vector2d(230, 132);
+			
 			Path path = new Path();	// final velocity of this path will be collisionVelocity required by next path
 			path.add(new Waypoint(initialPosition, pathOptions));
-			path.add(new Waypoint(turnPosition1,   pathOptions));
+			path.add(new Waypoint(   stopPosition, pathOptions));
 
 			runAction( new PathFollowerAction(path) );
 		}
