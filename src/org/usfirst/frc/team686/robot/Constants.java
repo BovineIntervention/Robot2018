@@ -132,7 +132,7 @@ public class Constants extends ConstantsBase
     public static double kScaleHeightMed = 	60.00;	// game manual: 60"
     public static double kScaleHeightLow = 	48.00;	// game manual: 48"
     public static double kSwitchHeight = 	18.75;	// field drawing 18150: 18.75" to top of fence	
-    public static double kExchangeHeight = 	 2.00;	// field drawing 18127: 0.5" plywood + 1.0" pine + 0.125" polycarbonate + clearance 
+    public static double kExchangeHeight = 	 4.00;	// field drawing 18127: 0.5" plywood + 1.0" pine + 0.125" polycarbonate + clearance 
     public static double kGroundHeight = 	 0.00;
 
     // DESIRED CUBE HEIGHT (bottom of cube)
@@ -193,7 +193,8 @@ public class Constants extends ConstantsBase
     public static final int kArmBarEncoderAtZeroDeg = -124700;	
     public static final int kArmBarEncoderLimitDown = -185000;	// DO NOT CHANGE!!!
     
-    public static double kArmBarUpAngleDeg =    86.6;	// at upper limit
+    public static double kArmBarCalAngleDeg =   86.6;	// at upper limit
+    public static double kArmBarUpAngleDeg =    80.0;	
     public static double kArmBarFlatAngleDeg = 	 0.0;	
     public static double kArmBarDownAngleDeg = -25.0;//-30.0; 	// at lower limit
 

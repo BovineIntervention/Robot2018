@@ -182,8 +182,8 @@ public class ArmBarLoop implements Loop
 			{
 				// CALIBRATING is done when limit switch is hit
 				talon.setSelectedSensorPosition( Constants.kArmBarEncoderLimitUp, Constants.kTalonPidIdx, Constants.kTalonTimeoutMs);
-				setTarget(Constants.kArmBarUpAngleDeg);			// initial goal is to stay in the same position
-				filteredTarget = Constants.kArmBarUpAngleDeg;	// initial goal is to stay in the same position
+				setTarget(Constants.kArmBarCalAngleDeg);			// initial goal is to stay in the same position
+				filteredTarget = Constants.kArmBarCalAngleDeg;	// initial goal is to stay in the same position
 				
 				talon.configReverseSoftLimitEnable(true, Constants.kTalonTimeoutMs);
 				talon.configForwardSoftLimitEnable(true, Constants.kTalonTimeoutMs);

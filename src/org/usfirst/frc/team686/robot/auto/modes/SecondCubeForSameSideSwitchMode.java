@@ -109,9 +109,7 @@ public class SecondCubeForSameSideSwitchMode {
 		
 		actions.add( new IntakeStartAction() );									// turn on intake
 		actions.add( new PathFollowerAction(toCubePath2) );						// quickly close in on cube
-		actions.add( new InterruptableAction( new CubeDetectionAction(), 
-				     new PathFollowerAction(intakePath2)) );					// slowly close in on cube
-		actions.add( new PickUpCubeAction() );									// close grabber
+		actions.add( new DrivingCubeIntakeAction( intakePath2 ));				// intake cube
 		
 		actions.add( new ElevatorAction(ElevatorArmBarStateEnum.SWITCH) );		// raise four bar to switch height
 		actions.add( new InterruptableAction(new CrossXAction(shootThresholdX),	// run into switch fence
@@ -127,9 +125,7 @@ public class SecondCubeForSameSideSwitchMode {
 		
 		actions.add( new IntakeStartAction() );									// turn on intake
 		actions.add( new PathFollowerAction(toCubePath3) );						// quickly close in on cube
-		actions.add( new InterruptableAction( new CubeDetectionAction(), 
-				     new PathFollowerAction(intakePath3)) );					// slowly close in on cube
-		actions.add( new PickUpCubeAction() );									// close grabber
+		actions.add( new DrivingCubeIntakeAction( intakePath3 ));				// intake cube
 		
 		actions.add( new ElevatorAction(ElevatorArmBarStateEnum.SWITCH) );		// raise four bar to switch height
 		actions.add( new InterruptableAction(new CrossXAction(shootThresholdX),	// run into switch fence

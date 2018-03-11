@@ -35,39 +35,39 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 		System.out.println("STARTING AUTOMODE: Center to Switch");
 		
 		PathSegment.Options pathOptions	= new PathSegment.Options(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, 48, false);
-		PathSegment.Options collisionOptions = new PathSegment.Options(Constants.kCollisionVel, Constants.kCollisionAccel, Constants.kPathFollowingLookahead, false);
+		PathSegment.Options slowOptions = new PathSegment.Options(Constants.kCollisionVel, Constants.kCollisionAccel, Constants.kPathFollowingLookahead, false);
 		
 		Vector2d initialPosition = startPosition.initialPose.getPosition();
-		Vector2d switchStopPosition = 	  new Vector2d(146 - Constants.kCenterToFrontBumper, 58);	// 58 is center of switch platform		
 		Vector2d turnPosition = 		  new Vector2d( 80, 64);
-		Vector2d startCollisionPosition = new Vector2d(100, 64);
+		Vector2d startSlowPosition = 	  new Vector2d(100, 64);
+		Vector2d switchStopPosition = 	  new Vector2d(142 - Constants.kCenterToFrontBumper, 58);	// 58 is center of switch platform		
+		
+		double switchThresholdX = 138 - Constants.kCenterToFrontBumper;
 		
 		if (switchSide == 'R') {
 			switchStopPosition.setY(-switchStopPosition.getY());
 			turnPosition.setY(-turnPosition.getY());
-			startCollisionPosition.setY(-startCollisionPosition.getY());
+			startSlowPosition.setY(-startSlowPosition.getY());
 		}
 		
 		Path path = new Path(Constants.kCollisionVel);	// final velocity of this path will be collisionVelocity required by next path
 		path.add(new Waypoint(initialPosition, pathOptions));
 		path.add(new Waypoint(turnPosition, pathOptions));
-		path.add(new Waypoint(startCollisionPosition, pathOptions));
+		path.add(new Waypoint(startSlowPosition, pathOptions));
 		
-		Path collisionPath = new Path();	// final velocity of this path will be 0
-		collisionPath.add(new Waypoint(startCollisionPosition, collisionOptions));
-		collisionPath.add(new Waypoint(switchStopPosition, collisionOptions));
+		Path slowPath = new Path();	// final velocity of this path will be 0
+		slowPath.add(new Waypoint(startSlowPosition, slowOptions));
+		slowPath.add(new Waypoint(switchStopPosition, slowOptions));
 		
 		System.out.println("CenterStartToSwitchMode path");
 		System.out.println(path.toString());
-		System.out.println(collisionPath.toString());
+		System.out.println(slowPath.toString());
 		
 		runAction( new PathFollowerAction(path) );						// drive towards switch
 		runAction( new ParallelAction(Arrays.asList(new Action[] {
 				new ElevatorAction(ElevatorArmBarStateEnum.SWITCH),		// raise elevator
-//				new InterruptableAction(new CollisionDetectionAction(),	// crash into switch
-//				new PathFollowerAction(collisionPath))
-				new InterruptableAction(new CrossXAction(140 - Constants.kCenterToFrontBumper),	// crash into switch
-				new PathFollowerAction(collisionPath))
+				new InterruptableAction(new CrossXAction(switchThresholdX),	// crash into switch
+				new PathFollowerAction(slowPath))
 		})));
 		runAction( new OuttakeAction() );								// shoot!
 		
@@ -92,8 +92,8 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 		approachCubePath.add(new Waypoint(startIntakePosition, pathOptions));
 		
 		Path intakeCubePath = new Path();
-		intakeCubePath.add(new Waypoint(startIntakePosition, collisionOptions));
-		intakeCubePath.add(new Waypoint(cubePickupPosition, collisionOptions));
+		intakeCubePath.add(new Waypoint(startIntakePosition, slowOptions));
+		intakeCubePath.add(new Waypoint(cubePickupPosition, slowOptions));
 		
 		System.out.println("CenterStartToSwitchMode 2nd Cube Pickup");
 		System.out.println(backupPath.toString());
@@ -103,10 +103,9 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 		runAction( new PathFollowerAction(backupPath) );			// backup
 		runAction( new IntakeStartAction() );						// turn on intake
 		runAction( new PathFollowerAction(approachCubePath) );		// approach cube
-		runAction( new InterruptableAction( new CubeDetectionAction(), 
-				   new PathFollowerAction(intakeCubePath)) );		// close in on cube
-		runAction( new PickUpCubeAction() );						// close grabber
+		runAction( new DrivingCubeIntakeAction( intakeCubePath ));
 
+		
 		
 		
 		// score 2nd cube on switch
@@ -119,11 +118,11 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 		Path path2 = new Path(Constants.kCollisionVel);	// final velocity of this path will be collisionVelocity required by next path
 		path2.add(new Waypoint(backupPosition, pathOptions));
 		path2.add(new Waypoint(turnPosition, pathOptions));
-		path2.add(new Waypoint(startCollisionPosition, pathOptions));
+		path2.add(new Waypoint(startSlowPosition, pathOptions));
 		
 		Path collisionPath2 = new Path();	// final velocity of this path will be 0
-		collisionPath2.add(new Waypoint(startCollisionPosition, collisionOptions));
-		collisionPath2.add(new Waypoint(switchStopPosition, collisionOptions));
+		collisionPath2.add(new Waypoint(startSlowPosition, slowOptions));
+		collisionPath2.add(new Waypoint(switchStopPosition, slowOptions));
 		
 		System.out.println("CenterStartToSwitchMode 2nd Cube Score");
 		System.out.println(backupPath2.toString());
@@ -136,9 +135,7 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 		runAction( new PathFollowerAction(path2) );						// approach switch						
 		runAction( new ParallelAction(Arrays.asList(new Action[] {
 				new ElevatorAction(ElevatorArmBarStateEnum.SWITCH),		// raise elevator
-//				new InterruptableAction(new CollisionDetectionAction(),	// crash into switch
-//				new PathFollowerAction(collisionPath2))
-				new InterruptableAction(new CrossXAction(140 - Constants.kCenterToFrontBumper),	// crash into switch
+				new InterruptableAction(new CrossXAction(switchThresholdX),	// crash into switch
 				new PathFollowerAction(collisionPath2))
 		})));
 		runAction( new OuttakeAction() );								// shoot!
