@@ -71,6 +71,7 @@ public class StartToNearScaleMode extends AutoModeBase {
 		
 		System.out.println("SideStartToNearScaleMode path");
 		System.out.println(path.toString());
+		System.out.println(approachPath.toString());
 	
 		
 		runAction( new PathFollowerAction(path) );
