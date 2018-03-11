@@ -17,7 +17,7 @@ public class ElevatorAction implements Action {
 
 	private double targetOffset = 1.0;
 	private double mStartTime;
-	private double mTargetTime = 1.0;
+	private double mTargetTime = 0.3;
 	private double actualPosition;
 	private double targetPosition;
 	private boolean extended = false;

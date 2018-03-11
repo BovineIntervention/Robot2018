@@ -111,7 +111,6 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 		
 		// score 2nd cube on switch
 		
-		// redo path to start at cubePickupPosition
 		Path backupPath2 = new Path();
 		backupPath2.add(new Waypoint(cubePickupPosition, pathOptions));	
 		backupPath2.add(new Waypoint(backupPosition, pathOptions));

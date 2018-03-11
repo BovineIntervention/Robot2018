@@ -8,15 +8,22 @@ public class CrossXAction implements Action
 {
 	public RobotState robotState = RobotState.getInstance();
 	double threshold;
+	double diff;
+	double prevDiff;
 	
     public CrossXAction(double _threshold) 
     {
     	threshold = _threshold;
+    	diff = 0;
+    	prevDiff = 0;
     }
 
     @Override
     public void start() 
-    {}
+    {
+    	diff = (robotState.getLatestFieldToVehicle().getX() - threshold);
+    	prevDiff = diff;
+    }
 
 
     @Override
@@ -29,9 +36,16 @@ public class CrossXAction implements Action
     @Override
     public boolean isFinished() 
     {
-    	boolean finished = (robotState.getLatestFieldToVehicle().getX() > threshold);
+    	diff = (robotState.getLatestFieldToVehicle().getX() - threshold);
+    	
+    	// we are done when we cross the threshold line
+    	// (so the sign of the difference will change)
+    	boolean finished = (Math.signum(diff) != Math.signum(prevDiff));
+    	
 //    	if (finished)
 //    		System.out.println("Crossed X Threshold: " + threshold);
+
+    	prevDiff = diff;
     	return finished;
     }
 
