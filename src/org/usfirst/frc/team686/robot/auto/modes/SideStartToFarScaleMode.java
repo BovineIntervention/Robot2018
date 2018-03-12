@@ -8,16 +8,10 @@ import org.usfirst.frc.team686.robot.SmartDashboardInteractions.StartPositionOpt
 import org.usfirst.frc.team686.robot.auto.AutoModeBase;
 import org.usfirst.frc.team686.robot.auto.AutoModeEndedException;
 import org.usfirst.frc.team686.robot.auto.actions.Action;
-import org.usfirst.frc.team686.robot.auto.actions.CollisionDetectionAction;
-import org.usfirst.frc.team686.robot.auto.actions.ElevatorAction;
-import org.usfirst.frc.team686.robot.auto.actions.InterruptableAction;
-import org.usfirst.frc.team686.robot.auto.actions.OuttakeAction;
-import org.usfirst.frc.team686.robot.auto.actions.ParallelAction;
-import org.usfirst.frc.team686.robot.auto.actions.PathFollowerAction;
+import org.usfirst.frc.team686.robot.auto.actions.*;
 import org.usfirst.frc.team686.robot.lib.util.Path;
 import org.usfirst.frc.team686.robot.lib.util.Path.Waypoint;
 import org.usfirst.frc.team686.robot.lib.util.PathSegment;
-import org.usfirst.frc.team686.robot.lib.util.Pose;
 import org.usfirst.frc.team686.robot.lib.util.Vector2d;
 import org.usfirst.frc.team686.robot.subsystems.Superstructure.ElevatorArmBarStateEnum;
 

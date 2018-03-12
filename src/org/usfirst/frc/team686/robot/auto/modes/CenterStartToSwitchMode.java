@@ -66,7 +66,7 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 		runAction( new PathFollowerAction(path) );						// drive towards switch
 		runAction( new ParallelAction(Arrays.asList(new Action[] {
 				new ElevatorAction(ElevatorArmBarStateEnum.SWITCH),		// raise elevator
-				new InterruptableAction(new CrossXAction(switchThresholdX),	// crash into switch
+				new InterruptableAction(new CrossXYAction('x', switchThresholdX),	// crash into switch
 				new PathFollowerAction(slowPath))
 		})));
 		runAction( new OuttakeAction() );								// shoot!
@@ -135,7 +135,7 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 		runAction( new PathFollowerAction(path2) );						// approach switch						
 		runAction( new ParallelAction(Arrays.asList(new Action[] {
 				new ElevatorAction(ElevatorArmBarStateEnum.SWITCH),		// raise elevator
-				new InterruptableAction(new CrossXAction(switchThresholdX),	// crash into switch
+				new InterruptableAction(new CrossXYAction('x', switchThresholdX),	// crash into switch
 				new PathFollowerAction(collisionPath2))
 		})));
 		runAction( new OuttakeAction() );								// shoot!

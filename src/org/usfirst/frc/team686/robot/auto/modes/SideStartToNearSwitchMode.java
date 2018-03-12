@@ -39,19 +39,18 @@ System.out.println("STARTING AUTOMODE: " + startPosition.name + " to Near Switch
 		PathSegment.Options tightTurnOptions = new PathSegment.Options(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, 18, false);
 		PathSegment.Options collisionOptions = new PathSegment.Options(Constants.kCollisionVel, Constants.kCollisionAccel, 18, false);
 		
-		Vector2d initialPosition = startPosition.initialPose.getPosition();
+		Vector2d initialPosition = 			startPosition.initialPose.getPosition();
+		Vector2d switchStopPosition = 		new Vector2d(168 + 12, 76.75 + Constants.kCenterToFrontBumper);
+		Vector2d turnPosition = 			new Vector2d(switchStopPosition.getX() + 12, switchStopPosition.getY() + 50);
+		Vector2d startCollisionPosition = 	new Vector2d(switchStopPosition.getX() +  3, switchStopPosition.getY() + 12);
 		
-		Vector2d switchStopPosition = new Vector2d(FieldDimensions.kSwitchFromCenterStartDistX + (FieldDimensions.kSwitchLengthX/2) + 12,
-													(FieldDimensions.kSwitchLengthY/2) + Constants.kCenterToFrontBumper);
-		
-		Vector2d turnPosition = new Vector2d(switchStopPosition.getX() + 12 , switchStopPosition.getY() + 50);
-		
-		Vector2d startCollisionPosition = new Vector2d(switchStopPosition.getX() + 3, switchStopPosition.getY() + 12);
+		double switchThresholdY = switchStopPosition.getY() + 1;
 		
 		if (startPosition == StartPositionOption.RIGHT_START) {
 			turnPosition.setY(-turnPosition.getY());
 			startCollisionPosition.setY(-startCollisionPosition.getY());
 			switchStopPosition.setY(-switchStopPosition.getY());
+			switchThresholdY = -switchThresholdY;
 		}
 
 		
@@ -71,10 +70,23 @@ System.out.println("STARTING AUTOMODE: " + startPosition.name + " to Near Switch
 		runAction( new PathFollowerAction(path) );
 		runAction( new ParallelAction(Arrays.asList(new Action[] {
 				new ElevatorAction(ElevatorArmBarStateEnum.SWITCH),
-				new InterruptableAction(new CollisionDetectionAction(),
+				new InterruptableAction(new CrossXYAction('y', switchThresholdY),
 				new PathFollowerAction(collisionPath))
 		})));
 		runAction( new OuttakeAction() );
+
+		
+		
+		// go after second cube
+		SeriesAction secondCubeActions;
+		
+		if (switchSide == scaleSide)
+			secondCubeActions = SecondCubeForScaleMode.getActions(switchStopPosition, switchSide, scaleSide);
+		else
+			secondCubeActions = SecondCubeForSameSideSwitchMode.getActions(switchStopPosition, switchSide, scaleSide);
+		
+		runAction( secondCubeActions );
+	
 	}
 	
 }

@@ -7,19 +7,10 @@ import org.usfirst.frc.team686.robot.SmartDashboardInteractions.CrossFieldOption
 import org.usfirst.frc.team686.robot.SmartDashboardInteractions.StartPositionOption;
 import org.usfirst.frc.team686.robot.auto.AutoModeBase;
 import org.usfirst.frc.team686.robot.auto.AutoModeEndedException;
-import org.usfirst.frc.team686.robot.auto.actions.Action;
-import org.usfirst.frc.team686.robot.auto.actions.CollisionDetectionAction;
-import org.usfirst.frc.team686.robot.auto.actions.CrossXAction;
-import org.usfirst.frc.team686.robot.auto.actions.ElevatorAction;
-import org.usfirst.frc.team686.robot.auto.actions.InterruptableAction;
-import org.usfirst.frc.team686.robot.auto.actions.OuttakeAction;
-import org.usfirst.frc.team686.robot.auto.actions.ParallelAction;
-import org.usfirst.frc.team686.robot.auto.actions.PathFollowerAction;
-import org.usfirst.frc.team686.robot.auto.actions.SeriesAction;
+import org.usfirst.frc.team686.robot.auto.actions.*;
 import org.usfirst.frc.team686.robot.lib.util.Path;
 import org.usfirst.frc.team686.robot.lib.util.Path.Waypoint;
 import org.usfirst.frc.team686.robot.lib.util.PathSegment;
-import org.usfirst.frc.team686.robot.lib.util.Pose;
 import org.usfirst.frc.team686.robot.lib.util.Vector2d;
 import org.usfirst.frc.team686.robot.subsystems.Superstructure.ElevatorArmBarStateEnum;
 
@@ -50,7 +41,6 @@ public class StartToNearScaleMode extends AutoModeBase {
 		Vector2d scaleStopPosition =       new Vector2d(287, 103);
 		Vector2d turnToScalePosition =     scaleStopPosition.add(Vector2d.magnitudeAngle(25.0, 135 * Vector2d.degreesToRadians));
 		Vector2d startElevatorPosition =   scaleStopPosition.add(Vector2d.magnitudeAngle(12.0, 135 * Vector2d.degreesToRadians));
-		//Vector2d backupPosition =   	   scaleStopPosition.add(Vector2d.magnitudeAngle( 6.0, 135 * Vector2d.degreesToRadians));
 
 		if (startPosition == StartPositionOption.RIGHT_START) {
 			centerStartTurnPosition.setY(-centerStartTurnPosition.getY());
