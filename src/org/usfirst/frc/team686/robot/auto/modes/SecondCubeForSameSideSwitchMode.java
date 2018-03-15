@@ -26,8 +26,8 @@ public class SecondCubeForSameSideSwitchMode {
 		Vector2d slowDownPosition2 = 	 new Vector2d(202, 70).add(Vector2d.magnitudeAngle(Constants.kCenterToFrontBumper + 18, 30.0*Vector2d.degreesToRadians));
 		Vector2d closeIntakePosition2 =	 new Vector2d(202, 70).add(Vector2d.magnitudeAngle(Constants.kCenterToFrontBumper +  6, 30.0*Vector2d.degreesToRadians));
 
-		// 0 degree approach angle for 2nd cube
-		Vector2d backupPosition3 = 	 	 new Vector2d(250, 42);
+		// 0 degree approach angle for 3rd cube
+		Vector2d backupPosition3 = 	 	 new Vector2d(270, 42);
 		Vector2d stopPosition3 = 		 new Vector2d(202, 42).add(Vector2d.magnitudeAngle(Constants.kCenterToFrontBumper -  2,  0.0*Vector2d.degreesToRadians));
 		Vector2d slowDownPosition3 = 	 new Vector2d(202, 42).add(Vector2d.magnitudeAngle(Constants.kCenterToFrontBumper + 18,  0.0*Vector2d.degreesToRadians));
 		Vector2d closeIntakePosition3 =	 new Vector2d(202, 42).add(Vector2d.magnitudeAngle(Constants.kCenterToFrontBumper +  6,  0.0*Vector2d.degreesToRadians));
@@ -66,7 +66,7 @@ public class SecondCubeForSameSideSwitchMode {
 		
 		
 		// display paths for debug
-		System.out.println("SameSideSwitchSecondCubeMode path");
+		System.out.println("SameSideSwitchSecondCubeMode path -- 2nd cube");
 		System.out.println(backupPath2.toString());
 		System.out.println(toCubePath2.toString());
 		System.out.println(intakePath2.toString());
@@ -93,7 +93,7 @@ public class SecondCubeForSameSideSwitchMode {
 		
 		
 		// display paths for debug
-		System.out.println("SameSideSwitchSecondCubeMode path");
+		System.out.println("SameSideSwitchSecondCubeMode path -- 3rd cube");
 		System.out.println(backupPath3.toString());
 		System.out.println(toCubePath3.toString());
 		System.out.println(intakePath3.toString());
@@ -124,6 +124,7 @@ public class SecondCubeForSameSideSwitchMode {
 				new PathFollowerAction(backupPath3) })));						// backup towards wall
 		
 		actions.add( new IntakeStartAction() );									// turn on intake
+		actions.add( new WaitAction(0.5));
 		actions.add( new PathFollowerAction(toCubePath3) );						// quickly close in on cube
 		actions.add( new DrivingCubeIntakeAction( intakePath3 ));				// intake cube
 		

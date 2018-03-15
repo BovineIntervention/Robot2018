@@ -60,7 +60,7 @@ public class SideStartToFarSwitchMode extends AutoModeBase {
 		// distance at which we start checking collision detector
 		Vector2d startCollisionPosition = switchStopPosition.add(Vector2d.magnitudeAngle(24.0, -Math.PI/4));
 		
-		double switchThresholdY = switchStopPosition.getY() + 1;
+		double switchThresholdY = switchStopPosition.getY() + 13;
 		
 		
 		if (startPosition == StartPositionOption.RIGHT_START) {
@@ -68,6 +68,7 @@ public class SideStartToFarSwitchMode extends AutoModeBase {
 			turnAngleStart = -turnAngleStart;
 			turnAngleEnd = -turnAngleEnd;
 			turnAngleStep = -turnAngleStep;
+			turnCenter.setY(-turnCenter.getY());
 		    turnAroundPosition.setY(-turnAroundPosition.getY());     
 		    startCollisionPosition.setY(-startCollisionPosition.getY());
 		    switchStopPosition.setY(-switchStopPosition.getY());

@@ -65,15 +65,14 @@ public class ElevatorAction implements Action {
 				finished = true;
 		}
 		
-		if (finished)
-			System.out.println("ElevatorAction Finished");
-		
 		return finished;
 	}
 
 
 	@Override
 	public void done() {
+		System.out.println("ElevatorAction done");
+		
 		elevatorArmBar.set(ElevatorArmBarStateEnum.GROUND, extended);
 	}
 

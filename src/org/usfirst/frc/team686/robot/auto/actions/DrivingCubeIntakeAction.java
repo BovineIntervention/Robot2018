@@ -26,7 +26,6 @@ public class DrivingCubeIntakeAction implements Action
 	Path path;
 	Superstructure superstructure = Superstructure.getInstance();
 
-	public DigitalInput proximitySensor = new DigitalInput(Constants.kProximitySensor1Port);
 	boolean cubeDetected = false;
 
 	double startTime = 0.0;
@@ -50,7 +49,7 @@ public class DrivingCubeIntakeAction implements Action
     @Override
     public void start() 
     {
-		System.out.println("PathFollowerAction.start(), pose = " + RobotState.getInstance().getLatestFieldToVehicle().toString());
+		System.out.println("DrivingCubeIntakeAction.start(), pose = " + RobotState.getInstance().getLatestFieldToVehicle().toString());
 
 		// make sure intake is extended and rotating, if it wasn't already
 		boolean extended = true;
@@ -69,7 +68,7 @@ public class DrivingCubeIntakeAction implements Action
     @Override
     public void update() 
     {
-    	cubeDetected = !proximitySensor.get();
+    	cubeDetected = !Constants.proximitySensor.get();
     	
     	switch (cubeDetectionState)
     	{

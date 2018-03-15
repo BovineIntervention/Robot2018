@@ -2,6 +2,7 @@ package org.usfirst.frc.team686.robot;
 
 import org.usfirst.frc.team686.robot.lib.util.ConstantsBase;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.SPI;
 
@@ -228,7 +229,8 @@ public class Constants extends ConstantsBase
     public static boolean kIntakeRightMotorInverted;
     
     public static int kProximitySensor1Port = 0;    
-    
+	public static DigitalInput proximitySensor;
+
     // Do not change anything after this line!
     
     // Motor Controllers
@@ -412,6 +414,7 @@ public class Constants extends ConstantsBase
     			
     			kElevatorLimitSwitchPwmId = 0;
 
+    			
     			break;
     			
     			
@@ -539,6 +542,11 @@ System.out.printf("PRACTICE_BOT: kIntakeLeftMotorInverted = %b (should be false)
 	    kTangentCameraHalfFOV = Math.tan(kCameraHalfFOVRadians);
 	    kCameraLatencySeconds = 0.240;			// Camera image capturing latency
 	    kTargetLocationFilterConstant = (30.0 * kLoopDt);		// 30 time constants in 1 second
+	    
+	    if (proximitySensor == null)
+	    {
+	    	proximitySensor = new DigitalInput(Constants.kProximitySensor1Port);
+	    }
 	    
     }
 }

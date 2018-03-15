@@ -2,41 +2,35 @@ package org.usfirst.frc.team686.robot.auto.actions;
 
 import org.usfirst.frc.team686.robot.lib.util.DataLogger;
 import org.usfirst.frc.team686.robot.subsystems.Superstructure;
-import org.usfirst.frc.team686.robot.subsystems.Superstructure.ElevatorArmBarStateEnum;
 
-public class IntakeStartAction implements Action {
+import edu.wpi.first.wpilibj.Timer;
+
+public class GrabberOpenAction implements Action {
 	Superstructure superstructure = Superstructure.getInstance();
-	private boolean finished;
 
-	public IntakeStartAction() {
-		finished = false;
-	}
+	
+	public GrabberOpenAction() {
+		}
 	
 	
 	@Override
-	public void start() 
-	{
-System.out.println("Starting IntakeStartAction");		
-		boolean extended = true;
-		superstructure.set(ElevatorArmBarStateEnum.GROUND, extended);
+	public void start() {
 		superstructure.grabberOut();
-		superstructure.startIntake();
-		finished = true;
-	}
+		
+}
 
 	@Override
 	public boolean isFinished() {
-		return finished;
+		return true;
 	}
 
 	@Override
-	public void update() {}
+	public void update() {
+		
+	}
 
 	@Override
 	public void done() {
-		superstructure.grabberIn();
-System.out.println("Done IntakeStartAction");		
-
 	}
 
 	private final DataLogger logger = new DataLogger()

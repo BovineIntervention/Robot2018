@@ -14,6 +14,8 @@ public class OuttakeAction implements Action {
 	private boolean finished;
 	
 	public OuttakeAction() {
+System.out.println("Starting OuttakeAction");
+		
 		finished = false;
 	}
 	
@@ -31,7 +33,7 @@ public class OuttakeAction implements Action {
 	@Override
 	public void update() {
 		
-		finished = (Timer.getFPGATimestamp() - mStartTime) >= mTimeToOuttake;
+		finished = ((Timer.getFPGATimestamp() - mStartTime) >= mTimeToOuttake);
 		superstructure.startOuttake();
 		if (finished)
 			superstructure.stopOuttake();
@@ -40,6 +42,7 @@ public class OuttakeAction implements Action {
 
 	@Override
 	public void done() {
+System.out.println("Finished OuttakeAction");
 	}
 
 	private final DataLogger logger = new DataLogger()

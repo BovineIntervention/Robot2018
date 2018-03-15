@@ -9,11 +9,9 @@ import edu.wpi.first.wpilibj.DigitalInput;
 
 public class CubeDetectionAction implements Action 
 {
-	public DigitalInput proximitySensor;
 	
     public CubeDetectionAction() 
     {
-    	proximitySensor = new DigitalInput(Constants.kProximitySensor1Port);
     }
 
     @Override
@@ -33,10 +31,10 @@ public class CubeDetectionAction implements Action
     @Override
     public boolean isFinished() 
     {
-    	if (!proximitySensor.get())
+    	if (!Constants.proximitySensor.get())
     		System.out.println("Detected Cube!");
 
-    	return !proximitySensor.get();
+    	return !Constants.proximitySensor.get();
     }
 
     @Override
@@ -52,7 +50,7 @@ public class CubeDetectionAction implements Action
         @Override
         public void log()
         {
-   			put("CubeDetectionAction/proximitySensor", proximitySensor.get() );
+   			put("CubeDetectionAction/proximitySensor", Constants.proximitySensor.get() );
         }
     };
      

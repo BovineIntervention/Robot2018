@@ -100,10 +100,12 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 		System.out.println(approachCubePath.toString());
 		System.out.println(intakeCubePath.toString());
 		
-		runAction( new PathFollowerAction(backupPath) );			// backup
+		runAction( new PathFollowerAction(backupPath) );	         // backup
 		runAction( new IntakeStartAction() );						// turn on intake
+		runAction( new GrabberOpenAction () );
 		runAction( new PathFollowerAction(approachCubePath) );		// approach cube
 		runAction( new DrivingCubeIntakeAction( intakeCubePath ));
+		runAction( new GrabberCloseAction () );
 
 		
 		

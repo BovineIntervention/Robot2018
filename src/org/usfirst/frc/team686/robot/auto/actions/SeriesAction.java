@@ -83,8 +83,8 @@ public class SeriesAction implements Action
         @Override
         public void log()
         {
-            if (mCurAction == null) 
-            	mCurAction.getLogger().log();
+//            if (mCurAction == null) 
+//            	mCurAction.getLogger().log();
 	    }
     };
 	
