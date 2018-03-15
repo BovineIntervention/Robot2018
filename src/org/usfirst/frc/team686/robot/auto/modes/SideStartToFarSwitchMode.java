@@ -1,6 +1,8 @@
 package org.usfirst.frc.team686.robot.auto.modes;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.usfirst.frc.team686.robot.Constants;
 import org.usfirst.frc.team686.robot.SmartDashboardInteractions.CrossFieldOption;
@@ -44,15 +46,19 @@ public class SideStartToFarSwitchMode extends AutoModeBase {
 		Vector2d initialPosition = startPosition.initialPose.getPosition(); //first assume start is left and goal is right 
 		
 		// drive straight until we are between the switch and platform
-		Vector2d turnPosition = new Vector2d(255, 116);
+		// smooth arc around corner
 		Vector2d turnCenter = new Vector2d(215, 76);	// 15 inches beyond desired path
 		double turnRadius = 40.0;
 		double turnAngleStart = +90.0;
 		double turnAngleEnd   = -20.0;					// extra 20 degrees brings us back to x=240"
 		double turnAngleStep  = -10.0;
+
+		List<Vector2d> turnPoints = new ArrayList<Vector2d>();
+		for (double turnAngle = turnAngleStart; turnAngle >= turnAngleEnd; turnAngle += turnAngleStep)
+			turnPoints.add( turnCenter.add(Vector2d.magnitudeAngle(turnRadius, turnAngle*Vector2d.degreesToRadians)) );
 		
 		// switch corner
-		Vector2d switchStopPosition = new Vector2d(178 + Constants.kCenterToFrontBumper/Math.sqrt(2), -71 - Constants.kCenterToFrontBumper/Math.sqrt(2));
+		Vector2d switchStopPosition = new Vector2d(196 + Constants.kCenterToFrontBumper/Math.sqrt(2), -77 - Constants.kCenterToFrontBumper/Math.sqrt(2));
 
 		// position that defines the turn around point
 		Vector2d turnAroundPosition = new Vector2d(240, -160);
@@ -60,15 +66,12 @@ public class SideStartToFarSwitchMode extends AutoModeBase {
 		// distance at which we start checking collision detector
 		Vector2d startCollisionPosition = switchStopPosition.add(Vector2d.magnitudeAngle(24.0, -Math.PI/4));
 		
-		double switchThresholdY = switchStopPosition.getY() + 13;
+		double switchThresholdY = switchStopPosition.getY() + 4;
 		
 		
 		if (startPosition == StartPositionOption.RIGHT_START) {
-			turnPosition.setY(-turnPosition.getY());
-			turnAngleStart = -turnAngleStart;
-			turnAngleEnd = -turnAngleEnd;
-			turnAngleStep = -turnAngleStep;
-			turnCenter.setY(-turnCenter.getY());
+			for (Vector2d turnPoint : turnPoints)
+				turnPoint.setY(-turnPoint.getY());
 		    turnAroundPosition.setY(-turnAroundPosition.getY());     
 		    startCollisionPosition.setY(-startCollisionPosition.getY());
 		    switchStopPosition.setY(-switchStopPosition.getY());
@@ -80,13 +83,8 @@ public class SideStartToFarSwitchMode extends AutoModeBase {
 		{
 			Path path = new Path(collisionOptions.getMaxSpeed());
 			path.add(new Waypoint(initialPosition, pathOptions));
-//			path.add(new Waypoint(turnPosition, pathOptions));
-			// try a more continuous arc instead of a hard turn
-			for (double turnAngle = turnAngleStart; turnAngle >= turnAngleEnd; turnAngle += turnAngleStep)
-			{
-				Vector2d turnPoint = turnCenter.add(Vector2d.magnitudeAngle(turnRadius, turnAngle*Vector2d.degreesToRadians));
+			for (Vector2d turnPoint : turnPoints)
 				path.add(new Waypoint(turnPoint, pathOptions));
-			}
 			path.add(new Waypoint(turnAroundPosition, backOptions));
 			path.add(new Waypoint(startCollisionPosition, tightTurnOptions));
 			
@@ -110,8 +108,8 @@ public class SideStartToFarSwitchMode extends AutoModeBase {
 			// just cross line if everything is on the other side, and we don't want to interfere with a partner
 			
 			Path path = new Path();	// final velocity of this path will be collisionVelocity required by next path
-			path.add(new Waypoint(initialPosition, pathOptions));
-			path.add(new Waypoint(turnPosition,   pathOptions));
+			path.add(new Waypoint(initialPosition, 	 pathOptions));
+			path.add(new Waypoint(turnPoints.get(0), pathOptions));
 
 			runAction( new PathFollowerAction(path) );
 		}

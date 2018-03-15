@@ -79,8 +79,8 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 		// Pick up a 2nd cube from the pile
 		
 		Vector2d backupPosition = 		new Vector2d(24, 0);
-		Vector2d cubePickupPosition = 	new Vector2d(140 - 3*13 - Constants.kCenterToFrontBumper +  3, 0);	// plow into pile an extra 3"
-		Vector2d startIntakePosition =	new Vector2d(140 - 3*13 - Constants.kCenterToFrontBumper - 12, 0);	// start looking for cube 12" early
+		Vector2d cubePickupPosition = 	new Vector2d(140 - 3*13 - Constants.kCenterToExtendedIntake +  0, 0);	
+		Vector2d startIntakePosition =	new Vector2d(140 - 3*13 - Constants.kCenterToExtendedIntake - 12, 0);	// start looking for cube 12" early
 		
 		Path backupPath = new Path();
 		backupPath.add(new Waypoint(switchStopPosition, pathOptions));	// where we finished 

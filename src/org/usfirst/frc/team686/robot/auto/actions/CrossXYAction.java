@@ -14,11 +14,16 @@ public class CrossXYAction implements Action
 	
     public CrossXYAction(char _xy, double _threshold) 
     {
-    	xFlag = (_xy == 'x' || _xy == 'X');
+    	xFlag = ((_xy == 'x') || (_xy == 'X'));
 
     	threshold = _threshold;
     	diff = 0;
     	prevDiff = 0;
+    	
+		if (xFlag)
+    		System.out.println("CrossXYAction X Threshold: " + threshold);
+		else
+    		System.out.println("CrossXYAction Y Threshold: " + threshold);
     }
 
     @Override
@@ -53,13 +58,13 @@ public class CrossXYAction implements Action
     	// (so the sign of the difference will change)
     	boolean finished = (Math.signum(diff) != Math.signum(prevDiff));
     	
-//    	if (finished)
-//    	{
-//    		if (xFlag)
-//        		System.out.println("Crossed X Threshold: " + threshold);
-//    		else
-//        		System.out.println("Crossed Y Threshold: " + threshold);
-//		}
+    	if (finished)
+    	{
+    		if (xFlag)
+        		System.out.println("Crossed X Threshold: " + robotState.getLatestFieldToVehicle().getX());
+    		else
+        		System.out.println("Crossed Y Threshold: " + robotState.getLatestFieldToVehicle().getY());
+		}
 
     	prevDiff = diff;
     	return finished;

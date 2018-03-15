@@ -1,6 +1,8 @@
 package org.usfirst.frc.team686.robot.auto.modes;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.usfirst.frc.team686.robot.Constants;
 import org.usfirst.frc.team686.robot.SmartDashboardInteractions.CrossFieldOption;
@@ -38,26 +40,26 @@ public class SideStartToFarScaleMode extends AutoModeBase {
 		PathSegment.Options slowPathOptions	= new PathSegment.Options(Constants.kCollisionVel, Constants.kCollisionAccel, Constants.kPathFollowingLookahead, false);
 		
 		Vector2d initialPosition 		= startPosition.initialPose.getPosition();
-//		Vector2d turnPosition1 			= new Vector2d(240, 132 - Constants.kCenterToSideBumper);
 		Vector2d farTurnPosition		= new Vector2d(240, -90);
 		Vector2d shootPosition 			= new Vector2d(290 - Constants.kCenterToFrontBumper, -78);
 		Vector2d startElevatorPosition =   shootPosition.add(Vector2d.magnitudeAngle(12.0, 180 * Vector2d.degreesToRadians));
 	
 		// drive straight until we are between the switch and platform
-		Vector2d turnPosition = new Vector2d(255, 116);
+		// smooth arc around corner
 		Vector2d turnCenter = new Vector2d(215, 76);	// 15 inches beyond desired path
 		double turnRadius = 40.0;
 		double turnAngleStart = +90.0;
 		double turnAngleEnd   = -20.0;					// extra 20 degrees brings us back to x=240"
 		double turnAngleStep  = -10.0;
+
+		List<Vector2d> turnPoints = new ArrayList<Vector2d>();
+		for (double turnAngle = turnAngleStart; turnAngle >= turnAngleEnd; turnAngle += turnAngleStep)
+			turnPoints.add( turnCenter.add(Vector2d.magnitudeAngle(turnRadius, turnAngle*Vector2d.degreesToRadians)) );
 		
 		
 		if (startPosition == StartPositionOption.RIGHT_START) {
-			turnPosition.setY(-turnPosition.getY());
-			turnAngleStart = -turnAngleStart;
-			turnAngleEnd = -turnAngleEnd;
-			turnAngleStep = -turnAngleStep;
-//			turnPosition1.setY(-turnPosition1.getY());
+			for (Vector2d turnPoint : turnPoints)
+				turnPoint.setY(-turnPoint.getY());
 			farTurnPosition.setY(-farTurnPosition.getY());
 			shootPosition.setY(-shootPosition.getY());
 		}
@@ -66,16 +68,12 @@ public class SideStartToFarScaleMode extends AutoModeBase {
 		{
 			Path path = new Path(slowPathOptions.getMaxSpeed());	// final velocity of this path will be collisionVelocity required by next path
 			path.add(new Waypoint(initialPosition, pathOptions));
-//			path.add(new Waypoint(turnPosition1,   pathOptions));
-			for (double turnAngle = turnAngleStart; turnAngle >= turnAngleEnd; turnAngle += turnAngleStep)
-			{
-				Vector2d turnPoint = turnCenter.add(Vector2d.magnitudeAngle(turnRadius, turnAngle*Vector2d.degreesToRadians));
+			for (Vector2d turnPoint : turnPoints)
 				path.add(new Waypoint(turnPoint, pathOptions));
-			}
 			path.add(new Waypoint(farTurnPosition,   pathOptions));
-			path.add(new Waypoint(startElevatorPosition,     pathOptions));
 			
 			Path approachPath = new Path();
+			approachPath.add(new Waypoint(farTurnPosition, 		 slowPathOptions));
 			approachPath.add(new Waypoint(startElevatorPosition, slowPathOptions));
 			approachPath.add(new Waypoint(shootPosition,         slowPathOptions));
 			
@@ -101,7 +99,7 @@ public class SideStartToFarScaleMode extends AutoModeBase {
 			
 			Vector2d stopPosition = new Vector2d(230, 132);
 			
-			Path path = new Path();	// final velocity of this path will be collisionVelocity required by next path
+			Path path = new Path();
 			path.add(new Waypoint(initialPosition, pathOptions));
 			path.add(new Waypoint(   stopPosition, pathOptions));
 

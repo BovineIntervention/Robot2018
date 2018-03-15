@@ -33,6 +33,7 @@ public class Constants extends ConstantsBase
     
     // Bumpers
     public static double kCenterToFrontBumper;	// position of front bumper with respect to robot center of rotation
+    public static double kCenterToExtendedIntake;	// position of intake sweetspot when extended with respect to robot center of rotation
     public static double kCenterToRearBumper;	// position of rear bumper with respect to robot center of rotation
     public static double kCenterToSideBumper;	// position of side bumper with respect to robot center of rotation
 	public static double kCenterToCornerBumper;
@@ -344,6 +345,7 @@ public class Constants extends ConstantsBase
     			kCenterToFrontBumper = 25.0;	// position of front bumper with respect to robot center of rotation
        		    kCenterToRearBumper = 16.0;	// position of rear bumper with respect to robot center of rotation
        		    kCenterToSideBumper = 17.5;	// position of side bumper with respect to robot center of rotation
+    		    kCenterToExtendedIntake = 29.0;
        		    
 
     			kDriveWheelCircumInches = 18.800 * (244.0/241.72);	// empirically corrected over a 20' test run
@@ -431,7 +433,8 @@ public class Constants extends ConstantsBase
        		    kCenterToFrontBumper = 19.0;	// position of front bumper with respect to robot center of rotation
     		    kCenterToRearBumper = 19.5;	// position of rear bumper with respect to robot center of rotation
     		    kCenterToSideBumper = 17.5;	// position of side bumper with respect to robot center of rotation
-
+    		    kCenterToExtendedIntake = 29.0;
+    		    
      		    kDriveWheelCircumInches = 13.229;//13.250;
     		    kTrackLengthInches = 25.000;
     		    kTrackWidthInches = 23.000;

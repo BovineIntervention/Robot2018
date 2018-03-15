@@ -22,15 +22,15 @@ public class SecondCubeForSameSideSwitchMode {
 		// define positions
 		// 30 degree approach angle for 2nd cube
 		Vector2d backupPosition2 = 	 	 new Vector2d(270, 120);
-		Vector2d stopPosition2 = 		 new Vector2d(202, 70).add(Vector2d.magnitudeAngle(Constants.kCenterToFrontBumper -  2, 30.0*Vector2d.degreesToRadians));
-		Vector2d slowDownPosition2 = 	 new Vector2d(202, 70).add(Vector2d.magnitudeAngle(Constants.kCenterToFrontBumper + 18, 30.0*Vector2d.degreesToRadians));
-		Vector2d closeIntakePosition2 =	 new Vector2d(202, 70).add(Vector2d.magnitudeAngle(Constants.kCenterToFrontBumper +  6, 30.0*Vector2d.degreesToRadians));
+		Vector2d stopPosition2 = 		 new Vector2d(202, 70).add(Vector2d.magnitudeAngle(Constants.kCenterToExtendedIntake +  0, 30.0*Vector2d.degreesToRadians));
+		Vector2d slowDownPosition2 = 	 new Vector2d(202, 70).add(Vector2d.magnitudeAngle(Constants.kCenterToExtendedIntake + 18, 30.0*Vector2d.degreesToRadians));
+		Vector2d closeIntakePosition2 =	 new Vector2d(202, 70).add(Vector2d.magnitudeAngle(Constants.kCenterToExtendedIntake +  6, 30.0*Vector2d.degreesToRadians));
 
 		// 0 degree approach angle for 3rd cube
-		Vector2d backupPosition3 = 	 	 new Vector2d(270, 42);
-		Vector2d stopPosition3 = 		 new Vector2d(202, 42).add(Vector2d.magnitudeAngle(Constants.kCenterToFrontBumper -  2,  0.0*Vector2d.degreesToRadians));
-		Vector2d slowDownPosition3 = 	 new Vector2d(202, 42).add(Vector2d.magnitudeAngle(Constants.kCenterToFrontBumper + 18,  0.0*Vector2d.degreesToRadians));
-		Vector2d closeIntakePosition3 =	 new Vector2d(202, 42).add(Vector2d.magnitudeAngle(Constants.kCenterToFrontBumper +  6,  0.0*Vector2d.degreesToRadians));
+		Vector2d backupPosition3 = 	 	 new Vector2d(270, 92);
+		Vector2d stopPosition3 = 		 new Vector2d(202, 42).add(Vector2d.magnitudeAngle(Constants.kCenterToExtendedIntake +  0,  0.0*Vector2d.degreesToRadians));
+		Vector2d slowDownPosition3 = 	 new Vector2d(202, 42).add(Vector2d.magnitudeAngle(Constants.kCenterToExtendedIntake + 18,  0.0*Vector2d.degreesToRadians));
+		Vector2d closeIntakePosition3 =	 new Vector2d(202, 42).add(Vector2d.magnitudeAngle(Constants.kCenterToExtendedIntake +  6,  0.0*Vector2d.degreesToRadians));
 		
 		double shootThresholdX =  200 + Constants.kCenterToFrontBumper;
 				
