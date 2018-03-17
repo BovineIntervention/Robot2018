@@ -57,8 +57,7 @@ public class Robot extends IterativeRobot {
 	SmartDashboardInteractions smartDashboardInteractions;
 	DataLogController robotLogger;
 
-	CameraServer cameraServer = CameraServer.getInstance();
-//	UsbCamera camera = new UsbCamera("USB Camera 1", 1);
+	UsbCamera usbCamera;
 
 	
 	enum OperationalMode 
@@ -83,6 +82,12 @@ public class Robot extends IterativeRobot {
 		try
     	{
     		CrashTracker.logRobotInit();
+
+    		usbCamera = CameraServer.getInstance().startAutomaticCapture("Intake Camera", 0);
+    		usbCamera.setResolution(320, 240);
+    		usbCamera.setFPS(15);
+    		// view camera at http://10.6.86.2:1181?action=stream
+    		// use Ctrl-+ to increase size to full screen
     		
     		LiveWindow.disableTelemetry(pdp);	// workaround to get rid of CTRE CAN Receive Timeout errors for PowerDistributionPanel.getPDPTotalCurrent()
     											// TODO: re-enable to see if WPILib fixes this in the future
@@ -111,14 +116,6 @@ public class Robot extends IterativeRobot {
     		
     		setInitialPose(new Pose());
 
-    		cameraServer.startAutomaticCapture();
-//    		cameraServer.getVideo();
-//    		cameraServer.putVideo("cam", 640, 480);
-//    		
-//    		MjpegServer mjpegServer = new MjpegServer("serve_Blur", "http://roborio-686-frc.local:1181/stream.mjpg", 1181);
-//    		mjpegServer.setSource(camera); 
-//    		CvSink cvSink = new CvSink("USB Camera 1");
-//    		cvSink.setSource(camera);
 
     		
     	}
