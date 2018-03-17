@@ -37,12 +37,12 @@ public class SideStartToFarScaleMode extends AutoModeBase {
 	protected void routine() throws AutoModeEndedException 
 	{
 		PathSegment.Options pathOptions	= new PathSegment.Options(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, 48, false);
-		PathSegment.Options slowPathOptions	= new PathSegment.Options(Constants.kCollisionVel, Constants.kCollisionAccel, Constants.kPathFollowingLookahead, false);
+		PathSegment.Options slowPathOptions	= new PathSegment.Options(Constants.kCollisionVel, Constants.kCollisionAccel, 18, false);
 		
 		Vector2d initialPosition 		= startPosition.initialPose.getPosition();
-		Vector2d farTurnPosition		= new Vector2d(240, -90);
-		Vector2d shootPosition 			= new Vector2d(290 - Constants.kCenterToFrontBumper, -78);
-		Vector2d startElevatorPosition =   shootPosition.add(Vector2d.magnitudeAngle(12.0, 180 * Vector2d.degreesToRadians));
+		Vector2d farTurnPosition		= new Vector2d(250, -160);
+		Vector2d shootPosition =       new Vector2d(287, -103);
+		Vector2d startElevatorPosition =   shootPosition.add(Vector2d.magnitudeAngle(12.0, -135 * Vector2d.degreesToRadians));
 	
 		// drive straight until we are between the switch and platform
 		// smooth arc around corner
@@ -62,6 +62,7 @@ public class SideStartToFarScaleMode extends AutoModeBase {
 				turnPoint.setY(-turnPoint.getY());
 			farTurnPosition.setY(-farTurnPosition.getY());
 			shootPosition.setY(-shootPosition.getY());
+			startElevatorPosition.setY(-startElevatorPosition.getY());
 		}
 
 		if (crossField == CrossFieldOption.YES)
@@ -71,9 +72,9 @@ public class SideStartToFarScaleMode extends AutoModeBase {
 			for (Vector2d turnPoint : turnPoints)
 				path.add(new Waypoint(turnPoint, pathOptions));
 			path.add(new Waypoint(farTurnPosition,   pathOptions));
+			path.add(new Waypoint(startElevatorPosition,   pathOptions));
 			
 			Path approachPath = new Path();
-			approachPath.add(new Waypoint(farTurnPosition, 		 slowPathOptions));
 			approachPath.add(new Waypoint(startElevatorPosition, slowPathOptions));
 			approachPath.add(new Waypoint(shootPosition,         slowPathOptions));
 			
@@ -81,7 +82,6 @@ public class SideStartToFarScaleMode extends AutoModeBase {
 			System.out.println(path.toString());
 			System.out.println(approachPath.toString());
 		
-			runAction( new PathFollowerAction(path) );
 
 			runAction( new PathFollowerAction(path) );
 			runAction( new ParallelAction(Arrays.asList(new Action[] {
