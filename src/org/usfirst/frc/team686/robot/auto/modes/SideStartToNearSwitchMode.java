@@ -46,7 +46,7 @@ System.out.println("STARTING AUTOMODE: " + startPosition.name + " to Near Switch
 		
 		double switchThresholdY = switchStopPosition.getY() + 1;
 		
-		if (startPosition == StartPositionOption.RIGHT_START) {
+		if (switchSide == 'R') {
 			turnPosition.setY(-turnPosition.getY());
 			startCollisionPosition.setY(-startCollisionPosition.getY());
 			switchStopPosition.setY(-switchStopPosition.getY());

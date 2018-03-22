@@ -42,7 +42,7 @@ public class StartToNearScaleMode extends AutoModeBase {
 		Vector2d turnToScalePosition =     scaleStopPosition.add(Vector2d.magnitudeAngle(25.0, 135 * Vector2d.degreesToRadians));
 		Vector2d startElevatorPosition =   scaleStopPosition.add(Vector2d.magnitudeAngle(12.0, 135 * Vector2d.degreesToRadians));
 
-		if (startPosition == StartPositionOption.RIGHT_START) {
+		if (scaleSide == 'R') {
 			centerStartTurnPosition.setY(-centerStartTurnPosition.getY());
 			turnToScalePosition.setY(-turnToScalePosition.getY());
 			startElevatorPosition.setY(-startElevatorPosition.getY());
