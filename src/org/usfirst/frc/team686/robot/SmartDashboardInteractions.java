@@ -105,7 +105,8 @@ public class SmartDashboardInteractions
     	CROSS_THE_LINE("Cross the line"),
         STAND_STILL("Stand Still"),
         PRACTICE_AUTO("Pick Up Cube"),
-        BACKUP_TEST("BackupTest");
+        BACKUP_TEST("BackupTest"),
+        GRABBER_TEST("GrabberTest");
     	
         public final String name;
 
@@ -167,6 +168,7 @@ public class SmartDashboardInteractions
         autoModeChooser.addObject(AutoModeOption.CROSS_THE_LINE.name, AutoModeOption.CROSS_THE_LINE);
         autoModeChooser.addObject(AutoModeOption.STAND_STILL.name, AutoModeOption.STAND_STILL);
         autoModeChooser.addObject(AutoModeOption.BACKUP_TEST.name, AutoModeOption.BACKUP_TEST);
+        autoModeChooser.addObject(AutoModeOption.GRABBER_TEST.name, AutoModeOption.GRABBER_TEST);
         SmartDashboard.putData("Auto Mode", autoModeChooser);
     	
     	joystickModeChooser = new SendableChooser<JoystickOption>();
@@ -209,6 +211,9 @@ public class SmartDashboardInteractions
 			
     	case BACKUP_TEST:
 			return new BackupTestMode();
+			
+    	case GRABBER_TEST:
+			return new GrabberTestMode();
 			
     	default:
             System.out.println("ERROR: unexpected auto mode: " + autoMode);

@@ -180,8 +180,11 @@ public class Superstructure extends Subsystem {
 			intakeLoop.startOuttake();
 		else
 		{
-			if (!_intakeButton)
-				intakeLoop.stopOuttake();
+			if (!_intakeButton && !keepIntaking)
+			{
+//				intakeLoop.stopOuttake();
+				intakeLoop.startHold();
+			}
 		}
 
 		
