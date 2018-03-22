@@ -345,7 +345,7 @@ public class Constants extends ConstantsBase
     			kCenterToFrontBumper = 25.0;	// position of front bumper with respect to robot center of rotation
        		    kCenterToRearBumper = 16.0;	// position of rear bumper with respect to robot center of rotation
        		    kCenterToSideBumper = 17.5;	// position of side bumper with respect to robot center of rotation
-    		    kCenterToExtendedIntake = 29.0;	//measure distance from the front bumper and add it to this value then change this value
+    		    kCenterToExtendedIntake = 27.5;	//measure distance from the front bumper and add it to this value then change this value
        		    
 
     			kDriveWheelCircumInches = 18.800 * (244.0/241.72);	// empirically corrected over a 20' test run
