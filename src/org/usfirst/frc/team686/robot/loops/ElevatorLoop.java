@@ -31,7 +31,7 @@ public class ElevatorLoop implements Loop{
     public double position;
 	public double target;
 
-	private static DigitalInput limitSwitch;
+//	private static DigitalInput limitSwitch;
 	private static TalonSRX talon;
 	private int kSlotIdx= 0;
 	
@@ -77,7 +77,7 @@ public class ElevatorLoop implements Loop{
 		//talon.configAllowableClosedloopError(kSlotIdx, Constants.kElevatorAllowableError, Constants.kTalonTimeoutMs);
   		
         // limit switch
-		limitSwitch = new DigitalInput(Constants.kElevatorLimitSwitchPwmId);
+		//limitSwitch = new DigitalInput(Constants.kElevatorLimitSwitchPwmId);
 		
 		disable();
 	}
@@ -141,7 +141,7 @@ public class ElevatorLoop implements Loop{
 		double elapsedZeroingTime = Timer.getFPGATimestamp() - startZeroingTime;
 		double maxZeroingTime = Constants.kElevatorMaxHeightLimit / Constants.kElevatorZeroingVelocity + 2.0;
 		
-		//System.out.printf("limSwitch: %d, elevCurrent = %.1f, elapsedTime = %.1f\n",  elevatorState.isLimitSwitchTriggered() ? 1 : 0, elevatorState.getMotorCurrent(), elapsedZeroingTime);
+		//System.out.printf("limSwitch: %d, elevCurrent = %.1f, elapsedTime = %.1f\n",  elevatorState.is`Triggered() ? 1 : 0, elevatorState.getMotorCurrent(), elapsedZeroingTime);
 		
 		return (elevatorState.isLimitSwitchTriggered() || 
 				(elevatorState.getMotorCurrent() > Constants.kElevatorMotorStallCurrentThreshold) ||
@@ -281,7 +281,8 @@ public class ElevatorLoop implements Loop{
 		elevatorState.setMotorPercentOutput( talon.getMotorOutputPercent() );
 		elevatorState.setMotorCurrent( talon.getOutputCurrent() );
 
-		elevatorState.setLimitSwitchTriggered( !limitSwitch.get() );
+//		elevatorState.setLimitSwitchTriggered( !limitSwitch.get() );
+		elevatorState.setLimitSwitchTriggered( false );
 	}
 	
 	public static double encoderUnitsToInches(int _encoderUnits)

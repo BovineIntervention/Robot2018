@@ -134,7 +134,7 @@ public class ArmBarLoop implements Loop
 		armBarState.setFilteredTargetAngleDeg(filteredTarget);
 		armBarState.setVoltage(voltage);
 			
-		//System.out.println(toString());
+		System.out.println(toString());
 	}
 
 	@Override
