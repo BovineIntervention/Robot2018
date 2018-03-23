@@ -36,7 +36,8 @@ public class SideStartToFarScaleMode extends AutoModeBase {
 	@Override
 	protected void routine() throws AutoModeEndedException 
 	{
-		PathSegment.Options pathOptions	= new PathSegment.Options(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, 48, false);
+		double fastPathVelocity = 100.0;
+		PathSegment.Options pathOptions	= new PathSegment.Options(fastPathVelocity, Constants.kPathFollowingMaxAccel, 48, false);
 		PathSegment.Options slowPathOptions	= new PathSegment.Options(Constants.kCollisionVel, Constants.kCollisionAccel, 18, false);
 		
 		Vector2d initialPosition 		= startPosition.initialPose.getPosition();

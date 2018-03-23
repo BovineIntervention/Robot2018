@@ -38,8 +38,9 @@ public class SideStartToFarSwitchMode extends AutoModeBase {
 		
 		System.out.println("STARTING AUTOMODE: " + startPosition.name + " to Switch");
 		
-		PathSegment.Options pathOptions	= new PathSegment.Options(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, 48, false);
-		PathSegment.Options backOptions	= new PathSegment.Options(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, 24, false);
+		double fastPathVelocity = 100.0;
+		PathSegment.Options pathOptions	= new PathSegment.Options(fastPathVelocity, Constants.kPathFollowingMaxAccel, 48, false);
+		PathSegment.Options backOptions	= new PathSegment.Options(fastPathVelocity, Constants.kPathFollowingMaxAccel, 24, false);
 		PathSegment.Options tightTurnOptions	= new PathSegment.Options(Constants.kCollisionVel, Constants.kCollisionAccel, 18, false);
 		PathSegment.Options collisionOptions = new PathSegment.Options(Constants.kCollisionVel, Constants.kCollisionAccel, Constants.kPathFollowingLookahead, false);
 		
