@@ -26,7 +26,8 @@ public class DrivingCubeIntakeAction implements Action
 	Path path;
 	Superstructure superstructure = Superstructure.getInstance();
 
-	boolean cubeDetected = false;
+	boolean cubeClose = false;
+	boolean cubeIn = false;
 
 	double startTime = 0.0;
 	double elapsedTime = 0.0;
@@ -61,14 +62,16 @@ public class DrivingCubeIntakeAction implements Action
 		driveCtrl.start();
 		
     	cubeDetectionState = CubeDetectionStateEnum.DRIVING_FORWARD;
-    	cubeDetected = false;
+    	cubeClose = false;
+    	cubeIn = false;
     }
 
 
     @Override
     public void update() 
     {
-    	cubeDetected = !Constants.proximitySensor.get();
+    	cubeClose = !Constants.cubeCloseProximitySensor.get();
+    	cubeIn = !Constants.cubeInProximitySensor.get();
     	
     	switch (cubeDetectionState)
     	{
@@ -76,11 +79,14 @@ public class DrivingCubeIntakeAction implements Action
         	driveCtrl.update();
 
         	elapsedTime = Timer.getFPGATimestamp() - startTime;
+
+        	if (cubeClose)
+        		superstructure.grabberIn();
         	
         	
-           	if (driveCtrl.isFinished() || cubeDetected || elapsedTime > cubeCollectionTime)
+           	if (driveCtrl.isFinished() || cubeIn || elapsedTime > cubeCollectionTime)
            	{
-           		if (cubeDetected)
+           		if (cubeIn)
            			System.out.println("Proximity Sensor Detected Cube!");
            		else
            			System.out.println("Cube Detection Timeout");
@@ -132,7 +138,7 @@ public class DrivingCubeIntakeAction implements Action
  
     public String toString()
     {
-    	return String.format("cubePickupState = %s, driveCtrl.isFinished = %b, cubeDetected = %b, elapsedTime = %.1f\n", cubeDetectionState, driveCtrl.isFinished(), cubeDetected, elapsedTime);
+    	return String.format("cubePickupState = %s, driveCtrl.isFinished = %b, cubeClose = %b, cubeIn = %b, elapsedTime = %.1f\n", cubeDetectionState, driveCtrl.isFinished(), cubeClose, cubeIn, elapsedTime);
     }
     
     

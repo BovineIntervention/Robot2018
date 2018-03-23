@@ -240,8 +240,10 @@ public class Constants extends ConstantsBase
     public static boolean kIntakeLeftMotorInverted;
     public static boolean kIntakeRightMotorInverted;
     
-    public static int kProximitySensor1Port = 0;    
-	public static DigitalInput proximitySensor;
+    public static int kCubeInProximitySensorPort = 0;    
+    public static int kCubeCloseProximitySensorPort = 1;    
+	public static DigitalInput cubeInProximitySensor;
+	public static DigitalInput cubeCloseProximitySensor;
 
     // Do not change anything after this line!
     
@@ -557,9 +559,13 @@ System.out.printf("PRACTICE_BOT: kIntakeLeftMotorInverted = %b (should be false)
 	    kCameraLatencySeconds = 0.240;			// Camera image capturing latency
 	    kTargetLocationFilterConstant = (30.0 * kLoopDt);		// 30 time constants in 1 second
 	    
-	    if (proximitySensor == null)
+	    if (cubeInProximitySensor == null)
 	    {
-	    	proximitySensor = new DigitalInput(Constants.kProximitySensor1Port);
+	    	cubeInProximitySensor = new DigitalInput(Constants.kCubeInProximitySensorPort);
+	    }
+	    if (cubeCloseProximitySensor == null)
+	    {
+	    	cubeCloseProximitySensor = new DigitalInput(Constants.kCubeCloseProximitySensorPort);
 	    }
 	    
     }
