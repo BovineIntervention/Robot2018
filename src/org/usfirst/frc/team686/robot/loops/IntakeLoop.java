@@ -104,7 +104,7 @@ public class IntakeLoop implements Loop
 		
 
 		
-		if (!grabberInFlag)
+		if (grabberInFlag)
 			solenoidValue = DoubleSolenoid.Value.kReverse;
 		else
 			solenoidValue = DoubleSolenoid.Value.kForward;
@@ -115,7 +115,7 @@ public class IntakeLoop implements Loop
 		rMotor.set(rVelocity);
 		grabber.set(solenoidValue);
 		
-		System.out.println(toString());
+		//System.out.println(toString());
 	}
 
 	@Override

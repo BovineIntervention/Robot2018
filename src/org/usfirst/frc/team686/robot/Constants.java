@@ -185,8 +185,10 @@ public class Constants extends ConstantsBase
     public static double kArmBarLength = 14.0;
     
     public static double kArmBarZeroingVelocity =	30.0;	// in degrees per second
-    public static double kArmBarVelocity = 		   250.0;//180.0;//250.0;	// in degrees per second
-    
+    public static double kArmBarVelocity = 		   250.0;	// in degrees per second
+
+    /*
+     * One of the 9:1 stages broke -- replaced with 7:1
 	public static double kArmBarQuadEncoderGain = 81.0 * 2.0;			// two 9:1 gear stages plus a 24:12 tooth reduction after the encoder 
 	public static double kArmBarQuadEncoderUnitsPerRev = 4096;
 	public static double kArmBarEncoderUnitsPerDeg = kArmBarQuadEncoderUnitsPerRev / 360.0 * kArmBarQuadEncoderGain; 
@@ -194,11 +196,20 @@ public class Constants extends ConstantsBase
     public static final int kArmBarEncoderLimitUp =    +35000;	// DO NOT CHANGE!!!
     public static final int kArmBarEncoderAtZeroDeg = -124700;	
     public static final int kArmBarEncoderLimitDown = -185000;	// DO NOT CHANGE!!!
+    */
+    
+	public static double kArmBarQuadEncoderGain = 9.0 * 7.0 * 2.0;			// two 9:1 gear stages plus a 24:12 tooth reduction after the encoder 
+	public static double kArmBarQuadEncoderUnitsPerRev = 4096;
+	public static double kArmBarEncoderUnitsPerDeg = kArmBarQuadEncoderUnitsPerRev / 360.0 * kArmBarQuadEncoderGain; 
+	
+    public static final int kArmBarEncoderLimitUp =   165000;
+    public static final int kArmBarEncoderAtZeroDeg = 58500;	
+    public static final int kArmBarEncoderLimitDown = 10000;
     
     public static double kArmBarCalAngleDeg =   86.6;	// at upper limit
-    public static double kArmBarUpAngleDeg =    80.0;	
+    public static double kArmBarUpAngleDeg =    65.0;	
     public static double kArmBarFlatAngleDeg = 	 0.0;	
-    public static double kArmBarDownAngleDeg = -25.0;//-30.0; 	// at lower limit
+    public static double kArmBarDownAngleDeg = -34.0; 	// at lower limit
 
 	
 	public static double kArmBarKf = 0.0;
@@ -332,8 +343,8 @@ public class Constants extends ConstantsBase
     
     public Constants()
     {
-//        kRobotSelection = RobotSelectionEnum.COMPETITION_BOT;	// select which robot we are building code for (TODO: make this automatic?)
-        kRobotSelection = RobotSelectionEnum.PRACTICE_BOT;	// select which robot we are building code for (TODO: make this automatic?)
+        kRobotSelection = RobotSelectionEnum.COMPETITION_BOT;	// select which robot we are building code for (TODO: make this automatic?)
+//        kRobotSelection = RobotSelectionEnum.PRACTICE_BOT;	// select which robot we are building code for (TODO: make this automatic?)
     	
     	// place robot-specific constants here
     	
