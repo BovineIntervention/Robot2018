@@ -134,7 +134,7 @@ public class Constants extends ConstantsBase
     public static double kScaleHeightMed = 	60.00;	// game manual: 60"
     public static double kScaleHeightLow = 	48.00;	// game manual: 48"
     public static double kSwitchHeight = 	18.75;	// field drawing 18150: 18.75" to top of fence	
-    public static double kExchangeHeight = 	 4.00;	// field drawing 18127: 0.5" plywood + 1.0" pine + 0.125" polycarbonate + clearance 
+    public static double kExchangeHeight = 	 0.00;	// field drawing 18127: 0.5" plywood + 1.0" pine + 0.125" polycarbonate + clearance 
     public static double kGroundHeight = 	 0.00;
 
     // DESIRED CUBE HEIGHT (bottom of cube)

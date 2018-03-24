@@ -27,8 +27,7 @@ public class Superstructure extends Subsystem {
 		// -----		---------------------				-------------------				------------------
 		START_OF_MATCH(	Constants.kCubeGroundHeight, 		Constants.kArmBarUpAngleDeg, 	Constants.kArmBarUpAngleDeg),	// needed for elevator / armbar limit switch calibration
 		GROUND(			Constants.kCubeGroundHeight, 		Constants.kArmBarUpAngleDeg, 	Constants.kArmBarDownAngleDeg),
-		EXCHANGE(		Constants.kCubeExchangeHeight, 		Constants.kArmBarDownAngleDeg, 	Constants.kArmBarDownAngleDeg),
-//		EXCHANGE(		Constants.kCubeExchangeHeight, 		-25, 	-25),
+		EXCHANGE(		Constants.kCubeExchangeHeight, 		Constants.kArmBarDownAngleDeg + 10, 	Constants.kArmBarDownAngleDeg),
 		SWITCH(			Constants.kCubeSwitchHeight, 		Constants.kArmBarUpAngleDeg, 	Constants.kArmBarUpAngleDeg),
 		SCALE_LOW(		Constants.kCubeScaleHeightLow, 		Constants.kArmBarUpAngleDeg, 	Constants.kArmBarUpAngleDeg),
 		SCALE_MED(		Constants.kCubeScaleHeightMed, 		Constants.kArmBarUpAngleDeg, 	Constants.kArmBarUpAngleDeg),
