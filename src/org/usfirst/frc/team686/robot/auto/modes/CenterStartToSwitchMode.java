@@ -34,7 +34,8 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 
 		System.out.println("STARTING AUTOMODE: Center to Switch");
 		
-		PathSegment.Options pathOptions	= new PathSegment.Options(Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel, 48, false);
+		double SlowerAccel = 82;  
+		PathSegment.Options pathOptions	= new PathSegment.Options(Constants.kPathFollowingMaxVel, SlowerAccel, 48, false);
 		PathSegment.Options slowOptions = new PathSegment.Options(Constants.kCollisionVel, Constants.kCollisionAccel, Constants.kPathFollowingLookahead, false);
 		
 		Vector2d initialPosition = startPosition.initialPose.getPosition();
@@ -42,7 +43,7 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 		Vector2d startSlowPosition = 	  new Vector2d(100, 64);
 		Vector2d switchStopPosition = 	  new Vector2d(142 - Constants.kCenterToFrontBumper, 58);	// 58 is center of switch platform		
 		
-		double switchThresholdX = 138 - Constants.kCenterToFrontBumper;
+		double switchThresholdX = 141 - Constants.kCenterToFrontBumper;
 		
 		if (switchSide == 'R') {
 			switchStopPosition.setY(-switchStopPosition.getY());
@@ -79,8 +80,8 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 		// Pick up a 2nd cube from the pile
 		
 		Vector2d backupPosition = 		new Vector2d(24, 0);
-		Vector2d cubePickupPosition = 	new Vector2d(140 - 3*13 - Constants.kCenterToExtendedIntake +  0, 0);	
-		Vector2d startIntakePosition =	new Vector2d(140 - 3*13 - Constants.kCenterToExtendedIntake - 12, 0);	// start looking for cube 12" early
+		Vector2d cubePickupPosition = 	new Vector2d(147 - 3*13 - Constants.kCenterToExtendedIntake +  0, 0);	
+		Vector2d startIntakePosition =	new Vector2d(140 - 3*13 - Constants.kCenterToExtendedIntake - 24, 0);	// start looking for cube 12" early
 		
 		Path backupPath = new Path();
 		backupPath.add(new Waypoint(switchStopPosition, pathOptions));	// where we finished 
@@ -102,7 +103,7 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 		
 		runAction( new PathFollowerAction(backupPath) );	         // backup
 		runAction( new IntakeStartAction() );						// turn on intake
-		runAction( new GrabberOpenAction () );
+		//runAction( new GrabberOpenAction () );
 		runAction( new PathFollowerAction(approachCubePath) );		// approach cube
 		runAction( new DrivingCubeIntakeAction( intakeCubePath ));
 		runAction( new GrabberCloseAction () );

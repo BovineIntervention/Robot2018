@@ -27,12 +27,12 @@ public class CubeDetectionAction implements Action
     public void update() 
     {
     	// do nothing -- just waiting for a collision
-       	if (!Constants.cubeCloseProximitySensor.get())
-       	{
-    		System.out.println("Cube Close -- Close Grabber!");
-    		superstructure.grabberIn();
-       	}
-    }	
+//       	if (!Constants.cubeCloseProximitySensor.get())
+//       	{
+//    		System.out.println("Cube Close -- Close Grabber!");
+//    		superstructure.grabberIn();
+//       	}
+   }	
 	
 	
     @Override
@@ -57,7 +57,7 @@ public class CubeDetectionAction implements Action
         @Override
         public void log()
         {
-   			put("CubeDetectionAction/cubeCloseProximitySensor", Constants.cubeCloseProximitySensor.get() );
+   			//put("CubeDetectionAction/cubeCloseProximitySensor", Constants.cubeCloseProximitySensor.get() );
    			put("CubeDetectionAction/cubeInProximitySensor", Constants.cubeInProximitySensor.get() );
         }
     };

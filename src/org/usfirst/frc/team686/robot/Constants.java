@@ -241,9 +241,9 @@ public class Constants extends ConstantsBase
     public static boolean kIntakeRightMotorInverted;
     
     public static int kCubeInProximitySensorPort = 0;    
-    public static int kCubeCloseProximitySensorPort = 1;    
+//    public static int kCubeCloseProximitySensorPort = 1;    
 	public static DigitalInput cubeInProximitySensor;
-	public static DigitalInput cubeCloseProximitySensor;
+//	public static DigitalInput cubeCloseProximitySensor;
 
     // Do not change anything after this line!
     
@@ -358,7 +358,7 @@ public class Constants extends ConstantsBase
     			kCenterToFrontBumper = 25.0;	// position of front bumper with respect to robot center of rotation
        		    kCenterToRearBumper = 16.0;	// position of rear bumper with respect to robot center of rotation
        		    kCenterToSideBumper = 17.5;	// position of side bumper with respect to robot center of rotation
-    		    kCenterToExtendedIntake = 29.0;	//measure distance from the front bumper and add it to this value then change this value
+    		    kCenterToExtendedIntake = 20.0;	//measure distance from the front bumper and add it to this value then change this value
        		    
 
     			kDriveWheelCircumInches = 18.800 * (244.0/241.72);	// empirically corrected over a 20' test run
@@ -563,10 +563,10 @@ System.out.printf("PRACTICE_BOT: kIntakeLeftMotorInverted = %b (should be false)
 	    {
 	    	cubeInProximitySensor = new DigitalInput(Constants.kCubeInProximitySensorPort);
 	    }
-	    if (cubeCloseProximitySensor == null)
-	    {
-	    	cubeCloseProximitySensor = new DigitalInput(Constants.kCubeCloseProximitySensorPort);
-	    }
+//	    if (cubeCloseProximitySensor == null)
+//	    {
+//	    	cubeCloseProximitySensor = new DigitalInput(Constants.kCubeCloseProximitySensorPort);
+//	    }
 	    
     }
 }
