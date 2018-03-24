@@ -185,7 +185,7 @@ public class Constants extends ConstantsBase
     public static double kArmBarLength = 14.0;
     
     public static double kArmBarZeroingVelocity =	30.0;	// in degrees per second
-    public static double kArmBarVelocity = 		   250.0;	// in degrees per second
+    public static double kArmBarVelocity = 		   180.0;	// in degrees per second
 
     /*
      * One of the 9:1 stages broke -- replaced with 7:1
