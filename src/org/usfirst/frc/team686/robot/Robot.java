@@ -170,7 +170,6 @@ public class Robot extends IterativeRobot {
 
 			stopAll(); // stop all actuators
 			loopController.start();
-			elevatorArmBar.disable();
 		}
 		catch (Throwable t)
 		{

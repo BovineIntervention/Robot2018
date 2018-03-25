@@ -40,7 +40,7 @@ public class StartToNearScaleMode extends AutoModeBase {
 		Vector2d centerStartTurnPosition = new Vector2d(140, 130);	// needed if starting from center to avoid clipping switch
 		Vector2d scaleStopPosition =       new Vector2d(287, 103);
 		Vector2d turnToScalePosition =     scaleStopPosition.add(Vector2d.magnitudeAngle(25.0, 135 * Vector2d.degreesToRadians));
-		Vector2d startElevatorPosition =   scaleStopPosition.add(Vector2d.magnitudeAngle(12.0, 135 * Vector2d.degreesToRadians));
+		Vector2d startElevatorPosition =   scaleStopPosition.add(Vector2d.magnitudeAngle(24.0, 135 * Vector2d.degreesToRadians));
 
 		if (startPosition == StartPositionOption.RIGHT_START) {
 			centerStartTurnPosition.setY(-centerStartTurnPosition.getY());
@@ -58,6 +58,11 @@ public class StartToNearScaleMode extends AutoModeBase {
 		Path approachPath = new Path();
 		approachPath.add(new Waypoint(startElevatorPosition, slowPathOptions));
 		approachPath.add(new Waypoint(scaleStopPosition,     slowPathOptions));
+
+		Path backupPath = new Path();
+		backupPath.add(new Waypoint(scaleStopPosition, 	   slowPathOptions));
+		backupPath.add(new Waypoint(startElevatorPosition, slowPathOptions));
+		backupPath.setReverseDirection();
 		
 		System.out.println("SideStartToNearScaleMode path");
 		System.out.println(path.toString());
@@ -65,11 +70,10 @@ public class StartToNearScaleMode extends AutoModeBase {
 	
 		
 		runAction( new PathFollowerAction(path) );
-		runAction( new ParallelAction(Arrays.asList(new Action[] {
-				new ElevatorAction(ElevatorArmBarStateEnum.SCALE_HIGH),		// raise elevator
-				new PathFollowerAction(approachPath)
-		})));
+		runAction( new ElevatorAction(ElevatorArmBarStateEnum.SCALE_HIGH) );		// raise elevator
+		runAction( new PathFollowerAction(approachPath) );
 		runAction( new OuttakeAction() );
+		runAction( new PathFollowerAction(backupPath) );
 		runAction( new ElevatorAction(ElevatorArmBarStateEnum.GROUND) );
 
 		
@@ -81,7 +85,7 @@ public class StartToNearScaleMode extends AutoModeBase {
 		else
 			secondCubeActions = SecondCubeForScaleMode.getActions(scaleStopPosition, switchSide, scaleSide);
 		
-		runAction( secondCubeActions );
+//		runAction( secondCubeActions );
 	}
 
 }
