@@ -43,7 +43,7 @@ public class SideStartToFarScaleMode extends AutoModeBase {
 		Vector2d initialPosition 		= startPosition.initialPose.getPosition();
 		Vector2d farTurnPosition		= new Vector2d(250, -160);
 		Vector2d shootPosition =       new Vector2d(287, -103);
-		Vector2d startElevatorPosition =   shootPosition.add(Vector2d.magnitudeAngle(12.0, -135 * Vector2d.degreesToRadians));
+		Vector2d startElevatorPosition =   shootPosition.add(Vector2d.magnitudeAngle(24.0, -135 * Vector2d.degreesToRadians));
 	
 		// drive straight until we are between the switch and platform
 		// smooth arc around corner
@@ -79,17 +79,21 @@ public class SideStartToFarScaleMode extends AutoModeBase {
 			approachPath.add(new Waypoint(startElevatorPosition, slowPathOptions));
 			approachPath.add(new Waypoint(shootPosition,         slowPathOptions));
 			
+			Path backupPath = new Path();
+			backupPath.add(new Waypoint(shootPosition,         slowPathOptions));
+			backupPath.add(new Waypoint(startElevatorPosition, slowPathOptions));
+			backupPath.setReverseDirection();
+			
 			System.out.println("SideStartToFarScaleMode path");
 			System.out.println(path.toString());
 			System.out.println(approachPath.toString());
 		
 
 			runAction( new PathFollowerAction(path) );
-			runAction( new ParallelAction(Arrays.asList(new Action[] {
-					new ElevatorAction(ElevatorArmBarStateEnum.SCALE_HIGH),		// raise elevator
-					new PathFollowerAction(approachPath)
-			})));
+			runAction( new ElevatorAction(ElevatorArmBarStateEnum.SCALE_HIGH));		// raise elevator
+			runAction( new PathFollowerAction(approachPath));
 			runAction( new OuttakeAction() );
+			runAction( new PathFollowerAction(backupPath));
 			runAction( new ElevatorAction(ElevatorArmBarStateEnum.GROUND) );
 
 		
