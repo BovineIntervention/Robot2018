@@ -20,6 +20,7 @@ public class Superstructure extends Subsystem {
 	
 	public enum ManualAutoStateEnum { MANUAL, AUTO };
 	ManualAutoStateEnum manualAutoState = ManualAutoStateEnum.AUTO; 
+	ManualAutoStateEnum prevManualAutoState = ManualAutoStateEnum.AUTO; 
 			
 	public enum ElevatorArmBarStateEnum 
 	{
@@ -106,11 +107,27 @@ public class Superstructure extends Subsystem {
 	{
 		// manual / auto state machine
 		if (_manualUpButton || _manualDownButton)
+		{
 			manualAutoState = ManualAutoStateEnum.MANUAL;
 
+			if (prevManualAutoState == ManualAutoStateEnum.AUTO)
+			{
+				elevatorLoop.disableSoftLimits();
+			}
+		}
+
 		if (_groundButton || _exchangeButton || _switchButton || _scaleLowButton || _scaleMedButton || _scaleHighButton)
+		{
 			manualAutoState = ManualAutoStateEnum.AUTO;
 		
+			if (prevManualAutoState == ManualAutoStateEnum.MANUAL)
+			{
+				// just finished a manual operation.  Move soft limits if current setting is below lower limit 
+				elevatorLoop.enableSoftLimits();
+			}
+		}
+		
+		prevManualAutoState = manualAutoState;
 		
 		
 		if (manualAutoState == ManualAutoStateEnum.MANUAL)

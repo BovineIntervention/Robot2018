@@ -149,6 +149,34 @@ public class ElevatorLoop implements Loop{
 	}
 	
 	
+	public void disableSoftLimits()
+	{
+		// called when we use manual elevator controls
+		talon.configReverseSoftLimitEnable(false, Constants.kTalonTimeoutMs);
+		talon.configForwardSoftLimitEnable(false, Constants.kTalonTimeoutMs);
+		talon.overrideLimitSwitchesEnable(false);	// disable soft limit switches
+	}
+	
+	
+	public void enableSoftLimits()
+	{
+		// called when we leave manual elevator controls
+		
+		// if current position is below limits, reset limits
+		double positionInches = elevatorState.getPositionInches();
+		if (positionInches < Constants.kElevatorMinHeightLimit)
+		{
+			calibratePosition(positionInches);
+		}
+		
+		// re-enable soft limit switches
+		talon.configReverseSoftLimitThreshold(inchesToEncoderUnits(Constants.kElevatorMinHeightLimit), Constants.kTalonTimeoutMs);
+		talon.configForwardSoftLimitThreshold(inchesToEncoderUnits(Constants.kElevatorMaxHeightLimit), Constants.kTalonTimeoutMs);
+		talon.configReverseSoftLimitEnable(true, Constants.kTalonTimeoutMs);
+		talon.configForwardSoftLimitEnable(true, Constants.kTalonTimeoutMs);
+		talon.overrideLimitSwitchesEnable(true);	
+	}
+	
 	
 	@Override
 	public void onStart() 
