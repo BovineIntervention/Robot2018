@@ -35,7 +35,7 @@ public class ArmBarLoop implements Loop
 	public double iError = 0.0;
 	public double lastError = 0.0;
 	
-	public double voltage = 0.0;
+	public double voltage = 0.0; 
 	
 	public TalonSRX talon;
 	

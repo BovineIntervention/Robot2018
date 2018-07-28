@@ -37,6 +37,7 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 		double SlowerAccel = 82;  
 		PathSegment.Options pathOptions	= new PathSegment.Options(Constants.kPathFollowingMaxVel, SlowerAccel, 48, false);
 		PathSegment.Options slowOptions = new PathSegment.Options(Constants.kCollisionVel, Constants.kCollisionAccel, Constants.kPathFollowingLookahead, false);
+		PathSegment.Options tightTurnOptions	= new PathSegment.Options(Constants.kPathFollowingMaxVel/2, SlowerAccel, 24, false);
 		
 		Vector2d initialPosition = startPosition.initialPose.getPosition();
 		Vector2d turnPosition = 		  new Vector2d( 80, 64);
@@ -89,8 +90,8 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 		backupPath.setReverseDirection();
 		
 		Path approachCubePath = new Path(Constants.kCollisionVel);
-		approachCubePath.add(new Waypoint(backupPosition, pathOptions));
-		approachCubePath.add(new Waypoint(startIntakePosition, pathOptions));
+		approachCubePath.add(new Waypoint(backupPosition, tightTurnOptions));
+		approachCubePath.add(new Waypoint(startIntakePosition, tightTurnOptions));
 		
 		Path intakeCubePath = new Path();
 		intakeCubePath.add(new Waypoint(startIntakePosition, slowOptions));

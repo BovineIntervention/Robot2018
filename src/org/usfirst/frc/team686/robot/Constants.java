@@ -202,7 +202,7 @@ public class Constants extends ConstantsBase
 	public static double kArmBarQuadEncoderUnitsPerRev = 4096;
 	public static double kArmBarEncoderUnitsPerDeg = kArmBarQuadEncoderUnitsPerRev / 360.0 * kArmBarQuadEncoderGain; 
 	
-    public static final int kArmBarEncoderLimitUp =   165000;
+    public static final int kArmBarEncoderLimitUp =  165000;
     public static final int kArmBarEncoderAtZeroDeg = 58500;	
     public static final int kArmBarEncoderLimitDown = 10000;
     
@@ -272,6 +272,7 @@ public class Constants extends ConstantsBase
 	public static int kDriveTrainCurrentLimit;
 	
 	public static int kElevatorLimitSwitchPwmId;
+	public static int kArmBarLimitSwitchPwmId;
 	
 
     // Joystick Controls
@@ -428,7 +429,7 @@ public class Constants extends ConstantsBase
     			kDriveTrainCurrentLimit = 25;
     			
     			kElevatorLimitSwitchPwmId = 0;
-
+    			kArmBarLimitSwitchPwmId = 1;
     			
     			break;
     			
@@ -521,7 +522,8 @@ System.out.printf("PRACTICE_BOT: kIntakeLeftMotorInverted = %b (should be false)
     			kDriveTrainCurrentLimit = 25;
     			
     			kElevatorLimitSwitchPwmId = 0;
-    		    
+    			kArmBarLimitSwitchPwmId = 1;
+    			
     		    break;
     	}
 

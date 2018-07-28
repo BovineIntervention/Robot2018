@@ -31,7 +31,7 @@ public class ElevatorLoop implements Loop{
     public double position;
 	public double target;
 
-//	private static DigitalInput limitSwitch;
+	private static DigitalInput limitSwitch;
 	private static TalonSRX talon;
 	private int kSlotIdx= 0;
 	
@@ -77,7 +77,7 @@ public class ElevatorLoop implements Loop{
 		//talon.configAllowableClosedloopError(kSlotIdx, Constants.kElevatorAllowableError, Constants.kTalonTimeoutMs);
   		
         // limit switch
-		//limitSwitch = new DigitalInput(Constants.kElevatorLimitSwitchPwmId);
+		limitSwitch = new DigitalInput(Constants.kElevatorLimitSwitchPwmId);
 		
 		disable();
 	}
@@ -309,8 +309,8 @@ public class ElevatorLoop implements Loop{
 		elevatorState.setMotorPercentOutput( talon.getMotorOutputPercent() );
 		elevatorState.setMotorCurrent( talon.getOutputCurrent() );
 
-//		elevatorState.setLimitSwitchTriggered( !limitSwitch.get() );
-		elevatorState.setLimitSwitchTriggered( false );
+		elevatorState.setLimitSwitchTriggered( !limitSwitch.get() );
+//		elevatorState.setLimitSwitchTriggered( false );
 	}
 	
 	public static double encoderUnitsToInches(int _encoderUnits)
