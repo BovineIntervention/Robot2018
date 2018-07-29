@@ -74,10 +74,32 @@ System.out.println("STARTING AUTOMODE: " + startPosition.name + " to Near Switch
 				new PathFollowerAction(collisionPath))
 		})));
 		runAction( new OuttakeAction() );
-
+/*
+		Vector2d endPosition = new Vector2d(switchStopPosition.getX() + 12, switchStopPosition.getY() + 50);
+		Vector2d backupPositionside = new Vector2d(switchStopPosition.getX() - 12, switchStopPosition.getY() - 50);
+		Vector2d driveToCubePosition = new Vector2d(switchStopPosition.getX() - 12, switchStopPosition.getY() - 50);
 		
+		Path backupPathSide = new Path();
+		path.add(new Waypoint(endPosition, pathOptions));
+		path.add(new Waypoint(backupPositionside, pathOptions));
 		
+		Path turnToCube = new Path();
+		path.add(new Waypoint(backupPositionside, pathOptions));
+		path.add(new Waypoint(turnPosition, pathOptions));
+		path.add(new Waypoint(startCollisionPosition, tightTurnOptions));
+		
+		Path driveToCube = new Path();
+		path.add(new Waypoint(turnPosition, pathOptions));
+		path.add(new Waypoint(driveToCubePosition, pathOptions));
+		
+		runAction(new PathFollowerAction(backupPathSide));
+		runAction(new PathFollowerAction(turnToCube));
+		runAction(new PathFollowerAction(driveToCube));
+		runAction(new IntakeStartAction ());
+		runAction(new PathFollowerAction ());
+		*/	
 		// go after second cube
+		/*
 		SeriesAction secondCubeActions;
 		
 		if (switchSide == scaleSide)
@@ -86,7 +108,7 @@ System.out.println("STARTING AUTOMODE: " + startPosition.name + " to Near Switch
 			secondCubeActions = SecondCubeForSameSideSwitchMode.getActions(switchStopPosition, switchSide, scaleSide);
 		
 		runAction( secondCubeActions );
-	
+	*/
 	}
 	
 }

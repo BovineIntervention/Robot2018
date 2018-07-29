@@ -176,7 +176,9 @@ public class Constants extends ConstantsBase
     public static double kMinElevatorOutput = 0.2;
     public static double kMaxElevatorOutput = 1.0;
     public static double kElevatorManualOutput = 0.5;
-    public static double kElevatorMotorStallCurrentThreshold = 15.0;	// current at which we will assume the limit switch didn't catch it and we are stalled
+//    public static double kElevatorMotorStallCurrentThreshold = 15.0;	// current at which we will assume the limit switch didn't catch it and we are stalled
+    // 07/28/18: increasing to 25A when using new limit switches
+    public static double kElevatorMotorStallCurrentThreshold = 25.0;	// current at which we will assume the limit switch didn't catch it and we are stalled
     
     public static double kDriveScaleFactorAtMaxElevatorHeight = 0.5;    
     
@@ -202,7 +204,7 @@ public class Constants extends ConstantsBase
 	public static double kArmBarQuadEncoderUnitsPerRev = 4096;
 	public static double kArmBarEncoderUnitsPerDeg = kArmBarQuadEncoderUnitsPerRev / 360.0 * kArmBarQuadEncoderGain; 
 	
-    public static final int kArmBarEncoderLimitUp =   165000;
+    public static final int kArmBarEncoderLimitUp =  165000;
     public static final int kArmBarEncoderAtZeroDeg = 58500;	
     public static final int kArmBarEncoderLimitDown = 10000;
     
@@ -218,7 +220,9 @@ public class Constants extends ConstantsBase
 	public static double kArmBarKi = 0.0;
    
 	public static double kMaxArmBarVoltage = 12.0;	// may be less than 12V battery voltage when testing	
-	public static double kArmBarMotorStallCurrentThreshold = 10.0;	// current at which we will assume the limit switch didn't catch it and we are stalled
+//	public static double kArmBarMotorStallCurrentThreshold = 10.0;	// current at which we will assume the limit switch didn't catch it and we are stalled
+	// 07/28/18: increasing to 20A when using new hall effect sensors (don't want to false trigger on current any more)
+	public static double kArmBarMotorStallCurrentThreshold = 20.0;	// current at which we will assume the limit switch didn't catch it and we are stalled
 
 	public static int kArmBarPeakCurrentLimit = 30;	// current at which current limit is activated
 	public static int kArmBarPeakCurrentDuration = 200;	// duration at which current limit is activated
@@ -240,7 +244,7 @@ public class Constants extends ConstantsBase
     public static boolean kIntakeLeftMotorInverted;
     public static boolean kIntakeRightMotorInverted;
     
-    public static int kCubeInProximitySensorPort = 0;    
+    public static int kCubeInProximitySensorPort = 2;    
 //    public static int kCubeCloseProximitySensorPort = 1;    
 	public static DigitalInput cubeInProximitySensor;
 //	public static DigitalInput cubeCloseProximitySensor;
@@ -272,6 +276,7 @@ public class Constants extends ConstantsBase
 	public static int kDriveTrainCurrentLimit;
 	
 	public static int kElevatorLimitSwitchPwmId;
+	public static int kArmBarLimitSwitchPwmId;
 	
 
     // Joystick Controls
@@ -377,7 +382,7 @@ public class Constants extends ConstantsBase
     		    
     		    
     		    kIntakeLeftMotorInverted = true;
-    		     kIntakeRightMotorInverted = false;
+    		    kIntakeRightMotorInverted = false;
     		    
     		    kDriveVelocityKp = 20.0;
     		    kDriveVelocityKi = 0.01;
@@ -427,8 +432,8 @@ public class Constants extends ConstantsBase
     		    
     			kDriveTrainCurrentLimit = 25;
     			
-    			kElevatorLimitSwitchPwmId = 0;
-
+    			kElevatorLimitSwitchPwmId = 5;
+    			kArmBarLimitSwitchPwmId = 1;
     			
     			break;
     			
@@ -521,7 +526,8 @@ System.out.printf("PRACTICE_BOT: kIntakeLeftMotorInverted = %b (should be false)
     			kDriveTrainCurrentLimit = 25;
     			
     			kElevatorLimitSwitchPwmId = 0;
-    		    
+    			kArmBarLimitSwitchPwmId = 1;
+    			
     		    break;
     	}
 
@@ -558,11 +564,12 @@ System.out.printf("PRACTICE_BOT: kIntakeLeftMotorInverted = %b (should be false)
 	    kTangentCameraHalfFOV = Math.tan(kCameraHalfFOVRadians);
 	    kCameraLatencySeconds = 0.240;			// Camera image capturing latency
 	    kTargetLocationFilterConstant = (30.0 * kLoopDt);		// 30 time constants in 1 second
-	    
+    
 	    if (cubeInProximitySensor == null)
 	    {
 	    	cubeInProximitySensor = new DigitalInput(Constants.kCubeInProximitySensorPort);
 	    }
+	   
 //	    if (cubeCloseProximitySensor == null)
 //	    {
 //	    	cubeCloseProximitySensor = new DigitalInput(Constants.kCubeCloseProximitySensorPort);
