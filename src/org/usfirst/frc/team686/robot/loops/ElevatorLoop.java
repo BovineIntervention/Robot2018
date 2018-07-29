@@ -191,6 +191,13 @@ public class ElevatorLoop implements Loop{
 	@Override
 	public void onLoop()
 	{
+		/*
+		if (getLimitSwitchDuringZeroing())
+//			if (!limitSwitch.get())
+		{
+			System.out.println("Elevator Limit Switch Triggered");
+		}	
+		*/
 		// read status of elevator
 		getStatus();
 		position = elevatorState.getPositionInches();

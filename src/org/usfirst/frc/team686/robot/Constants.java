@@ -240,7 +240,7 @@ public class Constants extends ConstantsBase
     public static boolean kIntakeLeftMotorInverted;
     public static boolean kIntakeRightMotorInverted;
     
-    public static int kCubeInProximitySensorPort = 0;    
+    public static int kCubeInProximitySensorPort = 2;    
 //    public static int kCubeCloseProximitySensorPort = 1;    
 	public static DigitalInput cubeInProximitySensor;
 //	public static DigitalInput cubeCloseProximitySensor;
@@ -428,7 +428,7 @@ public class Constants extends ConstantsBase
     		    
     			kDriveTrainCurrentLimit = 25;
     			
-    			kElevatorLimitSwitchPwmId = 0;
+    			kElevatorLimitSwitchPwmId = 5;
     			kArmBarLimitSwitchPwmId = 1;
     			
     			break;
@@ -560,11 +560,12 @@ System.out.printf("PRACTICE_BOT: kIntakeLeftMotorInverted = %b (should be false)
 	    kTangentCameraHalfFOV = Math.tan(kCameraHalfFOVRadians);
 	    kCameraLatencySeconds = 0.240;			// Camera image capturing latency
 	    kTargetLocationFilterConstant = (30.0 * kLoopDt);		// 30 time constants in 1 second
-	    
+    
 	    if (cubeInProximitySensor == null)
 	    {
 	    	cubeInProximitySensor = new DigitalInput(Constants.kCubeInProximitySensorPort);
 	    }
+	   
 //	    if (cubeCloseProximitySensor == null)
 //	    {
 //	    	cubeCloseProximitySensor = new DigitalInput(Constants.kCubeCloseProximitySensorPort);

@@ -6,6 +6,8 @@ import org.usfirst.frc.team686.robot.lib.util.Util;
 
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 
 public class ArmBarLoop implements Loop
@@ -40,7 +42,8 @@ public class ArmBarLoop implements Loop
 	public TalonSRX talon;
 	
 	private double startZeroingTime;
-	
+	private static DigitalInput limitSwitch;
+
 	
 	public ArmBarLoop()
 	{
@@ -67,7 +70,10 @@ public class ArmBarLoop implements Loop
 		// set soft limits (will not be valid until calibration completes)
 		talon.configForwardSoftLimitThreshold( Constants.kArmBarEncoderLimitUp,   Constants.kTalonTimeoutMs);
 		talon.configReverseSoftLimitThreshold( Constants.kArmBarEncoderLimitDown, Constants.kTalonTimeoutMs);
-		
+
+        // limit switch
+		limitSwitch = new DigitalInput(Constants.kArmBarLimitSwitchPwmId);
+
 		disable();
 	}
 	
@@ -150,6 +156,11 @@ public class ArmBarLoop implements Loop
 		// transition states
 		state = nextState;
 		
+	//	if (getLimitSwitchDuringZeroing())
+//		if (!limitSwitch.get())
+//		{
+//			System.out.println("Armbar Limit Switch Triggered");
+//		}	
 		// start over if ever disabled
 		if (!enabled)
 		{
@@ -180,6 +191,7 @@ public class ArmBarLoop implements Loop
 			
 			if (getLimitSwitchDuringZeroing())
 			{
+					System.out.println("Armbar Limit Switch Triggered");
 				// CALIBRATING is done when limit switch is hit
 				talon.setSelectedSensorPosition( Constants.kArmBarEncoderLimitUp, Constants.kTalonPidIdx, Constants.kTalonTimeoutMs);
 				setTarget(Constants.kArmBarCalAngleDeg);			// initial goal is to stay in the same position
@@ -253,7 +265,8 @@ public class ArmBarLoop implements Loop
 		armBarState.setMotorCurrent( talon.getOutputCurrent() );
 
 //		armBarState.setLimitSwitchTriggered( talon.getSelectedSensorPosition(Constants.kTalonPidIdx) >= Constants.kArmBarEncoderLimitUp);
-		armBarState.setLimitSwitchTriggered( false );
+		armBarState.setLimitSwitchTriggered( !limitSwitch.get() );
+//		armBarState.setLimitSwitchTriggered( false );
 	}
 
 	
