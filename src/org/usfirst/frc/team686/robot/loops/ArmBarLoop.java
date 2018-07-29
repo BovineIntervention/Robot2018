@@ -3,6 +3,7 @@ package org.usfirst.frc.team686.robot.loops;
 import org.usfirst.frc.team686.robot.Constants;
 import org.usfirst.frc.team686.robot.command_status.ArmBarState;
 import org.usfirst.frc.team686.robot.lib.util.Util;
+import org.usfirst.frc.team686.robot.loops.ElevatorLoop.ElevatorStateEnum;
 
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -27,8 +28,8 @@ public class ArmBarLoop implements Loop
 	private ArmBarState armBarState = ArmBarState.getInstance();
 	
 	public boolean enable = false;
+	public boolean calibrated = false;
 	
-	public double position;
 	public double target;
 	public double filteredTarget;
 
@@ -74,6 +75,7 @@ public class ArmBarLoop implements Loop
         // limit switch
 		limitSwitch = new DigitalInput(Constants.kArmBarLimitSwitchPwmId);
 
+		calibrated = false;
 		disable();
 	}
 	
@@ -100,7 +102,7 @@ public class ArmBarLoop implements Loop
 	
 	public void stop() { target = getPosition(); }
 
-	public double getPosition() { return position; }
+	public double getPosition() { return armBarState.getAngleDeg(); }
 	
 	public boolean getLimitSwitchDuringZeroing()
 	{
@@ -108,11 +110,11 @@ public class ArmBarLoop implements Loop
 		double maxZeroingTime = Constants.kElevatorMaxHeightLimit / Constants.kElevatorZeroingVelocity + 2.0;
 		
 		if (armBarState.isLimitSwitchTriggered())
-			System.out.println("ArmBar LimitSwitchDuring Zerong: LIMIT SWITCH TRIGGERED");
+			System.out.println("ArmBar LimitSwitchDuring Zeroing: LIMIT SWITCH TRIGGERED");
 		if (armBarState.getMotorCurrent() > Constants.kArmBarMotorStallCurrentThreshold)
-			System.out.println("ArmBar LimitSwitchDuring Zerong: MOTOR CURRENT > THRESHOLD: " + armBarState.getMotorCurrent());
+			System.out.println("ArmBar LimitSwitchDuring Zeroing: MOTOR CURRENT > THRESHOLD: " + armBarState.getMotorCurrent());
 		if (elapsedZeroingTime > maxZeroingTime)
-			System.out.println("ArmBar LimitSwitchDuring Zerong: ELAPSED ZEROING TIME");
+			System.out.println("ArmBar LimitSwitchDuring Zeroing: ELAPSED ZEROING TIME");
 		
 		return (armBarState.isLimitSwitchTriggered() || 
 				(armBarState.getMotorCurrent() > Constants.kArmBarMotorStallCurrentThreshold) ||
@@ -156,16 +158,14 @@ public class ArmBarLoop implements Loop
 		// transition states
 		state = nextState;
 		
-	//	if (getLimitSwitchDuringZeroing())
-//		if (!limitSwitch.get())
-//		{
-//			System.out.println("Armbar Limit Switch Triggered");
-//		}	
+		// 07/29/18 removing this so that arm doesn't reinitialize on TELEOP start if already calibrated in AUTONOMOUS
 		// start over if ever disabled
-		if (!enabled)
-		{
-			state = ArmBarStateEnum.UNINITIALIZED;
-		}
+//		if (!enabled)
+//			state = ArmBarStateEnum.UNINITIALIZED;
+
+		// stay in RUNNING state when transitioning AUTONOMOUS-->DISABLED-->TELEOP
+		if (calibrated)
+			state = ArmBarStateEnum.RUNNING;
 		
 		switch (state)
 		{

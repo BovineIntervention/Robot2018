@@ -26,6 +26,7 @@ public class ElevatorLoop implements Loop{
 	private ElevatorStateEnum nextState = ElevatorStateEnum.UNINITIALIZED;
 	
 	public boolean enabled = false;
+	public boolean calibrated = false;
 	public boolean manualControls = false;
 	
     public double position;
@@ -79,6 +80,7 @@ public class ElevatorLoop implements Loop{
         // limit switch
 		limitSwitch = new DigitalInput(Constants.kElevatorLimitSwitchPwmId);
 		
+		calibrated = false;
 		disable();
 	}
 	
@@ -191,13 +193,6 @@ public class ElevatorLoop implements Loop{
 	@Override
 	public void onLoop()
 	{
-		/*
-		if (getLimitSwitchDuringZeroing())
-//			if (!limitSwitch.get())
-		{
-			System.out.println("Elevator Limit Switch Triggered");
-		}	
-		*/
 		// read status of elevator
 		getStatus();
 		position = elevatorState.getPositionInches();
@@ -206,9 +201,14 @@ public class ElevatorLoop implements Loop{
 		state = nextState;
 		
 		// start over if ever disabled
-		if (!enabled)
-			state = ElevatorStateEnum.UNINITIALIZED;
+		// 07/29/18 removing this so that elevator doesn't reinitialize on TELEOP start if already calibrated in AUTONOMOUS
+//		if (!enabled)
+//			state = ElevatorStateEnum.UNINITIALIZED;
 
+		// stay in RUNNING state when transitioning AUTONOMOUS-->DISABLED-->TELEOP
+		if (calibrated)
+			state = ElevatorStateEnum.RUNNING;
+		
 		if (manualControls)
 		{
 			// do not run remaining function when being manually controlled
@@ -272,7 +272,8 @@ public class ElevatorLoop implements Loop{
 				talon.configReverseSoftLimitEnable(true, Constants.kTalonTimeoutMs);
 				talon.configForwardSoftLimitEnable(true, Constants.kTalonTimeoutMs);
 				talon.overrideLimitSwitchesEnable(true);	// enable soft limit switches
-				
+		
+				calibrated = true;						// only calibrate once on startup
 				nextState = ElevatorStateEnum.RUNNING;	// start running state
 			}
 			

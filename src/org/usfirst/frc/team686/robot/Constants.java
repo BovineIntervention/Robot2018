@@ -176,7 +176,9 @@ public class Constants extends ConstantsBase
     public static double kMinElevatorOutput = 0.2;
     public static double kMaxElevatorOutput = 1.0;
     public static double kElevatorManualOutput = 0.5;
-    public static double kElevatorMotorStallCurrentThreshold = 15.0;	// current at which we will assume the limit switch didn't catch it and we are stalled
+//    public static double kElevatorMotorStallCurrentThreshold = 15.0;	// current at which we will assume the limit switch didn't catch it and we are stalled
+    // 07/28/18: increasing to 25A when using new limit switches
+    public static double kElevatorMotorStallCurrentThreshold = 25.0;	// current at which we will assume the limit switch didn't catch it and we are stalled
     
     public static double kDriveScaleFactorAtMaxElevatorHeight = 0.5;    
     
@@ -218,7 +220,9 @@ public class Constants extends ConstantsBase
 	public static double kArmBarKi = 0.0;
    
 	public static double kMaxArmBarVoltage = 12.0;	// may be less than 12V battery voltage when testing	
-	public static double kArmBarMotorStallCurrentThreshold = 10.0;	// current at which we will assume the limit switch didn't catch it and we are stalled
+//	public static double kArmBarMotorStallCurrentThreshold = 10.0;	// current at which we will assume the limit switch didn't catch it and we are stalled
+	// 07/28/18: increasing to 20A when using new hall effect sensors (don't want to false trigger on current any more)
+	public static double kArmBarMotorStallCurrentThreshold = 20.0;	// current at which we will assume the limit switch didn't catch it and we are stalled
 
 	public static int kArmBarPeakCurrentLimit = 30;	// current at which current limit is activated
 	public static int kArmBarPeakCurrentDuration = 200;	// duration at which current limit is activated
@@ -378,7 +382,7 @@ public class Constants extends ConstantsBase
     		    
     		    
     		    kIntakeLeftMotorInverted = true;
-    		     kIntakeRightMotorInverted = false;
+    		    kIntakeRightMotorInverted = false;
     		    
     		    kDriveVelocityKp = 20.0;
     		    kDriveVelocityKi = 0.01;
