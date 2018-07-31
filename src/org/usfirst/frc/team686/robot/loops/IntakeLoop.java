@@ -5,9 +5,7 @@ import org.usfirst.frc.team686.robot.command_status.IntakeState;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.PWMSpeedController;
 import edu.wpi.first.wpilibj.Spark;
-import edu.wpi.first.wpilibj.Talon;
 
 public class IntakeLoop implements Loop
 {
@@ -16,8 +14,8 @@ public class IntakeLoop implements Loop
 
 	private IntakeState intakeState = IntakeState.getInstance();
 	
-	private static PWMSpeedController lMotor;
-	private static PWMSpeedController rMotor;
+	private static Spark lMotor;
+	private static Spark rMotor;
 	
 	private static DoubleSolenoid grabber;
 	
@@ -35,16 +33,8 @@ public class IntakeLoop implements Loop
 		System.out.println("IntakeLoop constructor");
 		
 		// Configure Motor Controllers
-		if (Constants.kRobotSelection == Constants.RobotSelectionEnum.COMPETITION_BOT)
-		{
-			lMotor = new Spark(Constants.kLeftIntakePwmChannel);
-			rMotor = new Spark(Constants.kRightIntakePwmChannel);
-		}
-		else
-		{
-			lMotor = new Talon(Constants.kLeftIntakePwmChannel);
-			rMotor = new Talon(Constants.kRightIntakePwmChannel);
-		}
+		lMotor = new Spark(Constants.kLeftIntakePwmChannel);
+		rMotor = new Spark(Constants.kRightIntakePwmChannel);
 		lMotor.setInverted(Constants.kIntakeLeftMotorInverted);
 		rMotor.setInverted(Constants.kIntakeRightMotorInverted);
 		
