@@ -211,7 +211,7 @@ public class Constants extends ConstantsBase
     public static double kArmBarCalAngleDeg =   86.6;	// at upper limit
     public static double kArmBarUpAngleDeg =    65.0;	
     public static double kArmBarFlatAngleDeg = 	 0.0;	
-    public static double kArmBarDownAngleDeg = -34.0; 	// at lower limit
+    public static double kArmBarDownAngleDeg = -30.0; 	// at lower limit
 
 	
 	public static double kArmBarKf = 0.0;
@@ -350,8 +350,8 @@ public class Constants extends ConstantsBase
     
     public Constants()
     {
-        kRobotSelection = RobotSelectionEnum.COMPETITION_BOT;	// select which robot we are building code for (TODO: make this automatic?)
-//        kRobotSelection = RobotSelectionEnum.PRACTICE_BOT;	// select which robot we are building code for (TODO: make this automatic?)
+    kRobotSelection = RobotSelectionEnum.COMPETITION_BOT;	// select which robot we are building code for (TODO: make this automatic?)
+//    kRobotSelection = RobotSelectionEnum.PRACTICE_BOT;	// select which robot we are building code for (TODO: make this automatic?)
     	
     	// place robot-specific constants here
     	
@@ -412,7 +412,8 @@ public class Constants extends ConstantsBase
     		    
     		    // Motor Controllers
     		    // (Note that if multiple Talons are dedicated to a mechanism, any sensors are attached to the master)
-    		    kLeftMotorMasterTalonId 	= 1;
+
+    		    kLeftMotorMasterTalonId     = 1;
     			kLeftMotorSlave1TalonId 	= 2;
     			kElevatorTalonId 			= 3;
     			kRightMotorMasterTalonId 	= 4;
@@ -567,6 +568,7 @@ System.out.printf("PRACTICE_BOT: kIntakeLeftMotorInverted = %b (should be false)
     
 	    if (cubeInProximitySensor == null)
 	    {
+	    	
 	    	cubeInProximitySensor = new DigitalInput(Constants.kCubeInProximitySensorPort);
 	    }
 	   

@@ -42,7 +42,7 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 		Vector2d initialPosition = startPosition.initialPose.getPosition();
 		Vector2d turnPosition = 		  new Vector2d( 80, 64);
 		Vector2d startSlowPosition = 	  new Vector2d(100, 64);
-		Vector2d switchStopPosition = 	  new Vector2d(142 - Constants.kCenterToFrontBumper, 58);	// 58 is center of switch platform		
+		Vector2d switchStopPosition = 	  new Vector2d(162 - Constants.kCenterToFrontBumper, 58);	// 58 is center of switch platform		
 		
 		double switchThresholdX = 141 - Constants.kCenterToFrontBumper;
 		
@@ -81,7 +81,7 @@ public class CenterStartToSwitchMode extends AutoModeBase {
 		// Pick up a 2nd cube from the pile
 		
 		Vector2d backupPosition = 		new Vector2d(24, 0);
-		Vector2d cubePickupPosition = 	new Vector2d(147 - 3*13 - Constants.kCenterToExtendedIntake +  0, 0);	
+		Vector2d cubePickupPosition = 	new Vector2d(152 - 3*13 - Constants.kCenterToExtendedIntake +  0, 0);	
 		Vector2d startIntakePosition =	new Vector2d(140 - 3*13 - Constants.kCenterToExtendedIntake - 24, 0);	// start looking for cube 12" early
 		
 		Path backupPath = new Path();

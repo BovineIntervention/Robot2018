@@ -292,12 +292,12 @@ public class ElevatorLoop implements Loop{
 			nextState = ElevatorStateEnum.UNINITIALIZED;
 		}
 		
-//		printCnt++;
-//		if (printCnt==5)
-//		{
-//			System.out.println(toString());
-//			printCnt = 0;
-//		}
+		printCnt++;
+		if (printCnt==5)
+		{
+			System.out.println(toString());
+			printCnt = 0;
+		}
 	}
 
 	public void getStatus()
